@@ -12,8 +12,18 @@
 		<module>jax-rs-hateoas-demo</module>
 	</modules>
 
+	<scm>
+		<connection>scm:git:git://github.com/jayway/jax-rs-hateoas.git</connection>
+		<developerConnection>scm:git:ssh://github.com:jayway/jax-rs-hateoas.git</developerConnection>
+	</scm>
+
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
