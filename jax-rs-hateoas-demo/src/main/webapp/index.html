@@ -1,0 +1,37 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+
+    <link rel="stylesheet" href="css/hateoas.css?nocache=1" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.16.custom.css" type="text/css" media="screen"/>
+
+    <script type="text/javascript" src="lib/underscore-1.1.7.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="lib/jquery.datalink.js"></script>
+    <script type="text/javascript" src="lib/prettyprint.js"></script>
+
+    <script type="text/javascript" src="scripts/hateoas.ajax.js"></script>
+    <script type="text/javascript" src="scripts/hateoas.entryPoint.js"></script>
+    <script type="text/javascript" src="scripts/hateoas.link.js"></script>
+    <script type="text/javascript" src="scripts/hateoas.resource.js"></script>
+    <script type="text/javascript" src="scripts/hateoas.util.js"></script>
+    <script type="text/javascript" src="scripts/hateoas.view.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            hateoas.view.init();
+            hateoas.entryPoint('/api/').init(function(entryPoint) {
+                var refs = entryPoint.links();
+                hateoas.view.renderEntryPoint(entryPoint);
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="hateoas"></div>
+</body>
+</html>
