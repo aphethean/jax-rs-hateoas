@@ -3,12 +3,12 @@
 	<groupId>com.jayway.jax-rs-hateoas</groupId>
 	<artifactId>jax-rs-hateoas-demo</artifactId>
 	<packaging>war</packaging>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>jax-rs-hateoas Demo App</name>
 	<parent>
 		<groupId>com.jayway.jax-rs-hateoas</groupId>
 		<artifactId>jax-rs-hateoas-parent</artifactId>
-		<version>0.1</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
