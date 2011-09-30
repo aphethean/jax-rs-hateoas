@@ -36,6 +36,10 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Mattias Hellborg Arthursson
+ * @author Kalle Stenflo
+ */
 public class DefaultHateoasContext implements HateoasContext {
 
 	private static final String[] DEFAULT_MEDIA_TYPE = { "*/*" };
