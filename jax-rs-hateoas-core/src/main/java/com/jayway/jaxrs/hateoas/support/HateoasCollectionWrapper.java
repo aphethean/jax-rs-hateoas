@@ -17,11 +17,11 @@ package com.jayway.jaxrs.hateoas.support;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.jayway.jaxrs.hateoas.EachCallback;
-import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 
@@ -31,7 +31,7 @@ import com.jayway.jaxrs.hateoas.HateoasVerbosity;
  */
 public class HateoasCollectionWrapper implements Iterable<Object> {
 	private Collection<Object> rows;
-	private Collection<HateoasLink> links;
+	private Collection<Map<String, Object>> links;
 
 	public HateoasCollectionWrapper(Collection<Object> originalCollection) {
 		rows = originalCollection;
@@ -45,11 +45,11 @@ public class HateoasCollectionWrapper implements Iterable<Object> {
 		this.rows = rows;
 	}
 
-	public Collection<HateoasLink> getLinks() {
+	public Collection<Map<String, Object>> getLinks() {
 		return links;
 	}
 
-	public void setLinks(Collection<HateoasLink> links) {
+	public void setLinks(Collection<Map<String, Object>> links) {
 		this.links = links;
 	}
 

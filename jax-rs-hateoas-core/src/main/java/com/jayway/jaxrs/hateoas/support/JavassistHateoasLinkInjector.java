@@ -56,9 +56,9 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector {
 	public Object injectLinks(Object entity, Collection<HateoasLink> links,
 			final HateoasVerbosity verbosity) {
 
-        if(entity == null){
-            return null;
-        }
+		if (entity == null) {
+			return null;
+		}
 
 		if (Collection.class.isAssignableFrom(entity.getClass())) {
 			return reflectionBasedDelegate

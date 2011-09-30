@@ -57,15 +57,7 @@ public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector {
 			Field field = ReflectionUtils.getField(entity, linksFieldName);
 
 			if (Collection.class.isAssignableFrom(field.getType())) {
-				Collection<HateoasLink> originalLinks = (Collection<HateoasLink>) field
-						.get(entity);
-				if (originalLinks == null) {
-					originalLinks = new LinkedList<HateoasLink>();
-				}
-
-				originalLinks.addAll(links);
-
-				field.set(entity, Collections2.transform(originalLinks,
+				field.set(entity, Collections2.transform(links,
 						new Function<HateoasLink, Map<String, Object>>() {
 							@Override
 							public Map<String, Object> apply(HateoasLink from) {
