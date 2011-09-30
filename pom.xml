@@ -14,7 +14,7 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/jayway/jax-rs-hateoas.git</connection>
-		<developerConnection>scm:git:git:git@github.com:jayway/jax-rs-hateoas.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com/jayway/jax-rs-hateoas.git</developerConnection>
 	</scm>
 
 	<build>
