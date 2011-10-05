@@ -32,7 +32,7 @@ public class CustomerResource {
 
 	@GET
 	@Produces("application/vnd.demo.library.list.customer+json")
-	@Linkable(id = LinkableIds.CUSTOMER_LIST_ID, rel = Rels.CUSTOMER_REL)
+	@Linkable(id = LinkableIds.CUSTOMER_LIST_ID, rel = Rels.CUSTOMERS_REL)
 	public Response getAllCustomers() {
 		return HateoasResponse
 				.ok(CustomerDto.fromBeanCollection(customerRepository
@@ -43,7 +43,7 @@ public class CustomerResource {
 	@POST
 	@Consumes("application/vnd.demo.library.customer+json")
 	@Produces("application/vnd.demo.library.customer+json")
-	@Linkable(id = LinkableIds.CUSTOMER_NEW_ID, rel = Rels.CUSTOMER_REL, templateClass = CustomerDto.class)
+	@Linkable(id = LinkableIds.CUSTOMER_NEW_ID, rel = Rels.CUSTOMERS_REL, templateClass = CustomerDto.class)
 	public Response newCustomer(CustomerDto customer) {
 		Customer newCustomer = customerRepository.newCustomer(customer
 				.getName());
@@ -66,7 +66,7 @@ public class CustomerResource {
 	@GET
 	@Path("/{id}/loans")
 	@Produces("application/vnd.demo.library.list.loan+json")
-	@Linkable(id = LinkableIds.CUSTOMER_LOANS_ID, rel = Rels.LOAN_REL)
+	@Linkable(id = LinkableIds.CUSTOMER_LOANS_ID, rel = Rels.LOANS_REL)
 	public Response getCustomerLoans(@PathParam("id") Integer id) {
 
 		Collection<LoanDto> loanDtos = LoanDto
