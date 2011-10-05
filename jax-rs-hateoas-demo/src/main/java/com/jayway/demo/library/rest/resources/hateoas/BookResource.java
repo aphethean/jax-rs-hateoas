@@ -7,6 +7,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.jayway.demo.library.domain.Book;
@@ -29,7 +30,7 @@ public class BookResource {
 
 	@GET
 	@Linkable(id = LinkableIds.BOOKS_LIST_ID, rel = Rels.BOOKS_REL)
-	@Produces("application/vnd.demo.library.list.book+json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllBooks() {
 		return HateoasResponse
 				.ok(BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
@@ -39,8 +40,8 @@ public class BookResource {
 
 	@POST
 	@Linkable(id = LinkableIds.BOOK_NEW_ID, rel = Rels.BOOK_REL, templateClass = BookDto.class)
-	@Consumes("application/vnd.demo.library.book+json")
-	@Produces("application/vnd.demo.library.book+json")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response newBook(BookDto book) {
 		Book newBook = bookRepository
 				.newBook(book.getAuthor(), book.getTitle());
@@ -53,7 +54,7 @@ public class BookResource {
 	@GET
 	@Linkable(id = LinkableIds.BOOK_DETAILS_ID, rel = Rels.BOOK_REL)
 	@Path("/{id}")
-	@Produces("application/vnd.demo.library.book+json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBookById(@PathParam("id") Integer id) {
 		Book book = bookRepository.getBookById(id);
 		HateoasResponseBuilder builder = HateoasResponse
@@ -72,8 +73,8 @@ public class BookResource {
 	@PUT
 	@Linkable(id = LinkableIds.BOOK_UPDATE_ID, rel = Rels.BOOK_REL, templateClass = BookDto.class)
 	@Path("/{id}")
-	@Consumes("application/vnd.demo.library.book+json")
-	@Produces("application/vnd.demo.library.book+json")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateBook(@PathParam("id") Integer id, BookDto updatedBook) {
 		Book book = bookRepository.getBookById(id);
 		book.setAuthor(updatedBook.getAuthor());
