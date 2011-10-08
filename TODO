@@ -1,0 +1,32 @@
+- Support for sending links in header.
+
+- Store links in Set - DONE
+
+- Support populated templates in builder (introduce HateoasLinkBuilder ?)
+
+- Support for custom uris in link calls  (in HateoasLinkBuilder ?)
+
+- JAXB support
+
+- Enable/disable custom verbosity levels
+
+- ParameterizedResponse
+
+- API Documentation resource
+
+- Spring support
+
+- Maven Central Repo publishing
+
+- Docs
+
+- Tests
+
+- Google code project
+
+- Post intro on Jayway blog
+
+- Javascript client improvements
+
+- Look into Jersey filters to remove custom filter requirement
+

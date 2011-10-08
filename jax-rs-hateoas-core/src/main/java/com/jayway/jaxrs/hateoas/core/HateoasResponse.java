@@ -411,7 +411,11 @@ public abstract class HateoasResponse extends Response {
 		private static HateoasLinkInjector linkInjector;
 		private static HateoasVerbosity verbosity;
 
-		public abstract HateoasResponseBuilder link(String id, Object... params);
+
+
+		//public abstract HateoasLinkBuilder linkBuilder(String id);
+
+        public abstract HateoasResponseBuilder link(String id, Object... params);
 
 		public abstract HateoasResponseBuilder links(HateoasLink... link);
 

@@ -16,6 +16,7 @@
 package com.jayway.jaxrs.hateoas.core;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -160,4 +161,38 @@ class DefaultHateoasLink implements HateoasLink {
 				linkableInfo.getTemplateClass());
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DefaultHateoasLink that = (DefaultHateoasLink) o;
+
+        if (!Arrays.equals(consumes, that.consumes)) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (href != null ? !href.equals(that.href) : that.href != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (label != null ? !label.equals(that.label) : that.label != null) return false;
+        if (method != null ? !method.equals(that.method) : that.method != null) return false;
+        if (!Arrays.equals(produces, that.produces)) return false;
+        if (rel != null ? !rel.equals(that.rel) : that.rel != null) return false;
+        if (templateClass != null ? !templateClass.equals(that.templateClass) : that.templateClass != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (rel != null ? rel.hashCode() : 0);
+        result = 31 * result + (href != null ? href.hashCode() : 0);
+        result = 31 * result + (produces != null ? Arrays.hashCode(produces) : 0);
+        result = 31 * result + (method != null ? method.hashCode() : 0);
+        result = 31 * result + (templateClass != null ? templateClass.hashCode() : 0);
+        result = 31 * result + (consumes != null ? Arrays.hashCode(consumes) : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        return result;
+    }
 }

@@ -46,11 +46,11 @@ public class HateoasResponseBuilderImpl extends
 
 	private Type entityType;
 
-	private Collection<HateoasLink> links = new LinkedList<HateoasLink>();
+	private Collection<HateoasLink> links = new HashSet<HateoasLink>();
 
 	private EachCallback eachCallback;
 
-	@Override
+    @Override
 	public HateoasResponseBuilder link(String id, Object... params) {
 		return links(HateoasResponseBuilder.makeLink(id, params));
 	}
@@ -137,6 +137,7 @@ public class HateoasResponseBuilderImpl extends
 		headers = null;
 		entity = null;
 		entityType = null;
+        links.clear();
 	}
 
 	@Override
