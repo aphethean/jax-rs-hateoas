@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.UriBuilder;
 
 /**
+ * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
 public class JerseyHateoasContextFilter implements ContainerRequestFilter, ContainerResponseFilter {
