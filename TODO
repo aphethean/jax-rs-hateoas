@@ -2,6 +2,10 @@
 
 - Store links in Set - DONE
 
+- Look into Jersey filters to remove custom filter requirement - spiked by Kalle 2011-10-10
+
+--------------------------------------------------------------------------------------------
+
 - Support populated templates in builder (introduce HateoasLinkBuilder ?)
 
 - Support for custom uris in link calls  (in HateoasLinkBuilder ?)
@@ -28,5 +32,5 @@
 
 - Javascript client improvements
 
-- Look into Jersey filters to remove custom filter requirement - spiked by Kalle 2011-10-10
+
 
