@@ -21,6 +21,7 @@ import java.net.URI;
 
 
 /**
+ * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
 public class HateoasLnk {
