@@ -116,7 +116,7 @@ public class HateoasResponseBuilderImpl extends
 
 		Object newEntity = entity;
 		if (newEntity != null) {
-			newEntity = linkInjector.injectLinks(entity, links, verbosity);
+			newEntity = linkInjector.injectLinks(entity, new HashSet<HateoasLink>(links), verbosity);
 
 			if (newEntity instanceof HateoasCollectionWrapper) {
 				if (eachCallback != null) {
