@@ -36,6 +36,7 @@ public class JerseyHateoasContextFilter implements ContainerRequestFilter, Conta
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
 
         log.debug("container response filter");
+        RequestContext.clearRequestContext();
 
         return response;
     }
