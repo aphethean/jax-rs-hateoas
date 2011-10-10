@@ -151,7 +151,7 @@ class DefaultHateoasLink implements HateoasLink {
 
 	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,
 			String rel, Object... params) {
-		URI requestURI = RequestContext.getBasePath()
+		URI requestURI = RequestContext.getRequestContext().getBasePath()
 				.path(linkableInfo.getMethodPath()).build(params);
 
 		return new DefaultHateoasLink(linkableInfo.getId(), rel,

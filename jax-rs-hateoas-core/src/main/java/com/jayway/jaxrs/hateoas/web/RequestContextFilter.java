@@ -15,38 +15,48 @@
  */
 package com.jayway.jaxrs.hateoas.web;
 
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 
 /**
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
 public class RequestContextFilter implements Filter {
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		RequestContext.setCurrentRequest(request);
-		try {
-			chain.doFilter(request, response);
-		} finally {
-			RequestContext.clearCurrentRequest();
-		}
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
 
-	@Override
-	public void destroy() {
 
-	}
+        final HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
 
-	}
+        String requestURI = servletRequest.getRequestURI();
+        requestURI = StringUtils.removeStart(requestURI, servletRequest.getContextPath() + servletRequest.getServletPath());
+        String baseURL = StringUtils.removeEnd(servletRequest.getRequestURL().toString(), requestURI);
+        UriBuilder uriBuilder = UriBuilder.fromUri(baseURL);
+
+        RequestContext ctx = new RequestContext(uriBuilder, servletRequest.getHeader(RequestContext.HATEOAS_OPTIONS_HEADER));
+
+        RequestContext.setRequestContext(ctx);
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            RequestContext.clearRequestContext();
+        }
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
 }

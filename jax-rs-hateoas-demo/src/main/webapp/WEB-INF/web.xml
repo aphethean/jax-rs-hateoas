@@ -4,7 +4,7 @@
 
 <web-app>
 	<display-name>JAX-RS HATEOAS</display-name>
-
+    <!--
 	<filter>
 		<filter-name>RequestContextFilter</filter-name>
 		<filter-class>com.jayway.jaxrs.hateoas.web.RequestContextFilter</filter-class>
@@ -14,7 +14,7 @@
 		<filter-name>RequestContextFilter</filter-name>
 		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
-
+    -->
 	<servlet>
 		<servlet-name>Hateoas</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>

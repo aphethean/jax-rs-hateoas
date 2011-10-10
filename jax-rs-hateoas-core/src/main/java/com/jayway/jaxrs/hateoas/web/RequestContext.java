@@ -15,46 +15,45 @@
  */
 package com.jayway.jaxrs.hateoas.web;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
 public class RequestContext {
-	private static final String HATEOAS_OPTIONS_HEADER = "x-jax-rs-hateoas-options";
-	private final static ThreadLocal<HttpServletRequest> currentRequest = new ThreadLocal<HttpServletRequest>();
 
-	public static void setCurrentRequest(ServletRequest request) {
-		currentRequest.set((HttpServletRequest) request);
-	}
+    public static final String HATEOAS_OPTIONS_HEADER = "x-jax-rs-hateoas-options";
 
-	public static HttpServletRequest getCurrentRequest() {
-		return currentRequest.get();
-	}
+    private final static ThreadLocal<RequestContext> currentContext = new ThreadLocal<RequestContext>();
 
-	public static void clearCurrentRequest() {
-		currentRequest.remove();
-	}
+    public static void setRequestContext(RequestContext context) {
+        currentContext.set(context);
+    }
 
-	public static UriBuilder getBasePath() {
-		HttpServletRequest request = getCurrentRequest();
+    public static RequestContext getRequestContext() {
+        return currentContext.get();
+    }
 
-		String requestURI = request.getRequestURI();
-		requestURI = StringUtils.removeStart(requestURI,
-				request.getContextPath() + request.getServletPath());
+    public static void clearRequestContext() {
+        currentContext.remove();
+    }
 
-		String baseURL = StringUtils.removeEnd(request.getRequestURL()
-				.toString(), requestURI);
-		return UriBuilder.fromUri(baseURL);
-	}
 
-	public static String getVerbosityHeader() {
-		HttpServletRequest request = getCurrentRequest();
-		return request.getHeader(HATEOAS_OPTIONS_HEADER);
-	}
+    private final UriBuilder basePath;
+
+    private final String verbosityHeader;
+
+    public RequestContext(UriBuilder basePath, String verbosityHeader) {
+        this.basePath = basePath;
+        this.verbosityHeader = verbosityHeader;
+    }
+
+    public UriBuilder getBasePath() {
+        return basePath.clone();
+    }
+
+    public String getVerbosityHeader() {
+        return verbosityHeader;
+    }
 }

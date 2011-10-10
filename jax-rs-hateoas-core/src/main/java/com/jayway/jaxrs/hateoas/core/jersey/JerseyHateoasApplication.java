@@ -50,9 +50,7 @@ public abstract class JerseyHateoasApplication extends PackagesResourceConfig {
 
         HateoasResponseBuilder.configure(linkInjector, verbosity);
 
-
-
-        JerseyHateoasContainerFilter filter = new JerseyHateoasContainerFilter();
+        JerseyHateoasContextFilter filter = new JerseyHateoasContextFilter();
 
         super.getContainerRequestFilters().add(filter);
         super.getContainerResponseFilters().add(filter);
