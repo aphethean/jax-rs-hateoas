@@ -28,5 +28,5 @@
 
 - Javascript client improvements
 
-- Look into Jersey filters to remove custom filter requirement
+- Look into Jersey filters to remove custom filter requirement - spiked by Kalle 2011-10-10
 
