@@ -38,7 +38,6 @@ public class JerseyHateoasContextFilter implements ContainerRequestFilter, Conta
 
         log.debug("container response filter");
 
-        RequestContext.clearRequestContext();
 
         return response;
     }
@@ -49,6 +48,8 @@ public class JerseyHateoasContextFilter implements ContainerRequestFilter, Conta
         log.debug("container request filter");
         log.debug("request.getAbsolutePath : " + request.getAbsolutePath());
         log.debug("request.getBaseUri : " + request.getBaseUri());
+
+        RequestContext.clearRequestContext();
 
         RequestContext ctx = new RequestContext(UriBuilder.fromUri(request.getBaseUri()), request.getHeaderValue(RequestContext.HATEOAS_OPTIONS_HEADER));
 

@@ -27,7 +27,7 @@ public class HateoasVerbosity {
 			HateoasOption.REL, HateoasOption.HREF, HateoasOption.ID,
 			HateoasOption.CONSUMES, HateoasOption.PRODUCES,
 			HateoasOption.METHOD, HateoasOption.LABEL,
-			HateoasOption.DESCRIPTION);
+			HateoasOption.DESCRIPTION, HateoasOption.TEMPLATE);
 	public static HateoasVerbosity MINIMUM = new HateoasVerbosity(
 			HateoasOption.REL, HateoasOption.HREF);
 	public static HateoasVerbosity GENERIC_CLIENT = new HateoasVerbosity(

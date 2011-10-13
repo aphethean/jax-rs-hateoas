@@ -66,7 +66,7 @@ public class DefaultHateoasContext implements HateoasContext {
 
 			Method[] methods = clazz.getMethods();
 			for (Method method : methods) {
-				mapMethod(rootPath, method);
+				mapMethod(clazz, rootPath, method);
 			}
 
 		} else {
@@ -88,7 +88,7 @@ public class DefaultHateoasContext implements HateoasContext {
 		return linkableInfo;
 	}
 
-	private void mapMethod(String rootPath, Method method) {
+	private void mapMethod(Class<?> clazz, String rootPath, Method method) {
 		String httpMethod = findHttpMethod(method);
 
 		if (httpMethod != null) {
@@ -99,11 +99,16 @@ public class DefaultHateoasContext implements HateoasContext {
 			if (method.isAnnotationPresent(Linkable.class)) {
 				Linkable linkAnnotation = method.getAnnotation(Linkable.class);
 				String id = linkAnnotation.id();
-				LinkableInfo relInfo = new LinkableInfo(id, path,
+				if (linkableMapping.containsKey(id)) {
+					throw new IllegalArgumentException("Id '" + id
+							+ "' mapped in class " + clazz
+							+ " is already mapped from another class");
+				}
+				LinkableInfo linkableInfo = new LinkableInfo(id, path,
 						linkAnnotation.rel(), httpMethod, consumes, produces,
 						linkAnnotation.label(), linkAnnotation.description(),
 						linkAnnotation.templateClass());
-				linkableMapping.put(id, relInfo);
+				linkableMapping.put(id, linkableInfo);
 			} else {
 				logger.warn("Method {} is missing Link annotation", method);
 			}
