@@ -18,6 +18,7 @@ package com.jayway.demo.library.domain.internal;
 import com.jayway.demo.library.domain.Customer;
 import com.jayway.demo.library.domain.CustomerRepository;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class CustomerRepositoryInMemory implements CustomerRepository {
 
 	private final AtomicInteger nextId = new AtomicInteger();
 
+    @PostConstruct
 	public void init() {
 		newCustomer("Mattias");
 		newCustomer("Kalle");

@@ -20,6 +20,7 @@ import com.google.common.collect.Collections2;
 import com.jayway.demo.library.domain.Book;
 import com.jayway.demo.library.domain.BookRepository;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -64,6 +65,7 @@ public class BookRepositoryInMemory implements BookRepository {
         });
     }
 
+    @PostConstruct
     public void init() {
         newBook("J.R.R. Tolkien", "Lord of the Rings");
         newBook("Cormac McCarthy", "The Road");

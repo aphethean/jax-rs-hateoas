@@ -18,7 +18,7 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-	<display-name>JAX-RS HATEOAS</display-name>
+	<display-name>JAX-RS HATEOAS Jersey</display-name>
     <!--
 	<filter>
 		<filter-name>RequestContextFilter</filter-name>
