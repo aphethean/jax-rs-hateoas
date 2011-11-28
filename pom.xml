@@ -22,7 +22,7 @@
 	<name>jax-rs-hateoas build root</name>
 	<modules>
 		<module>jax-rs-hateoas-core</module>
-		<module>jax-rs-hateoas-demo</module>
+		<module>demo</module>
 	</modules>
 
 	<licenses>
