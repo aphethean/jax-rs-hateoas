@@ -9,3 +9,4 @@ target
 *.iws
 *.ipr
 *.iml
+demo/demo-jersey/overlays/
