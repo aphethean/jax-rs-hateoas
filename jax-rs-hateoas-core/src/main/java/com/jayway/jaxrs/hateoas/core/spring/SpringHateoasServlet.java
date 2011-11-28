@@ -16,6 +16,7 @@
 package com.jayway.jaxrs.hateoas.core.spring;
 
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
+import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasContextFilter;
@@ -25,9 +26,12 @@ import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -35,12 +39,16 @@ import java.util.Set;
  */
 public class SpringHateoasServlet extends SpringServlet {
 
+    private final static Logger logger = LoggerFactory.getLogger(SpringHateoasServlet.class);
+
+    public final static String PROPERTY_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.property.LinkInjector";
+
     @Override
     protected ResourceConfig getDefaultResourceConfig(Map<String, Object> props,
-            WebConfig webConfig) throws ServletException {
+                                                      WebConfig webConfig) throws ServletException {
         return new DefaultSpringResourceConfig();
     }
-    
+
     @Override
     protected void initiate(ResourceConfig rc, WebApplication wa) {
         super.initiate(rc, wa);
@@ -50,6 +58,25 @@ public class SpringHateoasServlet extends SpringServlet {
             HateoasContextProvider.getDefaultContext().mapClass(clazz);
         }
 
-        HateoasResponseBuilder.configure(new JavassistHateoasLinkInjector(), HateoasVerbosity.MAXIMUM);
+        HateoasResponseBuilder.configure(getLinkInjector(rc), HateoasVerbosity.MAXIMUM);
+    }
+
+    private HateoasLinkInjector getLinkInjector(ResourceConfig rc) {
+        HateoasLinkInjector linkInjector = null;
+
+        Object linkInjectorProperty = rc.getProperty(PROPERTY_LINK_INJECTOR);
+        if (linkInjectorProperty == null) {
+            logger.info("Using default LinkInjcetor", linkInjectorProperty);
+            linkInjector = new JavassistHateoasLinkInjector();
+        } else {
+            logger.info("Using {} as LinkInjector", linkInjectorProperty);
+            try {
+                linkInjector = (HateoasLinkInjector) Class.forName((String) linkInjectorProperty).newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to instantiate " + linkInjector);
+            }
+        }
+
+        return linkInjector;
     }
 }
