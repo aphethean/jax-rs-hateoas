@@ -18,10 +18,9 @@ package com.jayway.jaxrs.hateoas.core.spring;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.core.HateoasResponse;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
-import com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasContextFilter;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
-import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.WebConfig;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -42,6 +40,7 @@ public class SpringHateoasServlet extends SpringServlet {
     private final static Logger logger = LoggerFactory.getLogger(SpringHateoasServlet.class);
 
     public final static String PROPERTY_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.property.LinkInjector";
+    public static final String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.property.Verbosity";
 
     @Override
     protected ResourceConfig getDefaultResourceConfig(Map<String, Object> props,
@@ -58,7 +57,7 @@ public class SpringHateoasServlet extends SpringServlet {
             HateoasContextProvider.getDefaultContext().mapClass(clazz);
         }
 
-        HateoasResponseBuilder.configure(getLinkInjector(rc), HateoasVerbosity.MAXIMUM);
+        HateoasResponseBuilder.configure(getLinkInjector(rc), getVerbosity(rc));
     }
 
     private HateoasLinkInjector getLinkInjector(ResourceConfig rc) {
@@ -78,5 +77,17 @@ public class SpringHateoasServlet extends SpringServlet {
         }
 
         return linkInjector;
+    }
+
+    private HateoasVerbosity getVerbosity(ResourceConfig rc) {
+        Object hateoasVerbosity = rc.getProperty(PROPERTY_HATEOAS_VERBOSITY);
+
+        if (hateoasVerbosity != null) {
+            logger.info("Using Verbosity: {}", hateoasVerbosity);
+            return HateoasResponseBuilder.getVerbosity((String) hateoasVerbosity);
+        } else {
+            logger.info("Using default verbosity");
+            return HateoasVerbosity.MAXIMUM;
+        }
     }
 }
