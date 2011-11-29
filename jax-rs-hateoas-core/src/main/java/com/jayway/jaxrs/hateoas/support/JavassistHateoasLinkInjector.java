@@ -38,7 +38,7 @@ import com.jayway.jaxrs.hateoas.HateoasVerbosity;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public class JavassistHateoasLinkInjector implements HateoasLinkInjector {
+public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object> {
 
 	private static final ClassPool CLASS_POOL = ClassPool.getDefault();
 
@@ -49,7 +49,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector {
 				JavassistHateoasLinkInjector.class.getClassLoader()));
 	}
 
-	private HateoasLinkInjector reflectionBasedDelegate = new ReflectionBasedHateoasLinkInjector();
+	private HateoasLinkInjector<Object> reflectionBasedDelegate = new ReflectionBasedHateoasLinkInjector();
 
 	@Override
 	public Object injectLinks(Object entity, Collection<HateoasLink> links,

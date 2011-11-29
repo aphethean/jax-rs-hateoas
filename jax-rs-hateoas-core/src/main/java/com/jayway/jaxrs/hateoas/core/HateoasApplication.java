@@ -37,7 +37,7 @@ public class HateoasApplication extends Application {
 		this(new JavassistHateoasLinkInjector(), verbosity);
 	}
 
-	public HateoasApplication(HateoasLinkInjector linkInjector,
+	public HateoasApplication(HateoasLinkInjector<Object> linkInjector,
 			HateoasVerbosity verbosity) {
 
 		Set<Class<?>> allClasses = getClasses();

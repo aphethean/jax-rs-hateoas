@@ -38,7 +38,7 @@ public abstract class JerseyHateoasApplication extends PackagesResourceConfig {
 		this(new JavassistHateoasLinkInjector(), verbosity, packages);
 	}
 
-	public JerseyHateoasApplication(HateoasLinkInjector linkInjector,
+	public JerseyHateoasApplication(HateoasLinkInjector<Object> linkInjector,
 			HateoasVerbosity verbosity, String... packages) {
 		super(packages);
 

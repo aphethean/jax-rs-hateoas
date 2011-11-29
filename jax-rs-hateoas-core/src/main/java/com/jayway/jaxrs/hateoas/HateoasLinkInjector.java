@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public interface HateoasLinkInjector {
-	Object injectLinks(Object entity, Collection<HateoasLink> links,
+public interface HateoasLinkInjector<T> {
+	T injectLinks(T entity, Collection<HateoasLink> links,
 			HateoasVerbosity verbosity);
 }

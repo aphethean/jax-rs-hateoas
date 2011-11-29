@@ -30,7 +30,7 @@ import com.jayway.jaxrs.hateoas.HateoasVerbosity;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector {
+public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector<Object> {
 
 	private static final String DEFAULT_LINKS_FIELD_NAME = "links";
 	private final String linksFieldName;

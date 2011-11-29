@@ -28,19 +28,19 @@ import com.jayway.jaxrs.hateoas.HateoasVerbosity;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public class HateoasCollectionWrapper implements Iterable<Object> {
-	private Collection<Object> rows;
+public class HateoasCollectionWrapper<T> implements Iterable<T> {
+	private Collection<T> rows;
 	private Collection<Map<String, Object>> links;
 
-	public HateoasCollectionWrapper(Collection<Object> originalCollection) {
+	public HateoasCollectionWrapper(Collection<T> originalCollection) {
 		rows = originalCollection;
 	}
 
-	public Collection<Object> getRows() {
+	public Collection<T> getRows() {
 		return rows;
 	}
 
-	public void setRows(Collection<Object> rows) {
+	public void setRows(Collection<T> rows) {
 		this.rows = rows;
 	}
 
@@ -53,15 +53,15 @@ public class HateoasCollectionWrapper implements Iterable<Object> {
 	}
 
 	@Override
-	public Iterator<Object> iterator() {
+	public Iterator<T> iterator() {
 		return rows.iterator();
 	}
 
-	public void transformRows(final HateoasLinkInjector linkInjector,
-			final EachCallback eachCallback, final HateoasVerbosity verbosity) {
-		rows = Collections2.transform(rows, new Function<Object, Object>() {
+	public void transformRows(final HateoasLinkInjector<T> linkInjector,
+			final EachCallback<T> eachCallback, final HateoasVerbosity verbosity) {
+		rows = Collections2.transform(rows, new Function<T, T>() {
 			@Override
-			public Object apply(Object from) {
+			public T apply(T from) {
 				return linkInjector.injectLinks(from,
 						eachCallback.getLinks(from), verbosity);
 			}

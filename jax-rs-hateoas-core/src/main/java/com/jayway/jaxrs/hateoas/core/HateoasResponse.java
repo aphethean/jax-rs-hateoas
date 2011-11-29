@@ -387,7 +387,7 @@ public abstract class HateoasResponse extends Response {
 	 */
 	public static abstract class HateoasResponseBuilder extends ResponseBuilder {
 
-		private static HateoasLinkInjector linkInjector;
+		private static HateoasLinkInjector<Object> linkInjector;
 
 
         //public abstract HateoasLinkBuilder linkBuilder(String id);
@@ -674,18 +674,18 @@ public abstract class HateoasResponse extends Response {
 		 */
 		public abstract HateoasResponseBuilder cookie(NewCookie... cookies);
 
-		public static void configure(HateoasLinkInjector linkInjector) {
+		public static void configure(HateoasLinkInjector<Object> linkInjector) {
 			HateoasResponseBuilder.linkInjector = linkInjector;
 		}
 
-		public static HateoasLinkInjector getLinkInjector() {
+		public static HateoasLinkInjector<Object> getLinkInjector() {
 			return HateoasResponseBuilder.linkInjector;
 		}
 
         public abstract HateoasResponseBuilder each(String id,
 				String... entityField);
 
-		public abstract HateoasResponseBuilder each(EachCallback callback);
+		public abstract HateoasResponseBuilder each(EachCallback<?> callback);
 	}
 
 }

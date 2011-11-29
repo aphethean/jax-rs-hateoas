@@ -20,6 +20,6 @@ import java.util.Collection;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public interface EachCallback {
-	Collection<HateoasLink> getLinks(Object entity);
+public interface EachCallback<T> {
+	Collection<HateoasLink> getLinks(T entity);
 }

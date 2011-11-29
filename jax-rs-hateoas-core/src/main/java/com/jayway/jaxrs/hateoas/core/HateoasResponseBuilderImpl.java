@@ -47,7 +47,7 @@ public class HateoasResponseBuilderImpl extends
 
 	private Collection<HateoasLink> links = new LinkedHashSet<HateoasLink>();
 
-	private EachCallback eachCallback;
+	private EachCallback<?> eachCallback;
 
     @Override
 	public HateoasResponseBuilder link(String id, Object... params) {
@@ -73,7 +73,7 @@ public class HateoasResponseBuilderImpl extends
 	}
 
 	@Override
-	public HateoasResponseBuilder each(EachCallback callback) {
+	public HateoasResponseBuilder each(EachCallback<?> callback) {
 		this.eachCallback = callback;
 		return this;
 	}
@@ -107,8 +107,9 @@ public class HateoasResponseBuilderImpl extends
 
 	// Response.Builder
 
+    @SuppressWarnings("unchecked")
 	public HateoasResponse build() {
-		HateoasLinkInjector linkInjector = HateoasResponseBuilder
+		HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
 				.getLinkInjector();
 		HateoasVerbosity verbosity = HateoasVerbosity
 				.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
@@ -119,8 +120,8 @@ public class HateoasResponseBuilderImpl extends
 
 			if (newEntity instanceof HateoasCollectionWrapper) {
 				if (eachCallback != null) {
-					HateoasCollectionWrapper wrapper = (HateoasCollectionWrapper) newEntity;
-					wrapper.transformRows(linkInjector, eachCallback, verbosity);
+					HateoasCollectionWrapper<Object> wrapper = (HateoasCollectionWrapper<Object>) newEntity;
+					wrapper.transformRows(linkInjector, (EachCallback<Object>) eachCallback, verbosity);
 				}
 			}
 		}
@@ -335,7 +336,7 @@ public class HateoasResponseBuilderImpl extends
 		return this;
 	}
 
-	private final class ReflectionBasedEachCallback implements EachCallback {
+	private final class ReflectionBasedEachCallback implements EachCallback<Object> {
 		private final String id;
 		private final String[] entityField;
 

@@ -60,8 +60,9 @@ public class SpringHateoasServlet extends SpringServlet {
         HateoasVerbosity.setDefaultVerbosity(getVerbosity(rc));
     }
 
-    private HateoasLinkInjector getLinkInjector(ResourceConfig rc) {
-        HateoasLinkInjector linkInjector = null;
+    @SuppressWarnings("unchecked")
+    private HateoasLinkInjector<Object> getLinkInjector(ResourceConfig rc) {
+        HateoasLinkInjector<Object> linkInjector = null;
 
         Object linkInjectorProperty = rc.getProperty(PROPERTY_LINK_INJECTOR);
         if (linkInjectorProperty == null) {
@@ -70,7 +71,8 @@ public class SpringHateoasServlet extends SpringServlet {
         } else {
             logger.info("Using {} as LinkInjector", linkInjectorProperty);
             try {
-                linkInjector = (HateoasLinkInjector) Class.forName((String) linkInjectorProperty).newInstance();
+                linkInjector = (HateoasLinkInjector<Object>)
+                        Class.forName((String) linkInjectorProperty).newInstance();
             } catch (Exception e) {
                 throw new RuntimeException("Failed to instantiate " + linkInjector);
             }

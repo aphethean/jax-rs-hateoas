@@ -21,19 +21,17 @@ import static junit.framework.Assert.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 
+import com.jayway.jaxrs.hateoas.*;
+import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jayway.jaxrs.hateoas.DummyDto;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
-import com.jayway.jaxrs.hateoas.Linkable;
-import com.jayway.jaxrs.hateoas.LinkableInfo;
-import com.jayway.jaxrs.hateoas.TestUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
 
 public class DefaultHateoasLinkTest {

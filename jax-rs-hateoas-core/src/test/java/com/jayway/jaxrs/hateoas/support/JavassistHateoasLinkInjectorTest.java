@@ -66,6 +66,7 @@ public class JavassistHateoasLinkInjectorTest {
 	}
 
 	@Test
+    @SuppressWarnings("unchecked")
 	public void entityCollectionWillResultInCollectionWrapper() {
 		DummyEntity expectedEntity = new DummyEntity();
 		List<DummyEntity> entityList = Arrays.asList(expectedEntity);
