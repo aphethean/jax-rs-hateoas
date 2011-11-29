@@ -10,3 +10,4 @@ target
 *.ipr
 *.iml
 demo/demo-jersey/overlays/
+demo/demo-spring/overlays/

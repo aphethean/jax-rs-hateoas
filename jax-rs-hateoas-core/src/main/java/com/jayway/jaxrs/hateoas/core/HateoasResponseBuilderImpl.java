@@ -45,7 +45,7 @@ public class HateoasResponseBuilderImpl extends
 
 	private Type entityType;
 
-	private Collection<HateoasLink> links = new HashSet<HateoasLink>();
+	private Collection<HateoasLink> links = new LinkedHashSet<HateoasLink>();
 
 	private EachCallback eachCallback;
 
@@ -115,7 +115,7 @@ public class HateoasResponseBuilderImpl extends
 
 		Object newEntity = entity;
 		if (newEntity != null) {
-			newEntity = linkInjector.injectLinks(entity, new HashSet<HateoasLink>(links), verbosity);
+			newEntity = linkInjector.injectLinks(entity, new LinkedHashSet<HateoasLink>(links), verbosity);
 
 			if (newEntity instanceof HateoasCollectionWrapper) {
 				if (eachCallback != null) {
