@@ -4,11 +4,11 @@
   <parent>
     <artifactId>demo</artifactId>
     <groupId>com.jayway.jax-rs-hateoas</groupId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.2</version>
   </parent>
   <groupId>com.jayway.jax-rs-hateoas</groupId>
   <artifactId>demo-spring</artifactId>
-  <version>0.3.2-SNAPSHOT</version>
+  <version>0.3.2</version>
   <packaging>war</packaging>
   <name>demo-spring</name>
   <url>http://maven.apache.org</url>

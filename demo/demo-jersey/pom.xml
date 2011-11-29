@@ -17,12 +17,12 @@
     <groupId>com.jayway.jax-rs-hateoas</groupId>
     <artifactId>demo-jersey</artifactId>
     <packaging>war</packaging>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.2</version>
     <name>demo-jersey</name>
     <parent>
         <groupId>com.jayway.jax-rs-hateoas</groupId>
         <artifactId>demo</artifactId>
-        <version>0.3.2-SNAPSHOT</version>
+        <version>0.3.2</version>
     </parent>
 
     <repositories>
