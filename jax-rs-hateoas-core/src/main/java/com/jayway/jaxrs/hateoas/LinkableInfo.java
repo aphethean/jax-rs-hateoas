@@ -17,6 +17,8 @@ package com.jayway.jaxrs.hateoas;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
+ * Holds all data regarding a Linkable method. Not intended for external use.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

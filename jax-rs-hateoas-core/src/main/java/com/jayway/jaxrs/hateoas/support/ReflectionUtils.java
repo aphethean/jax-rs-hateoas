@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import com.jayway.jaxrs.hateoas.HateoasInjectException;
 
 /**
+ * General reflection utilities. Not intended for external use.
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

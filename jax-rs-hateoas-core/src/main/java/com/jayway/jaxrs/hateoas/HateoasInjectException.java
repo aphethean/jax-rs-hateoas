@@ -15,6 +15,8 @@
 package com.jayway.jaxrs.hateoas;
 
 /**
+ * Exception thrown when something goes wrong injecting links into an entity.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

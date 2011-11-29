@@ -25,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.UriBuilder;
 
 /**
+ * Jersey filter implementation that stores the current request in a ThreadLocal ({@link RequestContext}),
+ * so that the current URI root can be used when generating link hrefs.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

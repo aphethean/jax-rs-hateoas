@@ -17,8 +17,12 @@ package com.jayway.jaxrs.hateoas;
 import java.util.Collection;
 
 /**
+ * Strategy interface for link injection.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
+ * @see com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector
+ * @see com.jayway.jaxrs.hateoas.support.ReflectionBasedHateoasLinkInjector
  */
 public interface HateoasLinkInjector<T> {
 	T injectLinks(T entity, Collection<HateoasLink> links,

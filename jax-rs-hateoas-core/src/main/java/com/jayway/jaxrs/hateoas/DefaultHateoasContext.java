@@ -36,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Default implementation of {@link HateoasContext}. Not intended for external use. This class is configured by the
+ * Application classes in the core package.
+
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

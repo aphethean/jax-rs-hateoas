@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 
 /**
+ * Default implementation of {@link HateoasResponse}.
+ * 
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

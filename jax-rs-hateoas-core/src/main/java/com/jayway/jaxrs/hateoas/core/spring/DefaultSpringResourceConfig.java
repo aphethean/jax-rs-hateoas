@@ -21,6 +21,9 @@ import com.sun.jersey.api.core.DefaultResourceConfig;
 import java.util.List;
 
 /**
+ * Custom ResourceConfig implementation to be used in {@link SpringHateoasServlet},
+ * adding the {@link JerseyHateoasContextFilter} automatically.
+ * 
  * @author Mattias Hellborg Arthursson
  */
 public class DefaultSpringResourceConfig extends DefaultResourceConfig {

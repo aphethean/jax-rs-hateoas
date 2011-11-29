@@ -25,6 +25,9 @@ import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 
 /**
+ * Plain JAX-RS application adding HATEOAS capability. Subclass this to add hypermedia capability to a plain JAX-RS
+ * application.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

@@ -20,6 +20,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Marking a method with @Linkable enables it to be linked from elsewhere in the application. Note that the id
+ * <b>must</b> be unique in an application.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
@@ -30,13 +33,28 @@ public @interface Linkable {
 
 	}
 
+    /**
+     * Id of this linkable method.
+     */
 	String id();
 
+    /**
+     * The default rel of this linkable method.
+     */
 	String rel();
 
+    /**
+     * The class to use for generating a template in links.
+     */
 	Class<?> templateClass() default NoTemplate.class;
 
+    /**
+     * Label of this link.
+     */
 	String label() default "";
 
+    /**
+     * Description of this link.
+     */
 	String description() default "";
 }

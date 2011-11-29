@@ -27,6 +27,8 @@ import com.jayway.jaxrs.hateoas.LinkableInfo;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
 
 /**
+ * Default implementation of HateoasLink. Not intended for external use.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

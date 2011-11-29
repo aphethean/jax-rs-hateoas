@@ -25,6 +25,9 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 
 /**
+ * Wrapper class for collection entities to enable root links in addition to the actual collection. Not for use
+ * outside of the framework.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

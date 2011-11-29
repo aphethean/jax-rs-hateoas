@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Adds HATEOAS capability to the Jersey {@link SpringServlet}. Use this instead of the standard SpringServlet to add
+ * hypermedia capability to a Spring/Jersey application.
+ *
  * @author Mattias Hellborg Arthursson
  */
 public class SpringHateoasServlet extends SpringServlet {

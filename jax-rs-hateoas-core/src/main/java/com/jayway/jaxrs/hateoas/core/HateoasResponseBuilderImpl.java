@@ -31,6 +31,8 @@ import java.net.URI;
 import java.util.*;
 
 /**
+ * Default implementation of {@link HateoasResponseBuilder}.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

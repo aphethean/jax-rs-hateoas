@@ -27,6 +27,20 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 
 /**
+ * Reflection-based implementation of {@link HateoasLinkInjector}. Uses reflection to inject links to the DTOs. The
+ * same field name must be used for <b>all</b> DTOs, and may be customized using {@link
+ * #ReflectionBasedHateoasLinkInjector(String)}. The target field in the DTOs <b>must</b> be of type {@link
+ * Collection}, e.g.:
+ * <pre>
+ *     public class MyDto {
+ *         private String name;
+ *         private String id;
+ *         private Collection&lt;Object&gt; links;
+ *
+ *         ...
+ *     }
+ * </pre>
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
@@ -35,10 +49,17 @@ public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector<O
 	private static final String DEFAULT_LINKS_FIELD_NAME = "links";
 	private final String linksFieldName;
 
+    /**
+     * Construct an instance using the default field name ('links').
+     */
 	public ReflectionBasedHateoasLinkInjector() {
 		this(DEFAULT_LINKS_FIELD_NAME);
 	}
 
+    /**
+     * Construct an instance using the supplied field name.
+     * @param linksFieldName the field in the DTOs where the links should be injected.
+     */
 	public ReflectionBasedHateoasLinkInjector(String linksFieldName) {
 		this.linksFieldName = linksFieldName;
 	}

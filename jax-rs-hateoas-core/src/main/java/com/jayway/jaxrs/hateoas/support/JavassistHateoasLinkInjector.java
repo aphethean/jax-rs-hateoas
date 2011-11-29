@@ -35,6 +35,9 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 
 /**
+ * {@link HateoasLinkInjector} implementation that uses javassist to dynamically add a field in the target entities
+ * where the links can be injected. This enables usage of the framework without <b>any</b> impact on the actual DTOs.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

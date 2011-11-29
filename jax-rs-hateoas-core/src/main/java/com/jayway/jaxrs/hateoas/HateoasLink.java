@@ -17,6 +17,8 @@ package com.jayway.jaxrs.hateoas;
 import java.util.Map;
 
 /**
+ * Represents all information about a link to be included in a response. Not intended for external use.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */

@@ -24,6 +24,9 @@ import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 
 /**
+ * JAX-RS Application adding HATEOAS capability to a Jersey application. Subclass this to add hypermedia capability
+ * to your Jersey application.
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
