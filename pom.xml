@@ -18,7 +18,7 @@
     <groupId>com.jayway.jax-rs-hateoas</groupId>
     <artifactId>jax-rs-hateoas-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.1</version>
+    <version>0.3.2-SNAPSHOT</version>
     <name>jax-rs-hateoas build root</name>
 
     <properties>
