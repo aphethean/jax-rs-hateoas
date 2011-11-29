@@ -2,7 +2,6 @@ JAX-RS-HATEOAS is a small extension to JAX-RS to enable hypermedia in JAX-RS 1.x
 
 Adding hypermedia to your existing application is easily done in four steps:
 * Extend HateoasApplication (or JerseyHateoasApplication)
-* Add a RequestContextFilter in your web.xml (enables the framework to get access to the full request URIs) 
 * Add @Linkable annotations to all methods that should be linkable.
 * Use HateoasResponse instead for building responses with HATEOAS links.
   The normal Response methods (ok, created, entity, etc.) will now return a HateoasResponseBuilder.
