@@ -110,8 +110,8 @@ public class HateoasResponseBuilderImpl extends
 	public HateoasResponse build() {
 		HateoasLinkInjector linkInjector = HateoasResponseBuilder
 				.getLinkInjector();
-		HateoasVerbosity verbosity = HateoasResponseBuilder
-				.getVerbosity(RequestContext.getRequestContext().getVerbosityHeader());
+		HateoasVerbosity verbosity = HateoasVerbosity
+				.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
 
 		Object newEntity = entity;
 		if (newEntity != null) {

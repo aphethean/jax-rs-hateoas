@@ -47,7 +47,8 @@ public abstract class JerseyHateoasApplication extends PackagesResourceConfig {
 			HateoasContextProvider.getDefaultContext().mapClass(clazz);
 		}
 
-        HateoasResponseBuilder.configure(linkInjector, verbosity);
+        HateoasResponseBuilder.configure(linkInjector);
+        HateoasVerbosity.setDefaultVerbosity(verbosity);
 
         JerseyHateoasContextFilter filter = new JerseyHateoasContextFilter();
 

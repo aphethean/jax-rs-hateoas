@@ -45,7 +45,7 @@ public class HateoasApplication extends Application {
 			HateoasContextProvider.getDefaultContext().mapClass(clazz);
 		}
 
-		HateoasResponseBuilder.configure(linkInjector, verbosity);
-
+		HateoasResponseBuilder.configure(linkInjector);
+        HateoasVerbosity.setDefaultVerbosity(verbosity);
 	}
 }

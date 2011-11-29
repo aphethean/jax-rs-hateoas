@@ -18,7 +18,6 @@ package com.jayway.jaxrs.hateoas.core.spring;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
-import com.jayway.jaxrs.hateoas.core.HateoasResponse;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 import com.sun.jersey.api.core.ResourceConfig;
@@ -57,7 +56,8 @@ public class SpringHateoasServlet extends SpringServlet {
             HateoasContextProvider.getDefaultContext().mapClass(clazz);
         }
 
-        HateoasResponseBuilder.configure(getLinkInjector(rc), getVerbosity(rc));
+        HateoasResponseBuilder.configure(getLinkInjector(rc));
+        HateoasVerbosity.setDefaultVerbosity(getVerbosity(rc));
     }
 
     private HateoasLinkInjector getLinkInjector(ResourceConfig rc) {
@@ -84,7 +84,7 @@ public class SpringHateoasServlet extends SpringServlet {
 
         if (hateoasVerbosity != null) {
             logger.info("Using Verbosity: {}", hateoasVerbosity);
-            return HateoasResponseBuilder.getVerbosity((String) hateoasVerbosity);
+            return HateoasVerbosity.valueOf((String) hateoasVerbosity);
         } else {
             logger.info("Using default verbosity");
             return HateoasVerbosity.MAXIMUM;

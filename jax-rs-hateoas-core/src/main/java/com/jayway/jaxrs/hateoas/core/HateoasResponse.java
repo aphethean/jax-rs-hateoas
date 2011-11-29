@@ -17,7 +17,6 @@ package com.jayway.jaxrs.hateoas.core;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,14 +31,11 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Variant;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.jayway.jaxrs.hateoas.EachCallback;
 import com.jayway.jaxrs.hateoas.HateoasContext;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasOption;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.LinkableInfo;
 
@@ -408,11 +404,9 @@ public abstract class HateoasResponse extends Response {
 	public static abstract class HateoasResponseBuilder extends ResponseBuilder {
 
 		private static HateoasLinkInjector linkInjector;
-		private static HateoasVerbosity verbosity;
 
 
-
-		//public abstract HateoasLinkBuilder linkBuilder(String id);
+        //public abstract HateoasLinkBuilder linkBuilder(String id);
 
         public abstract HateoasResponseBuilder link(String id, Object... params);
 
@@ -696,33 +690,15 @@ public abstract class HateoasResponse extends Response {
 		 */
 		public abstract HateoasResponseBuilder cookie(NewCookie... cookies);
 
-		public static void configure(HateoasLinkInjector linkInjector,
-				HateoasVerbosity verbosity) {
+		public static void configure(HateoasLinkInjector linkInjector) {
 			HateoasResponseBuilder.linkInjector = linkInjector;
-			HateoasResponseBuilder.verbosity = verbosity;
 		}
 
 		public static HateoasLinkInjector getLinkInjector() {
 			return HateoasResponseBuilder.linkInjector;
 		}
 
-		public static HateoasVerbosity getVerbosity(String header) {
-			if (StringUtils.isNotBlank(header)) {
-				String[] headerSplit = StringUtils.split(header, ",");
-				List<HateoasOption> options = new LinkedList<HateoasOption>();
-				for (String oneOption : headerSplit) {
-					options.add(HateoasOption.valueOf(oneOption.trim()));
-				}
-
-				return new HateoasVerbosity(
-						options.toArray(new HateoasOption[0]));
-			} else {
-				return HateoasResponseBuilder.verbosity;
-			}
-
-		}
-
-		public abstract HateoasResponseBuilder each(String id,
+        public abstract HateoasResponseBuilder each(String id,
 				String... entityField);
 
 		public abstract HateoasResponseBuilder each(EachCallback callback);
