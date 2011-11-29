@@ -2,6 +2,8 @@
 
 - Store links in Set - DONE
 
+- Spring support - DONE
+
 - Look into Jersey filters to remove custom filter requirement - spiked by Kalle 2011-10-10
 
 --------------------------------------------------------------------------------------------
@@ -18,7 +20,6 @@
 
 - API Documentation resource
 
-- Spring support - IN PROGRESS.
 
 - Maven Central Repo publishing
 
