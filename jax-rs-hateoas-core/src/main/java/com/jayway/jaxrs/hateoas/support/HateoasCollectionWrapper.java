@@ -14,15 +14,15 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.jayway.jaxrs.hateoas.EachCallback;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Wrapper class for collection entities to enable root links in addition to the actual collection. Not for use

@@ -15,11 +15,11 @@
 
 package com.jayway.jaxrs.hateoas;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 import java.util.Collection;
 import java.util.HashSet;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class TestUtils {
 	private TestUtils() {

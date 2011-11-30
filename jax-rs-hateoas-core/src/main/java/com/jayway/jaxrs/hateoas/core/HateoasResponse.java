@@ -397,7 +397,7 @@ public abstract class HateoasResponse extends Response {
 		public abstract HateoasResponseBuilder links(HateoasLink... link);
 
         /**
-         * Append a link corresponding to the supplied id, overriding the rel to 'self' and building the URI using
+         * Append a link corresponding to the supplied id, defaulting the rel to 'self' and building the URI using
          * the specified parameters.
          *
          * @param id the @Linkable id of the target method.
@@ -406,9 +406,25 @@ public abstract class HateoasResponse extends Response {
          */
 		public abstract HateoasResponseBuilder selfLink(String id, Object... params);
 
-        public abstract HateoasResponseBuilder each(String id, String rel, String... entityField);
+        /**
+         * Append a link to be included for each element nested in the entity (which is expected to be a Collection).
+         * @param id the @Linkable id of the target method.
+         * @param rel the relation of the linked resource from an item in the list.
+         * @param entityFields the fields in the nested elements that should be retrieved using reflection and used for
+         * populating the path parameters.
+         * @return this.
+         */
+        public abstract HateoasResponseBuilder each(String id, String rel, String... entityFields);
 
-        public abstract HateoasResponseBuilder selfEach(String id, String... entityField);
+        /**
+         * Append a link to be included for each element nested in the entity (which is expected to be a Collection),
+         * defaulting the rel to 'self'.
+         * @param id the @Linkable id of the target method.
+         * @param entityFields the fields in the nested elements that should be retrieved using reflection and used for
+         * populating the path parameters.
+         * @return this.
+         */
+        public abstract HateoasResponseBuilder selfEach(String id, String... entityFields);
 
 		public abstract HateoasResponseBuilder each(EachCallback<?> callback);
 

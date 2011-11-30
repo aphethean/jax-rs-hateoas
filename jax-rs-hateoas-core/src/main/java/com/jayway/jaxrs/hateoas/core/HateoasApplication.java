@@ -14,15 +14,14 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import java.util.Set;
-
-import javax.ws.rs.core.Application;
-
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
+
+import javax.ws.rs.core.Application;
+import java.util.Set;
 
 /**
  * Plain JAX-RS application adding HATEOAS capability. Subclass this to add hypermedia capability to a plain JAX-RS

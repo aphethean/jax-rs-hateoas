@@ -14,25 +14,19 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.LoaderClassPath;
-
-import org.dozer.DozerBeanMapper;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import javassist.*;
+import org.dozer.DozerBeanMapper;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link HateoasLinkInjector} implementation that uses javassist to dynamically add a field in the target entities

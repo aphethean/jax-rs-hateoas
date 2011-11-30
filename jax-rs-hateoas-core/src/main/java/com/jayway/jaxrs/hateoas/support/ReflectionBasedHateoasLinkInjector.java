@@ -14,17 +14,16 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.jayway.jaxrs.hateoas.HateoasInjectException;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Reflection-based implementation of {@link HateoasLinkInjector}. Uses reflection to inject links to the DTOs. The

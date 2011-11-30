@@ -14,9 +14,9 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import java.lang.reflect.Field;
-
 import com.jayway.jaxrs.hateoas.HateoasInjectException;
+
+import java.lang.reflect.Field;
 
 /**
  * General reflection utilities. Not intended for external use.

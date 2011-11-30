@@ -14,7 +14,10 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import com.jayway.jaxrs.hateoas.*;
+import com.jayway.jaxrs.hateoas.EachCallback;
+import com.jayway.jaxrs.hateoas.HateoasLink;
+import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
+import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.AtomRels;
 import com.jayway.jaxrs.hateoas.support.HateoasCollectionWrapper;
@@ -34,8 +37,7 @@ import java.util.*;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public class HateoasResponseBuilderImpl extends
-		HateoasResponse.HateoasResponseBuilder {
+public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseBuilder {
 
 	private Response.StatusType statusType = Response.Status.NO_CONTENT;
 
@@ -47,7 +49,7 @@ public class HateoasResponseBuilderImpl extends
 
 	private Collection<HateoasLink> links = new LinkedHashSet<HateoasLink>();
 
-	private EachCallback<?> eachCallback;
+	private final AggregateEachCallback eachCallback = new AggregateEachCallback();
 
     @Override
 	public HateoasResponseBuilder link(String id, String rel, Object... params) {
@@ -67,18 +69,18 @@ public class HateoasResponseBuilderImpl extends
 	}
 
 	@Override
-	public HateoasResponseBuilder each(final String id, String rel, final String... entityField) {
-		return each(new ReflectionBasedEachCallback(id, rel, entityField));
+	public HateoasResponseBuilder each(final String id, String rel, final String... entityFields) {
+		return each(new ReflectionBasedEachCallback(id, rel, entityFields));
 	}
 
     @Override
-    public HateoasResponseBuilder selfEach(String id, String... entityField) {
-        return each(new ReflectionBasedEachCallback(id, AtomRels.SELF, entityField));
+    public HateoasResponseBuilder selfEach(String id, String... entityFields) {
+        return each(id, AtomRels.SELF, entityFields);
     }
 
     @Override
 	public HateoasResponseBuilder each(EachCallback<?> callback) {
-		this.eachCallback = callback;
+		this.eachCallback.append(callback);
 		return this;
 	}
 
@@ -111,7 +113,6 @@ public class HateoasResponseBuilderImpl extends
 
 	// Response.Builder
 
-    @SuppressWarnings("unchecked")
 	public HateoasResponse build() {
 		HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
 				.getLinkInjector();
@@ -125,7 +126,7 @@ public class HateoasResponseBuilderImpl extends
 			if (newEntity instanceof HateoasCollectionWrapper) {
 				if (eachCallback != null) {
 					HateoasCollectionWrapper<Object> wrapper = (HateoasCollectionWrapper<Object>) newEntity;
-					wrapper.transformRows(linkInjector, (EachCallback<Object>) eachCallback, verbosity);
+					wrapper.transformRows(linkInjector, eachCallback, verbosity);
 				}
 			}
 		}
@@ -340,7 +341,7 @@ public class HateoasResponseBuilderImpl extends
 		return this;
 	}
 
-	private final class ReflectionBasedEachCallback implements EachCallback<Object> {
+	private final static class ReflectionBasedEachCallback implements EachCallback<Object> {
 		private final String id;
         private final String rel;
         private final String[] entityField;
@@ -363,5 +364,24 @@ public class HateoasResponseBuilderImpl extends
 			return Collections.singletonList(makeLink(id, rel, argumentList.toArray()));
 		}
 	}
+
+    private final static class AggregateEachCallback implements EachCallback<Object> {
+        private final Collection<EachCallback<Object>> wrappedCallbacks = new LinkedList<EachCallback<Object>>();
+
+        @SuppressWarnings("unchecked")
+        public void append(EachCallback<?> callback){
+            wrappedCallbacks.add((EachCallback<Object>) callback);
+        }
+
+        @Override
+        public Collection<HateoasLink> getLinks(Object entity) {
+            Collection<HateoasLink> result = new LinkedList<HateoasLink>();
+            for (EachCallback<Object> callback : wrappedCallbacks) {
+                result.addAll(callback.getLinks(entity));
+            }
+
+            return result;
+        }
+    }
 
 }

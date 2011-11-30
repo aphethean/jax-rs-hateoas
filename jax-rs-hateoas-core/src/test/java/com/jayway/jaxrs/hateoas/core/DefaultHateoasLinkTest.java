@@ -15,23 +15,19 @@
 
 package com.jayway.jaxrs.hateoas.core;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
-import javax.ws.rs.core.UriBuilder;
-
 import com.jayway.jaxrs.hateoas.*;
 import com.jayway.jaxrs.hateoas.support.AtomRels;
+import com.jayway.jaxrs.hateoas.web.RequestContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jayway.jaxrs.hateoas.web.RequestContext;
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import static junit.framework.Assert.*;
 
 public class DefaultHateoasLinkTest {
 

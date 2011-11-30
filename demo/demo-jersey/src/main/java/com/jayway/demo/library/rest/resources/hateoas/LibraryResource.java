@@ -15,13 +15,13 @@
 
 package com.jayway.demo.library.rest.resources.hateoas;
 
+import com.jayway.demo.library.rest.dto.RootDto;
+import com.jayway.jaxrs.hateoas.core.HateoasResponse;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-
-import com.jayway.demo.library.rest.dto.RootDto;
-import com.jayway.jaxrs.hateoas.core.HateoasResponse;
 
 @Path("/")
 public class LibraryResource {

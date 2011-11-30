@@ -14,11 +14,10 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import static org.junit.Assert.assertEquals;
-
+import com.jayway.jaxrs.hateoas.HateoasInjectException;
 import org.junit.Test;
 
-import com.jayway.jaxrs.hateoas.HateoasInjectException;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Mattias Hellborg Arthursson

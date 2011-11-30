@@ -14,14 +14,17 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
+import com.google.common.collect.Maps;
+import com.jayway.jaxrs.hateoas.HateoasLink;
+import com.jayway.jaxrs.hateoas.HateoasOption;
+import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.LinkableInfo;
+import com.jayway.jaxrs.hateoas.web.RequestContext;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
-import com.jayway.jaxrs.hateoas.*;
-import com.jayway.jaxrs.hateoas.web.RequestContext;
 
 /**
  * Default implementation of HateoasLink. Not intended for external use.

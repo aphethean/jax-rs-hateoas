@@ -14,23 +14,17 @@
  */
 package com.jayway.jaxrs.hateoas.support;
 
-import static junit.framework.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.Iterables;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.*;
+
+import static junit.framework.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Mattias Hellborg Arthursson
