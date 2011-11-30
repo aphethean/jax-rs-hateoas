@@ -16,6 +16,8 @@
 package com.jayway.jaxrs.hateoas.support;
 
 /**
+ * The standard atom rels as specified in the RFC.
+ *
  * @author Mattias Hellborg Arthursson
  */
 public class AtomRels {
