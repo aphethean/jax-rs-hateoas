@@ -37,7 +37,7 @@ public class BookResource {
 	private BookRepository bookRepository;
 
     @GET
-    @Linkable(id = LinkableIds.BOOKS_LIST_ID)
+    @Linkable(LinkableIds.BOOKS_LIST_ID)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllBooks() {
         return HateoasResponse
@@ -47,7 +47,7 @@ public class BookResource {
     }
 
     @POST
-    @Linkable(id = LinkableIds.BOOK_NEW_ID, templateClass = BookDto.class)
+    @Linkable(value = LinkableIds.BOOK_NEW_ID, templateClass = BookDto.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response newBook(BookDto book) {
@@ -59,7 +59,7 @@ public class BookResource {
     }
 
     @GET
-    @Linkable(id = LinkableIds.BOOK_DETAILS_ID)
+    @Linkable(LinkableIds.BOOK_DETAILS_ID)
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBookById(@PathParam("id") Integer id) {
@@ -77,7 +77,7 @@ public class BookResource {
     }
 
     @PUT
-    @Linkable(id = LinkableIds.BOOK_UPDATE_ID, templateClass = BookDto.class)
+    @Linkable(value = LinkableIds.BOOK_UPDATE_ID, templateClass = BookDto.class)
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

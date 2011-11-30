@@ -100,7 +100,7 @@ public class DefaultHateoasContext implements HateoasContext {
 
 			if (method.isAnnotationPresent(Linkable.class)) {
 				Linkable linkAnnotation = method.getAnnotation(Linkable.class);
-				String id = linkAnnotation.id();
+				String id = linkAnnotation.value();
 				if (linkableMapping.containsKey(id)) {
 					throw new IllegalArgumentException("Id '" + id
 							+ "' mapped in class " + clazz

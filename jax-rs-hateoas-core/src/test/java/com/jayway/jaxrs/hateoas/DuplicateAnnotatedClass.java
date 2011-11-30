@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 public class DuplicateAnnotatedClass {
 
 	@GET
-	@Linkable(id = "test.dummy.get")
+	@Linkable(value = "test.dummy.get")
 	public Response get() {
 		return null;
 	}

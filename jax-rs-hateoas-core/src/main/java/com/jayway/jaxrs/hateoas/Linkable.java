@@ -34,9 +34,9 @@ public @interface Linkable {
 	}
 
     /**
-     * Id of this linkable method.
+     * Identifier of this linkable method.
      */
-	String id();
+	String value();
 
     /**
      * The class to use for generating a template in links.

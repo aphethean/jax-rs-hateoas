@@ -44,7 +44,7 @@ public class LoanResource {
     @POST
     @Consumes("application/vnd.demo.library.loan+json")
     @Produces("application/vnd.demo.library.loan+json")
-    @Linkable(id = LinkableIds.LOAN_NEW_ID, templateClass = LoanDto.class)
+    @Linkable(value = LinkableIds.LOAN_NEW_ID, templateClass = LoanDto.class)
     public Response newLoan(LoanDto loan) {
         Book book = bookRepository.getBookById(loan.getBookId());
         if (book.isBorrowed()) {
@@ -65,7 +65,7 @@ public class LoanResource {
 
     @GET
     @Produces("application/vnd.demo.library.list.loan+json")
-    @Linkable(id = LinkableIds.LOANS_LIST_ID)
+    @Linkable(LinkableIds.LOANS_LIST_ID)
     public Response getLoans() {
         Collection<Book> books = bookRepository.getLoans();
 
@@ -79,7 +79,7 @@ public class LoanResource {
     @GET
     @Path("/{id}")
     @Produces("application/vnd.demo.library.loan+json")
-    @Linkable(id = LinkableIds.LOAN_DETAILS_ID)
+    @Linkable(LinkableIds.LOAN_DETAILS_ID)
     public Response getLoan(@PathParam("id") Integer id) {
         Book book = bookRepository.getBookById(id);
         if (book == null || !book.isBorrowed()) {
@@ -96,7 +96,7 @@ public class LoanResource {
 
     @DELETE
     @Path("/{id}")
-    @Linkable(id = LinkableIds.LOAN_RETURN_ID)
+    @Linkable(LinkableIds.LOAN_RETURN_ID)
     public Response returnLoan(@PathParam("id") Integer id) {
         Book book = bookRepository.getBookById(id);
         book.returned();
