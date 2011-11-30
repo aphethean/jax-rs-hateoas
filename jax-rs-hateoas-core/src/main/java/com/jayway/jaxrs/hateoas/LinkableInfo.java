@@ -25,7 +25,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public final class LinkableInfo {
 	private final String id;
 	private final String methodPath;
-	private final String rel;
 	private final String[] produces;
 	private final String httpMethod;
 	private final String description;
@@ -33,12 +32,11 @@ public final class LinkableInfo {
 	private final String[] consumes;
 	private final String label;
 
-	public LinkableInfo(String id, String methodPath, String rel,
-			String httpMethod, String[] consumes, String[] produces,
-			String label, String description, Class<?> templateClass) {
+	public LinkableInfo(String id, String methodPath,
+                        String httpMethod, String[] consumes, String[] produces,
+                        String label, String description, Class<?> templateClass) {
 		this.id = id;
 		this.methodPath = methodPath;
-		this.rel = rel;
 		this.httpMethod = httpMethod;
 		this.consumes = consumes;
 		this.produces = produces;
@@ -53,10 +51,6 @@ public final class LinkableInfo {
 
 	public String getDescription() {
 		return description;
-	}
-
-	public String getRel() {
-		return rel;
 	}
 
 	public String getHttpMethod() {

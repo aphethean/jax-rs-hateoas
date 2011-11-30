@@ -14,11 +14,9 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import com.jayway.jaxrs.hateoas.EachCallback;
-import com.jayway.jaxrs.hateoas.HateoasLink;
-import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.*;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.support.AtomRels;
 import com.jayway.jaxrs.hateoas.support.HateoasCollectionWrapper;
 import com.jayway.jaxrs.hateoas.support.ReflectionUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
@@ -52,13 +50,13 @@ public class HateoasResponseBuilderImpl extends
 	private EachCallback<?> eachCallback;
 
     @Override
-	public HateoasResponseBuilder link(String id, Object... params) {
-		return links(HateoasResponseBuilder.makeLink(id, params));
+	public HateoasResponseBuilder link(String id, String rel, Object... params) {
+		return links(HateoasResponseBuilder.makeLink(id, rel, params));
 	}
 
 	@Override
 	public HateoasResponseBuilder selfLink(String id, Object... params) {
-		return links(HateoasResponseBuilder.makeSelfLink(id, params));
+		return link(id, AtomRels.SELF, params);
 	}
 
 	@Override
@@ -69,12 +67,16 @@ public class HateoasResponseBuilderImpl extends
 	}
 
 	@Override
-	public HateoasResponseBuilder each(final String id,
-			final String... entityField) {
-		return each(new ReflectionBasedEachCallback(id, entityField));
+	public HateoasResponseBuilder each(final String id, String rel, final String... entityField) {
+		return each(new ReflectionBasedEachCallback(id, rel, entityField));
 	}
 
-	@Override
+    @Override
+    public HateoasResponseBuilder selfEach(String id, String... entityField) {
+        return each(new ReflectionBasedEachCallback(id, AtomRels.SELF, entityField));
+    }
+
+    @Override
 	public HateoasResponseBuilder each(EachCallback<?> callback) {
 		this.eachCallback = callback;
 		return this;
@@ -340,11 +342,13 @@ public class HateoasResponseBuilderImpl extends
 
 	private final class ReflectionBasedEachCallback implements EachCallback<Object> {
 		private final String id;
-		private final String[] entityField;
+        private final String rel;
+        private final String[] entityField;
 
-		private ReflectionBasedEachCallback(String id, String[] entityField) {
+		private ReflectionBasedEachCallback(String id, String rel, String[] entityField) {
 			this.id = id;
-			this.entityField = entityField;
+            this.rel = rel;
+            this.entityField = entityField;
 		}
 
 		@Override
@@ -352,13 +356,11 @@ public class HateoasResponseBuilderImpl extends
 			LinkedList<Object> argumentList = new LinkedList<Object>();
 
 			for (String fieldName : entityField) {
-				Object fieldValue = ReflectionUtils.getFieldValue(entity,
-						fieldName);
+				Object fieldValue = ReflectionUtils.getFieldValue(entity, fieldName);
 				argumentList.add(fieldValue);
 			}
 
-			return Collections.singletonList(makeSelfLink(id,
-					argumentList.toArray()));
+			return Collections.singletonList(makeLink(id, rel, argumentList.toArray()));
 		}
 	}
 

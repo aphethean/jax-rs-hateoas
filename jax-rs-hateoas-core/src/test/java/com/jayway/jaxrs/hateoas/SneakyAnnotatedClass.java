@@ -23,13 +23,13 @@ import javax.ws.rs.core.Response;
 public class SneakyAnnotatedClass {
 
 	@GET
-	@Linkable(id = "test.dummy.sneaky.get", rel = "dummy2")
+	@Linkable(id = "test.dummy.sneaky.get")
 	public Response get() {
 		return null;
 	}
 
 	@GET
-	@Linkable(id = "test.dummy.sneaky.subpath", rel = "dummy2")
+	@Linkable(id = "test.dummy.sneaky.subpath")
 	@Path("/subpath")
 	public Response getSubpath() {
 		return null;

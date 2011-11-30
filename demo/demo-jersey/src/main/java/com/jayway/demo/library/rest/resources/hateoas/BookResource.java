@@ -38,17 +38,17 @@ public class BookResource {
 	}
 
 	@GET
-	@Linkable(id = LinkableIds.BOOKS_LIST_ID, rel = Rels.BOOKS_REL)
+	@Linkable(id = LinkableIds.BOOKS_LIST_ID)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllBooks() {
 		return HateoasResponse
 				.ok(BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
-				.link(LinkableIds.BOOK_NEW_ID)
-				.each(LinkableIds.BOOK_DETAILS_ID, "id").build();
+				.selfLink(LinkableIds.BOOK_NEW_ID)
+				.selfEach(LinkableIds.BOOK_DETAILS_ID, "id").build();
 	}
 
 	@POST
-	@Linkable(id = LinkableIds.BOOK_NEW_ID, rel = Rels.BOOK_REL, templateClass = BookDto.class)
+	@Linkable(id = LinkableIds.BOOK_NEW_ID, templateClass = BookDto.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response newBook(BookDto book) {
@@ -56,31 +56,29 @@ public class BookResource {
 				.newBook(book.getAuthor(), book.getTitle());
 		return HateoasResponse
 				.created(LinkableIds.BOOK_DETAILS_ID, newBook.getId())
-				.entity(BookDto.fromBean(newBook))
-				.selfLink(LinkableIds.BOOK_DETAILS_ID, newBook.getId()).build();
+				.entity(BookDto.fromBean(newBook)).build();
 	}
 
 	@GET
-	@Linkable(id = LinkableIds.BOOK_DETAILS_ID, rel = Rels.BOOK_REL)
+	@Linkable(id = LinkableIds.BOOK_DETAILS_ID)
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBookById(@PathParam("id") Integer id) {
 		Book book = bookRepository.getBookById(id);
 		HateoasResponseBuilder builder = HateoasResponse
 				.ok(BookDto.fromBean(book))
-				.selfLink(LinkableIds.BOOK_DETAILS_ID, id)
-				.selfLink(LinkableIds.BOOK_UPDATE_ID, id);
+				.link(LinkableIds.BOOK_UPDATE_ID, Rels.UPDATE, id);
 
 		if (!book.isBorrowed()) {
-			builder.link(LinkableIds.LOAN_NEW_ID);
+			builder.link(LinkableIds.LOAN_NEW_ID, Rels.LOANS);
 		} else {
-			builder.link(LinkableIds.LOAN_DETAILS_ID, book.getId());
+			builder.link(LinkableIds.LOAN_DETAILS_ID, Rels.LOAN, book.getId());
 		}
 		return builder.build();
 	}
 
 	@PUT
-	@Linkable(id = LinkableIds.BOOK_UPDATE_ID, rel = Rels.BOOK_REL, templateClass = BookDto.class)
+	@Linkable(id = LinkableIds.BOOK_UPDATE_ID, templateClass = BookDto.class)
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

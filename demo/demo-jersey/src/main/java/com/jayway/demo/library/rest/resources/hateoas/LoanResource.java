@@ -52,7 +52,7 @@ public class LoanResource {
 	@POST
 	@Consumes("application/vnd.demo.library.loan+json")
 	@Produces("application/vnd.demo.library.loan+json")
-	@Linkable(id = LinkableIds.LOAN_NEW_ID, rel = Rels.LOANS_REL, templateClass = LoanDto.class)
+	@Linkable(id = LinkableIds.LOAN_NEW_ID, templateClass = LoanDto.class)
 	public Response newLoan(LoanDto loan) {
 		Book book = bookRepository.getBookById(loan.getBookId());
 		if (book.isBorrowed()) {
@@ -66,14 +66,14 @@ public class LoanResource {
 				.created(LinkableIds.LOAN_DETAILS_ID, book.getId())
 				.entity(loan)
 				.selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
-				.link(LinkableIds.BOOK_DETAILS_ID, book.getId())
-				.link(LinkableIds.CUSTOMER_DETAILS_ID, customer.getId())
+				.link(LinkableIds.BOOK_DETAILS_ID, Rels.BOOK, book.getId())
+				.link(LinkableIds.CUSTOMER_DETAILS_ID, Rels.CUSTOMER, customer.getId())
 				.selfLink(LinkableIds.LOAN_RETURN_ID, book.getId()).build();
 	}
 
 	@GET
 	@Produces("application/vnd.demo.library.list.loan+json")
-	@Linkable(id = LinkableIds.LOANS_LIST_ID, rel = Rels.LOANS_REL)
+	@Linkable(id = LinkableIds.LOANS_LIST_ID)
 	public Response getLoans() {
 		Collection<Book> books = bookRepository.getLoans();
 
@@ -81,13 +81,13 @@ public class LoanResource {
 
 		return HateoasResponse.ok(dtos).selfLink(LinkableIds.LOANS_LIST_ID)
 				.selfLink(LinkableIds.LOAN_NEW_ID)
-				.each(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
+				.selfEach(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
 	}
 
 	@GET
 	@Path("/{id}")
 	@Produces("application/vnd.demo.library.loan+json")
-	@Linkable(id = LinkableIds.LOAN_DETAILS_ID, rel = Rels.LOAN_REL)
+	@Linkable(id = LinkableIds.LOAN_DETAILS_ID)
 	public Response getLoan(@PathParam("id") Integer id) {
 		Book book = bookRepository.getBookById(id);
 		if (book == null || !book.isBorrowed()) {
@@ -97,19 +97,19 @@ public class LoanResource {
 		Customer customer = book.getBorrowedBy();
 		return HateoasResponse.ok(new LoanDto(customer.getId(), book.getId()))
 				.selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
-				.link(LinkableIds.BOOK_DETAILS_ID, book.getId())
-				.link(LinkableIds.CUSTOMER_DETAILS_ID, customer.getId())
+				.link(LinkableIds.BOOK_DETAILS_ID, Rels.BOOK, book.getId())
+				.link(LinkableIds.CUSTOMER_DETAILS_ID, Rels.CUSTOMER, customer.getId())
 				.selfLink(LinkableIds.LOAN_RETURN_ID, id).build();
 	}
 
 	@DELETE
 	@Path("/{id}")
-	@Linkable(id = LinkableIds.LOAN_RETURN_ID, rel = Rels.LOAN_REL)
+	@Linkable(id = LinkableIds.LOAN_RETURN_ID)
 	public Response returnLoan(@PathParam("id") Integer id) {
 		Book book = bookRepository.getBookById(id);
 		book.returned();
 
 		return HateoasResponse.ok()
-				.location(makeLink(LinkableIds.LOANS_LIST_ID)).build();
+				.location(makeLink(LinkableIds.LOANS_LIST_ID, Rels.LOANS)).build();
 	}
 }

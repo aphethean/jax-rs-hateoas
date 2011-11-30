@@ -19,7 +19,6 @@ import com.jayway.demo.library.domain.Book;
 import com.jayway.demo.library.domain.BookRepository;
 import com.jayway.demo.library.domain.Customer;
 import com.jayway.demo.library.domain.CustomerRepository;
-import com.jayway.demo.library.domain.factory.RepositoryFactory;
 import com.jayway.demo.library.rest.dto.LoanDto;
 import com.jayway.jaxrs.hateoas.Linkable;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse;
@@ -42,67 +41,67 @@ public class LoanResource {
     @Autowired
 	private CustomerRepository customerRepository;
 
-	@POST
-	@Consumes("application/vnd.demo.library.loan+json")
-	@Produces("application/vnd.demo.library.loan+json")
-	@Linkable(id = LinkableIds.LOAN_NEW_ID, rel = Rels.LOANS_REL, templateClass = LoanDto.class)
-	public Response newLoan(LoanDto loan) {
-		Book book = bookRepository.getBookById(loan.getBookId());
-		if (book.isBorrowed()) {
-			return Response.status(Status.CONFLICT).build();
-		}
+    @POST
+    @Consumes("application/vnd.demo.library.loan+json")
+    @Produces("application/vnd.demo.library.loan+json")
+    @Linkable(id = LinkableIds.LOAN_NEW_ID, templateClass = LoanDto.class)
+    public Response newLoan(LoanDto loan) {
+        Book book = bookRepository.getBookById(loan.getBookId());
+        if (book.isBorrowed()) {
+            return Response.status(Status.CONFLICT).build();
+        }
 
-		Customer customer = customerRepository.getById(loan.getCustomerId());
-		book.setBorrowedBy(customer);
+        Customer customer = customerRepository.getById(loan.getCustomerId());
+        book.setBorrowedBy(customer);
 
-		return HateoasResponse
-				.created(LinkableIds.LOAN_DETAILS_ID, book.getId())
-				.entity(loan)
-				.selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
-				.link(LinkableIds.BOOK_DETAILS_ID, book.getId())
-				.link(LinkableIds.CUSTOMER_DETAILS_ID, customer.getId())
-				.selfLink(LinkableIds.LOAN_RETURN_ID, book.getId()).build();
-	}
+        return HateoasResponse
+                .created(LinkableIds.LOAN_DETAILS_ID, book.getId())
+                .entity(loan)
+                .selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
+                .link(LinkableIds.BOOK_DETAILS_ID, Rels.BOOK, book.getId())
+                .link(LinkableIds.CUSTOMER_DETAILS_ID, Rels.CUSTOMER, customer.getId())
+                .selfLink(LinkableIds.LOAN_RETURN_ID, book.getId()).build();
+    }
 
-	@GET
-	@Produces("application/vnd.demo.library.list.loan+json")
-	@Linkable(id = LinkableIds.LOANS_LIST_ID, rel = Rels.LOANS_REL)
-	public Response getLoans() {
-		Collection<Book> books = bookRepository.getLoans();
+    @GET
+    @Produces("application/vnd.demo.library.list.loan+json")
+    @Linkable(id = LinkableIds.LOANS_LIST_ID)
+    public Response getLoans() {
+        Collection<Book> books = bookRepository.getLoans();
 
-		Collection<LoanDto> dtos = LoanDto.fromBeanCollection(books);
+        Collection<LoanDto> dtos = LoanDto.fromBeanCollection(books);
 
-		return HateoasResponse.ok(dtos).selfLink(LinkableIds.LOANS_LIST_ID)
-				.selfLink(LinkableIds.LOAN_NEW_ID)
-				.each(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
-	}
+        return HateoasResponse.ok(dtos).selfLink(LinkableIds.LOANS_LIST_ID)
+                .selfLink(LinkableIds.LOAN_NEW_ID)
+                .selfEach(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
+    }
 
-	@GET
-	@Path("/{id}")
-	@Produces("application/vnd.demo.library.loan+json")
-	@Linkable(id = LinkableIds.LOAN_DETAILS_ID, rel = Rels.LOAN_REL)
-	public Response getLoan(@PathParam("id") Integer id) {
-		Book book = bookRepository.getBookById(id);
-		if (book == null || !book.isBorrowed()) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+    @GET
+    @Path("/{id}")
+    @Produces("application/vnd.demo.library.loan+json")
+    @Linkable(id = LinkableIds.LOAN_DETAILS_ID)
+    public Response getLoan(@PathParam("id") Integer id) {
+        Book book = bookRepository.getBookById(id);
+        if (book == null || !book.isBorrowed()) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
 
-		Customer customer = book.getBorrowedBy();
-		return HateoasResponse.ok(new LoanDto(customer.getId(), book.getId()))
-				.selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
-				.link(LinkableIds.BOOK_DETAILS_ID, book.getId())
-				.link(LinkableIds.CUSTOMER_DETAILS_ID, customer.getId())
-				.selfLink(LinkableIds.LOAN_RETURN_ID, id).build();
-	}
+        Customer customer = book.getBorrowedBy();
+        return HateoasResponse.ok(new LoanDto(customer.getId(), book.getId()))
+                .selfLink(LinkableIds.LOAN_DETAILS_ID, book.getId())
+                .link(LinkableIds.BOOK_DETAILS_ID, Rels.BOOK, book.getId())
+                .link(LinkableIds.CUSTOMER_DETAILS_ID, Rels.CUSTOMER, customer.getId())
+                .selfLink(LinkableIds.LOAN_RETURN_ID, id).build();
+    }
 
-	@DELETE
-	@Path("/{id}")
-	@Linkable(id = LinkableIds.LOAN_RETURN_ID, rel = Rels.LOAN_REL)
-	public Response returnLoan(@PathParam("id") Integer id) {
-		Book book = bookRepository.getBookById(id);
-		book.returned();
+    @DELETE
+    @Path("/{id}")
+    @Linkable(id = LinkableIds.LOAN_RETURN_ID)
+    public Response returnLoan(@PathParam("id") Integer id) {
+        Book book = bookRepository.getBookById(id);
+        book.returned();
 
-		return HateoasResponse.ok()
-				.location(makeLink(LinkableIds.LOANS_LIST_ID)).build();
-	}
+        return HateoasResponse.ok()
+                .location(makeLink(LinkableIds.LOANS_LIST_ID, Rels.LOANS)).build();
+    }
 }

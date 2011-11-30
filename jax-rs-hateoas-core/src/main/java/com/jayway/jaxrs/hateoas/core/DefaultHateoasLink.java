@@ -20,10 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.jayway.jaxrs.hateoas.HateoasOption;
-import com.jayway.jaxrs.hateoas.HateoasLink;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
-import com.jayway.jaxrs.hateoas.LinkableInfo;
+import com.jayway.jaxrs.hateoas.*;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
 
 /**
@@ -143,11 +140,6 @@ class DefaultHateoasLink implements HateoasLink {
 		}
 
 		return result;
-	}
-
-	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,
-			Object... params) {
-		return fromLinkableInfo(linkableInfo, linkableInfo.getRel(), params);
 	}
 
 	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,

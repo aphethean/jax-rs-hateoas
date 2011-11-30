@@ -107,10 +107,10 @@ public class HateoasIntegrationTest {
                 body("author", equalTo("J.R.R. Tolkien")).
                 body("borrowed", is(false)).
                 body("id", is(0)).
-                body("links.size()", is(3)).
-                body("links[0].rel", equalTo("self")).
-                body("links[1].rel", equalTo("self")).
-                body("links[2].rel", equalTo("loans")).
+                body("links.size()", is(2)).
+                body("links[0].rel", equalTo("update")).
+                body("links[1].rel", equalTo("loans")).
+                body("links[1].method", equalTo("POST")).
                 statusCode(200).
                 when().get(bookHref);
     }

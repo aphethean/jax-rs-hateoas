@@ -30,8 +30,8 @@ public class LibraryResource {
 	@Produces("application/vnd.demo.library.root+json")
 	public Response root() {
 		return HateoasResponse.ok(new RootDto())
-				.link(LinkableIds.BOOKS_LIST_ID)
-				.link(LinkableIds.CUSTOMER_LIST_ID)
-				.link(LinkableIds.LOANS_LIST_ID).build();
+				.link(LinkableIds.BOOKS_LIST_ID, Rels.BOOKS)
+				.link(LinkableIds.CUSTOMER_LIST_ID, Rels.CUSTOMERS)
+				.link(LinkableIds.LOANS_LIST_ID, Rels.LOANS).build();
 	}
 }

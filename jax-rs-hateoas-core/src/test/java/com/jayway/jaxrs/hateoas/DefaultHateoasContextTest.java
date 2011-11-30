@@ -40,7 +40,6 @@ public class DefaultHateoasContextTest {
 
 		assertNotNull(result);
 		assertEquals("test.dummy.fully.documented", result.getId());
-		assertEquals("dummy", result.getRel());
 		assertEquals("PUT", result.getHttpMethod());
 		assertEquals("/dummy", result.getMethodPath());
 		assertEquals("test label", result.getLabel());
@@ -56,7 +55,6 @@ public class DefaultHateoasContextTest {
 		LinkableInfo result = tested.getLinkableInfo("test.dummy.get");
 
 		assertEquals("test.dummy.get", result.getId());
-		assertEquals("dummy2", result.getRel());
 		assertEquals("GET", result.getHttpMethod());
 		assertEquals("/dummy", result.getMethodPath());
 
@@ -68,7 +66,6 @@ public class DefaultHateoasContextTest {
 	public void verifyPostMethod() {
 		LinkableInfo result = tested.getLinkableInfo("test.dummy.post");
 		assertEquals("test.dummy.post", result.getId());
-		assertEquals("dummy", result.getRel());
 		assertEquals("POST", result.getHttpMethod());
 		assertEquals("/dummy", result.getMethodPath());
 
@@ -80,7 +77,6 @@ public class DefaultHateoasContextTest {
 	public void verifyDeleteMethod() {
 		LinkableInfo result = tested.getLinkableInfo("test.dummy.delete");
 		assertEquals("test.dummy.delete", result.getId());
-		assertEquals("dummy", result.getRel());
 		assertEquals("DELETE", result.getHttpMethod());
 		assertEquals("/dummy", result.getMethodPath());
 	}
@@ -90,7 +86,6 @@ public class DefaultHateoasContextTest {
 		LinkableInfo result = tested.getLinkableInfo("test.dummy.get.subpath");
 
 		assertEquals("test.dummy.get.subpath", result.getId());
-		assertEquals("dummy2", result.getRel());
 		assertEquals("GET", result.getHttpMethod());
 		assertEquals("/dummy/subpath", result.getMethodPath());
 	}
@@ -100,7 +95,6 @@ public class DefaultHateoasContextTest {
 		LinkableInfo result = tested.getLinkableInfo("test.dummy.sneaky.get");
 
 		assertEquals("test.dummy.sneaky.get", result.getId());
-		assertEquals("dummy2", result.getRel());
 		assertEquals("GET", result.getHttpMethod());
 		assertEquals("/dummy", result.getMethodPath());
 	}
@@ -111,7 +105,6 @@ public class DefaultHateoasContextTest {
 				.getLinkableInfo("test.dummy.sneaky.subpath");
 
 		assertEquals("test.dummy.sneaky.subpath", result.getId());
-		assertEquals("dummy2", result.getRel());
 		assertEquals("GET", result.getHttpMethod());
 		assertEquals("/dummy/subpath", result.getMethodPath());
 	}

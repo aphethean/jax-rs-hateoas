@@ -13,18 +13,16 @@
  * limitations under the License.
  */
 
-package com.jayway.jaxrs.hateoas;
+package com.jayway.jaxrs.hateoas.support;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+/**
+ * @author Mattias Hellborg Arthursson
+ */
+public class AtomRels {
+    public final static String ALTERNATE = "alternate";
+    public final static String RELATED = "related";
+    public final static String SELF = "self";
+    public final static String ENCLOSURE = "enclosure";
+    public final static String VIA = "via";
 
-@Path("/dummy/")
-public class DuplicateAnnotatedClass {
-
-	@GET
-	@Linkable(id = "test.dummy.get")
-	public Response get() {
-		return null;
-	}
 }

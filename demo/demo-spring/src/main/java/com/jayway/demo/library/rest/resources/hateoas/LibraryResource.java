@@ -28,12 +28,12 @@ import javax.ws.rs.core.Response;
 @Component
 public class LibraryResource {
 
-	@GET
-	@Produces("application/vnd.demo.library.root+json")
-	public Response root() {
-		return HateoasResponse.ok(new RootDto())
-				.link(LinkableIds.BOOKS_LIST_ID)
-				.link(LinkableIds.CUSTOMER_LIST_ID)
-				.link(LinkableIds.LOANS_LIST_ID).build();
-	}
+    @GET
+    @Produces("application/vnd.demo.library.root+json")
+    public Response root() {
+        return HateoasResponse.ok(new RootDto())
+                .link(LinkableIds.BOOKS_LIST_ID, Rels.BOOKS)
+                .link(LinkableIds.CUSTOMER_LIST_ID, Rels.CUSTOMERS)
+                .link(LinkableIds.LOANS_LIST_ID, Rels.LOANS).build();
+    }
 }

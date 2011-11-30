@@ -21,13 +21,12 @@ import static junit.framework.Assert.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 
 import com.jayway.jaxrs.hateoas.*;
-import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.support.AtomRels;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,10 +45,10 @@ public class DefaultHateoasLinkTest {
 				UriBuilder.fromUri(new URI("http://www.example.com/api")), null);
 		RequestContext.setRequestContext(requestContext);
 		LinkableInfo linkableInfo = new LinkableInfo("test.dummy",
-				"/dummy/{id1}/{id2}", "dummy", "POST", DEFAULT_MEDIA_TYPE,
+				"/dummy/{id1}/{id2}", "POST", DEFAULT_MEDIA_TYPE,
 				DEFAULT_MEDIA_TYPE, "test label", "test description",
 				DummyDto.class);
-		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, 1, 2);
+		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, 1, 2);
 	}
 
 	@After
@@ -61,7 +60,7 @@ public class DefaultHateoasLinkTest {
 	public void verifyFromLinkableInfo() {
 		assertNotNull(tested);
 		assertEquals("test.dummy", tested.getId());
-		assertEquals("dummy", tested.getRel());
+		assertEquals("self", tested.getRel());
 		assertEquals("POST", tested.getMethod());
 		assertEquals("http://www.example.com/api/dummy/1/2", tested.getHref());
 		assertEquals("test label", tested.getLabel());
@@ -77,7 +76,7 @@ public class DefaultHateoasLinkTest {
 		Map<String, Object> result = tested.toMap(HateoasVerbosity.MAXIMUM);
 
 		assertEquals("test.dummy", result.get("id"));
-		assertEquals("dummy", result.get("rel"));
+		assertEquals("self", result.get("rel"));
 		assertEquals("POST", result.get("method"));
 		assertEquals("http://www.example.com/api/dummy/1/2", result.get("href"));
 		assertEquals("test label", result.get("label"));
@@ -90,10 +89,10 @@ public class DefaultHateoasLinkTest {
 	@Test
 	public void onGetMethodProducesAndTemplateAreOmitted() {
 		LinkableInfo linkableInfo = new LinkableInfo("test.dummy",
-				"/dummy/{id1}/{id2}", "dummy", "GET", DEFAULT_MEDIA_TYPE,
+				"/dummy/{id1}/{id2}", "GET", DEFAULT_MEDIA_TYPE,
 				DEFAULT_MEDIA_TYPE, "test label", "test description",
 				DummyDto.class);
-		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, 1, 2);
+		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, 1, 2);
 		Map<String, Object> result = tested.toMap(HateoasVerbosity.MAXIMUM);
 
 		assertEquals("test.dummy", result.get("id"));
@@ -106,10 +105,10 @@ public class DefaultHateoasLinkTest {
 	@Test
 	public void onDeleteMethodProducesAndTemplateAreOmitted() {
 		LinkableInfo linkableInfo = new LinkableInfo("test.dummy",
-				"/dummy/{id1}/{id2}", "dummy", "DELETE", DEFAULT_MEDIA_TYPE,
+				"/dummy/{id1}/{id2}", "DELETE", DEFAULT_MEDIA_TYPE,
 				DEFAULT_MEDIA_TYPE, "test label", "test description",
 				DummyDto.class);
-		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, 1, 2);
+		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, 1, 2);
 		Map<String, Object> result = tested.toMap(HateoasVerbosity.MAXIMUM);
 
 		assertEquals("test.dummy", result.get("id"));
@@ -121,10 +120,10 @@ public class DefaultHateoasLinkTest {
 	@Test
 	public void whenNoTemplateExplainingStringIsReturned() {
 		LinkableInfo linkableInfo = new LinkableInfo("test.dummy",
-				"/dummy/{id1}/{id2}", "dummy", "PUT", DEFAULT_MEDIA_TYPE,
+				"/dummy/{id1}/{id2}", "PUT", DEFAULT_MEDIA_TYPE,
 				DEFAULT_MEDIA_TYPE, "test label", "test description",
 				Linkable.NoTemplate.class);
-		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, 1, 2);
+		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, 1, 2);
 		Map<String, Object> result = tested.toMap(HateoasVerbosity.MAXIMUM);
 
 		assertEquals("test.dummy", result.get("id"));

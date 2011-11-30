@@ -18,7 +18,6 @@ package com.jayway.demo.library.rest.resources.hateoas;
 import com.jayway.demo.library.domain.BookRepository;
 import com.jayway.demo.library.domain.Customer;
 import com.jayway.demo.library.domain.CustomerRepository;
-import com.jayway.demo.library.domain.factory.RepositoryFactory;
 import com.jayway.demo.library.rest.dto.CustomerDto;
 import com.jayway.demo.library.rest.dto.LoanDto;
 import com.jayway.jaxrs.hateoas.Linkable;
@@ -41,18 +40,18 @@ public class CustomerResource {
 
     @GET
     @Produces("application/vnd.demo.library.list.customer+json")
-    @Linkable(id = LinkableIds.CUSTOMER_LIST_ID, rel = Rels.CUSTOMERS_REL)
+    @Linkable(id = LinkableIds.CUSTOMER_LIST_ID)
     public Response getAllCustomers() {
         return HateoasResponse
-                .ok(CustomerDto.fromBeanCollection(customerRepository
-                                                           .getAllCustomers())).link(LinkableIds.CUSTOMER_NEW_ID)
-                .each(LinkableIds.CUSTOMER_DETAILS_ID, "id").build();
+                .ok(CustomerDto.fromBeanCollection(customerRepository.getAllCustomers()))
+                .selfLink(LinkableIds.CUSTOMER_NEW_ID)
+                .selfEach(LinkableIds.CUSTOMER_DETAILS_ID, "id").build();
     }
 
     @POST
     @Consumes("application/vnd.demo.library.customer+json")
     @Produces("application/vnd.demo.library.customer+json")
-    @Linkable(id = LinkableIds.CUSTOMER_NEW_ID, rel = Rels.CUSTOMERS_REL, templateClass = CustomerDto.class)
+    @Linkable(id = LinkableIds.CUSTOMER_NEW_ID, templateClass = CustomerDto.class)
     public Response newCustomer(CustomerDto customer) {
         Customer newCustomer = customerRepository.newCustomer(customer.getName());
         return HateoasResponse
@@ -64,23 +63,21 @@ public class CustomerResource {
     @GET
     @Path("/{id}")
     @Produces("application/vnd.demo.library.customer+json")
-    @Linkable(id = LinkableIds.CUSTOMER_DETAILS_ID, rel = Rels.CUSTOMER_REL)
+    @Linkable(id = LinkableIds.CUSTOMER_DETAILS_ID)
     public Response getCustomer(@PathParam("id") Integer id) {
         return HateoasResponse
                 .ok(CustomerDto.fromBean(customerRepository.getById(id)))
-                .link(LinkableIds.CUSTOMER_LOANS_ID, id).build();
+                .link(LinkableIds.CUSTOMER_LOANS_ID, Rels.LOANS, id).build();
     }
 
     @GET
     @Path("/{id}/loans")
     @Produces("application/vnd.demo.library.list.loan+json")
-    @Linkable(id = LinkableIds.CUSTOMER_LOANS_ID, rel = Rels.LOANS_REL)
+    @Linkable(id = LinkableIds.CUSTOMER_LOANS_ID)
     public Response getCustomerLoans(@PathParam("id") Integer id) {
-
         Collection<LoanDto> loanDtos = LoanDto
                 .fromBeanCollection(bookRepository.getLoansForCustomer(id));
         return HateoasResponse.ok(loanDtos)
-                              .each(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
+                              .selfEach(LinkableIds.LOAN_DETAILS_ID, "bookId").build();
     }
-
 }

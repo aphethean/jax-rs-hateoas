@@ -256,7 +256,7 @@ public abstract class HateoasResponse extends Response {
 
 	public static HateoasResponseBuilder created(String linkId,
 			Object... parameters) {
-		return created(HateoasResponseBuilder.makeLink(linkId, parameters));
+		return created(HateoasResponseBuilder.makeLink(linkId, null, parameters));
 	}
 
 	/**
@@ -362,13 +362,12 @@ public abstract class HateoasResponse extends Response {
 
     /**
      * Extension of the standard JAX-RS {@link ResponseBuilder}, adding methods to specify hypermedia in responses.
-     * @see #link(String, Object...)
+     * @see #link(String, String, Object...)
      * @see #links(com.jayway.jaxrs.hateoas.HateoasLink...)
      * @see #selfLink(String, Object...) 
-     * @see #each(String, String...)
+     * @see #each(String, String, String...)
      * @see #each(com.jayway.jaxrs.hateoas.EachCallback)
-     * @see #makeLink(String, Object...)
-     * @see #makeSelfLink(String, Object...) 
+     * @see #makeLink(String, String, Object...)
      */
 	public static abstract class HateoasResponseBuilder extends ResponseBuilder {
 
@@ -380,20 +379,20 @@ public abstract class HateoasResponse extends Response {
         /**
          * Append a link corresponding to the supplied id, building the URI using the specified parameters.
          *
+         *
          * @param id the @Linkable id of the target method.
-         * @param params the parameters to use for populating path parameters.
-         * @return this.
+         * @param rel the relation of the linked resource in the current context.
+         * @param params the parameters to use for populating path parameters.  @return this.
          */
-        public abstract HateoasResponseBuilder link(String id, Object... params);
+        public abstract HateoasResponseBuilder link(String id, String rel, Object... params);
 
         /**
          * Append a number of HateoasLinks.
          *
          * @param link the links to append.
          * @return this.
-         * @see #link(String, Object...)
-         * @see #makeLink(String, Object...)
-         * @see #makeSelfLink(String, Object...)
+         * @see #link(String, String, Object...)
+         * @see #makeLink(String, String, Object...)
          */
 		public abstract HateoasResponseBuilder links(HateoasLink... link);
 
@@ -407,34 +406,25 @@ public abstract class HateoasResponse extends Response {
          */
 		public abstract HateoasResponseBuilder selfLink(String id, Object... params);
 
+        public abstract HateoasResponseBuilder each(String id, String rel, String... entityField);
+
+        public abstract HateoasResponseBuilder selfEach(String id, String... entityField);
+
+		public abstract HateoasResponseBuilder each(EachCallback<?> callback);
+
         /**
          * Construct a {@link HateoasLink} for the supplied id, building the URI using the specified parameters.
          * 
+         *
          * @param id the @Linkable id of the target method.
-         * @param params the parameters to use for populating path parameters.
-         * @return a populated HateoasLink instance.
+         * @param rel the relation of the linked resource in the current context.
+         * @param params the parameters to use for populating path parameters.  @return a populated HateoasLink instance.
          */
-		public static HateoasLink makeLink(String id, Object... params) {
+		public static HateoasLink makeLink(String id, String rel, Object... params) {
 			HateoasContext hateoasContext = HateoasContextProvider
 					.getDefaultContext();
 			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
-			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, params);
-		}
-
-        /**
-         * Construct a {@link HateoasLink} for the supplied id, overriding the rel to 'self' and
-         * building the URI using the specified parameters.
-         * 
-         * @param id the @Linkable id of the target method.
-         * @param params the parameters to use for populating path parameters.
-         * @return a populated HateoasLink instance.
-         */
-		public static HateoasLink makeSelfLink(String id, Object... params) {
-			HateoasContext hateoasContext = HateoasContextProvider
-					.getDefaultContext();
-			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
-			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, "self",
-					params);
+			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, rel, params);
 		}
 
 		/**
@@ -705,11 +695,6 @@ public abstract class HateoasResponse extends Response {
 		public static HateoasLinkInjector<Object> getLinkInjector() {
 			return HateoasResponseBuilder.linkInjector;
 		}
-
-        public abstract HateoasResponseBuilder each(String id,
-				String... entityField);
-
-		public abstract HateoasResponseBuilder each(EachCallback<?> callback);
 	}
 
 }

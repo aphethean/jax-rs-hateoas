@@ -107,7 +107,7 @@ public class DefaultHateoasContext implements HateoasContext {
 							+ " is already mapped from another class");
 				}
 				LinkableInfo linkableInfo = new LinkableInfo(id, path,
-						linkAnnotation.rel(), httpMethod, consumes, produces,
+                                                             httpMethod, consumes, produces,
 						linkAnnotation.label(), linkAnnotation.description(),
 						linkAnnotation.templateClass());
 				linkableMapping.put(id, linkableInfo);

@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 public class DummyAnnotatedClass {
 
 	@PUT
-	@Linkable(id = "test.dummy.fully.documented", rel = "dummy", description = "test description", label = "test label", templateClass = DummyDto.class)
+	@Linkable(id = "test.dummy.fully.documented", description = "test description", label = "test label", templateClass = DummyDto.class)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.TEXT_HTML, MediaType.TEXT_PLAIN })
 	public Response fullyDocumented(DummyDto input) {
@@ -37,27 +37,27 @@ public class DummyAnnotatedClass {
 	}
 
 	@GET
-	@Linkable(id = "test.dummy.get", rel = "dummy2")
+	@Linkable(id = "test.dummy.get")
 	public Response get() {
 		return null;
 	}
 
 	@GET
-	@Linkable(id = "test.dummy.get.subpath", rel = "dummy2")
+	@Linkable(id = "test.dummy.get.subpath")
 	@Path("/subpath")
 	public Response getSubpath() {
 		return null;
 	}
 
 	@POST
-	@Linkable(id = "test.dummy.post", rel = "dummy")
+	@Linkable(id = "test.dummy.post")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(DummyDto input) {
 		return null;
 	}
 
 	@DELETE
-	@Linkable(id = "test.dummy.delete", rel = "dummy")
+	@Linkable(id = "test.dummy.delete")
 	public Response delete(DummyDto input) {
 		return null;
 	}

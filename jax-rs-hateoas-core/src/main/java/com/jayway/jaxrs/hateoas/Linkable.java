@@ -39,11 +39,6 @@ public @interface Linkable {
 	String id();
 
     /**
-     * The default rel of this linkable method.
-     */
-	String rel();
-
-    /**
      * The class to use for generating a template in links.
      */
 	Class<?> templateClass() default NoTemplate.class;

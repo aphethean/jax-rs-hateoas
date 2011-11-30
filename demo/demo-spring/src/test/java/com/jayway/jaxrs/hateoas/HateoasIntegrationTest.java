@@ -15,16 +15,24 @@
 
 package com.jayway.jaxrs.hateoas;
 
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import groovyx.net.http.ParserRegistry;
+import junit.framework.Assert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.registerParser;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.*;
 
 public class HateoasIntegrationTest {
@@ -99,10 +107,10 @@ public class HateoasIntegrationTest {
                 body("author", equalTo("J.R.R. Tolkien")).
                 body("borrowed", is(false)).
                 body("id", is(0)).
-                body("links.size()", is(3)).
-                body("links[0].rel", equalTo("self")).
-                body("links[1].rel", equalTo("self")).
-                body("links[2].rel", equalTo("loans")).
+                body("links.size()", is(2)).
+                body("links[0].rel", equalTo("update")).
+                body("links[1].rel", equalTo("loans")).
+                body("links[1].method", equalTo("POST")).
                 statusCode(200).
                 when().get(bookHref);
     }
