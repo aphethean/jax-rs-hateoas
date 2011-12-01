@@ -31,62 +31,62 @@ import javax.ws.rs.core.Response;
 @Path("/library/books")
 public class BookResource {
 
-	private final BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-	public BookResource() {
-		bookRepository = RepositoryFactory.getBookRepository();
-	}
+    public BookResource() {
+        bookRepository = RepositoryFactory.getBookRepository();
+    }
 
-	@GET
-	@Linkable(LinkableIds.BOOKS_LIST_ID)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllBooks() {
-		return HateoasResponse
-				.ok(BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
-				.selfLink(LinkableIds.BOOK_NEW_ID)
-				.selfEach(LinkableIds.BOOK_DETAILS_ID, "id").build();
-	}
+    @GET
+    @Linkable(LinkableIds.BOOKS_LIST_ID)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllBooks() {
+        return HateoasResponse
+                .ok(BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
+                .selfLink(LinkableIds.BOOK_NEW_ID)
+                .selfEach(LinkableIds.BOOK_DETAILS_ID, "id").build();
+    }
 
-	@POST
-	@Linkable(value = LinkableIds.BOOK_NEW_ID, templateClass = BookDto.class)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response newBook(BookDto book) {
-		Book newBook = bookRepository
-				.newBook(book.getAuthor(), book.getTitle());
-		return HateoasResponse
-				.created(LinkableIds.BOOK_DETAILS_ID, newBook.getId())
-				.entity(BookDto.fromBean(newBook)).build();
-	}
+    @POST
+    @Linkable(value = LinkableIds.BOOK_NEW_ID, templateClass = BookDto.class)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response newBook(BookDto book) {
+        Book newBook = bookRepository
+                .newBook(book.getAuthor(), book.getTitle());
+        return HateoasResponse
+                .created(LinkableIds.BOOK_DETAILS_ID, newBook.getId())
+                .entity(BookDto.fromBean(newBook)).build();
+    }
 
-	@GET
-	@Linkable(LinkableIds.BOOK_DETAILS_ID)
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getBookById(@PathParam("id") Integer id) {
-		Book book = bookRepository.getBookById(id);
-		HateoasResponseBuilder builder = HateoasResponse
-				.ok(BookDto.fromBean(book))
-				.link(LinkableIds.BOOK_UPDATE_ID, Rels.UPDATE, id);
+    @GET
+    @Linkable(LinkableIds.BOOK_DETAILS_ID)
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBookById(@PathParam("id") Integer id) {
+        Book book = bookRepository.getBookById(id);
+        HateoasResponseBuilder builder = HateoasResponse
+                .ok(BookDto.fromBean(book))
+                .link(LinkableIds.BOOK_UPDATE_ID, Rels.UPDATE, id);
 
-		if (!book.isBorrowed()) {
-			builder.link(LinkableIds.LOAN_NEW_ID, Rels.LOANS);
-		} else {
-			builder.link(LinkableIds.LOAN_DETAILS_ID, Rels.LOAN, book.getId());
-		}
-		return builder.build();
-	}
+        if (!book.isBorrowed()) {
+            builder.link(LinkableIds.LOAN_NEW_ID, Rels.LOANS);
+        } else {
+            builder.link(LinkableIds.LOAN_DETAILS_ID, Rels.LOAN, book.getId());
+        }
+        return builder.build();
+    }
 
-	@PUT
-	@Linkable(value = LinkableIds.BOOK_UPDATE_ID, templateClass = BookDto.class)
-	@Path("/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateBook(@PathParam("id") Integer id, BookDto updatedBook) {
-		Book book = bookRepository.getBookById(id);
-		book.setAuthor(updatedBook.getAuthor());
-		book.setTitle(updatedBook.getTitle());
+    @PUT
+    @Linkable(value = LinkableIds.BOOK_UPDATE_ID, templateClass = BookDto.class)
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateBook(@PathParam("id") Integer id, BookDto updatedBook) {
+        Book book = bookRepository.getBookById(id);
+        book.setAuthor(updatedBook.getAuthor());
+        book.setTitle(updatedBook.getTitle());
 
-		return getBookById(id);
-	}
+        return getBookById(id);
+    }
 }
