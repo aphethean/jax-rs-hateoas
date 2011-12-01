@@ -74,8 +74,13 @@ public class FieldPath implements Iterable<String> {
     private Object injectLinks(Iterator<String> pathIterator, Object currentTarget,
                                final HateoasLinkInjector<Object> injector, final LinkProducer linkProducer,
                                final HateoasVerbosity verbosity) throws NoSuchFieldException, IllegalAccessException {
+
+        if(currentTarget == null){
+            return currentTarget;
+        }
+
         if (!pathIterator.hasNext()) {
-            if (currentTarget != null && Collection.class.isAssignableFrom(currentTarget.getClass())) {
+            if (Collection.class.isAssignableFrom(currentTarget.getClass())) {
                 Collection<Object> targetAsCollection = (Collection<Object>) currentTarget;
                 return Collections2.transform(targetAsCollection, new Function<Object, Object>() {
                     @Override

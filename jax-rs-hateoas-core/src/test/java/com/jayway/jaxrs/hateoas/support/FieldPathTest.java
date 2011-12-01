@@ -127,6 +127,24 @@ public class FieldPathTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void verifyInjectLinksDeeperNestedPathThatIsNull() throws NoSuchFieldException, IllegalAccessException {
+        FieldPath tested = FieldPath.parse("nested.nested2");
+
+        HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
+
+        DummyBean expectedInput = new DummyBean(null);
+
+        LinkProducer<Object> expectedLinkProducer = mock(LinkProducer.class);
+
+        DummyBean result = (DummyBean) tested.injectLinks(expectedInput, linkInjector,
+                expectedLinkProducer, HateoasVerbosity.MAXIMUM);
+
+        assertSame(expectedInput, result);
+
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void verifyWithNestedCollection() throws NoSuchFieldException, IllegalAccessException {
         FieldPath tested = FieldPath.parse("nestedBeans");
 
@@ -177,6 +195,10 @@ public class FieldPathTest {
 
     public final static class DummyBean {
         private NestedBean nested;
+
+        public DummyBean(NestedBean nested) {
+            this.nested = nested;
+        }
 
         public DummyBean() {
             nested = new NestedBean();
