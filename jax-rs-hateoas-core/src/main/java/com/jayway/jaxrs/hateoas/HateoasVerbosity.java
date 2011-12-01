@@ -36,7 +36,10 @@ public class HateoasVerbosity {
             HateoasOption.METHOD, HateoasOption.LABEL,
             HateoasOption.DESCRIPTION, HateoasOption.TEMPLATE);
     public static HateoasVerbosity MINIMUM = new HateoasVerbosity(
-            HateoasOption.REL, HateoasOption.HREF);
+            HateoasOption.REL, HateoasOption.HREF, HateoasOption.METHOD);
+    public static HateoasVerbosity NORMAL = new HateoasVerbosity(
+            HateoasOption.REL, HateoasOption.HREF, HateoasOption.METHOD,
+            HateoasOption.PRODUCES, HateoasOption.CONSUMES);
     public static HateoasVerbosity GENERIC_CLIENT = new HateoasVerbosity(
             HateoasOption.REL, HateoasOption.HREF, HateoasOption.CONSUMES,
             HateoasOption.METHOD, HateoasOption.TEMPLATE);
