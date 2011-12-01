@@ -97,7 +97,7 @@ public class FieldPathTest {
                 .thenReturn(expectedOutput);
 
         DummyBean result = (DummyBean) tested.injectLinks(expectedInput, linkInjector,
-                                                          expectedLinkProducer, HateoasVerbosity.MAXIMUM);
+                expectedLinkProducer, HateoasVerbosity.MAXIMUM);
 
         assertSame(expectedInput, result);
         assertSame(expectedOutput, result.nested);
@@ -119,7 +119,7 @@ public class FieldPathTest {
                 .thenReturn(expectedOutput);
 
         DummyBean result = (DummyBean) tested.injectLinks(expectedInput, linkInjector,
-                                                          expectedLinkProducer, HateoasVerbosity.MAXIMUM);
+                expectedLinkProducer, HateoasVerbosity.MAXIMUM);
 
         assertSame(expectedInput, result);
         assertSame(expectedOutput, result.nested.nested2);
@@ -148,12 +148,32 @@ public class FieldPathTest {
                 .thenReturn(expectedOutputItem2);
 
         CollectionContainingNested result = (CollectionContainingNested) tested.injectLinks(expectedInput, linkInjector,
-                                                                                            expectedLinkProducer,
-                                                                                            HateoasVerbosity.MAXIMUM);
+                expectedLinkProducer,
+                HateoasVerbosity.MAXIMUM);
         assertSame(expectedInput, result);
         assertSame(expectedOutputItem1, Iterables.get(result.nestedBeans, 0));
         assertSame(expectedOutputItem2, Iterables.get(result.nestedBeans, 1));
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void verifyWithNestedCollectionThatIsNull() throws NoSuchFieldException, IllegalAccessException {
+        FieldPath tested = FieldPath.parse("nestedBeans");
+
+        HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
+
+        CollectionContainingNested expectedInput =
+                new CollectionContainingNested(null);
+
+        LinkProducer<Object> expectedLinkProducer = mock(LinkProducer.class);
+
+        CollectionContainingNested result = (CollectionContainingNested) tested.injectLinks(expectedInput, linkInjector,
+                expectedLinkProducer,
+                HateoasVerbosity.MAXIMUM);
+        assertSame(expectedInput, result);
+    }
+
+
 
     public final static class DummyBean {
         private NestedBean nested;
