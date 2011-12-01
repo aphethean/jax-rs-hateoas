@@ -19,6 +19,7 @@ import com.google.common.collect.Collections2;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.LinkProducer;
 import javassist.*;
 import org.dozer.DozerBeanMapper;
 
@@ -49,16 +50,16 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 	private HateoasLinkInjector<Object> reflectionBasedDelegate = new ReflectionBasedHateoasLinkInjector();
 
 	@Override
-	public Object injectLinks(Object entity, Collection<HateoasLink> links,
+	public Object injectLinks(Object entity, LinkProducer<Object> linkProducer,
 			final HateoasVerbosity verbosity) {
 
 		if (entity == null) {
 			return null;
 		}
 
-		if (Collection.class.isAssignableFrom(entity.getClass())) {
+		if (ReflectionUtils.hasField(entity, "links")) {
 			return reflectionBasedDelegate
-					.injectLinks(entity, links, verbosity);
+					.injectLinks(entity, linkProducer, verbosity);
 		}
 
 		String newClassName = entity.getClass().getPackage().getName() + "."
@@ -97,7 +98,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 
 		Object newInstance = mapper.map(entity, clazz);
 		ReflectionUtils.setField(newInstance, "links", Collections2.transform(
-				links, new Function<HateoasLink, Map<String, Object>>() {
+                linkProducer.getLinks(entity), new Function<HateoasLink, Map<String, Object>>() {
 					@Override
 					public Map<String, Object> apply(HateoasLink link) {
 						return link.toMap(verbosity);

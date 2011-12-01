@@ -16,7 +16,7 @@ package com.jayway.jaxrs.hateoas.support;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.jayway.jaxrs.hateoas.EachCallback;
+import com.jayway.jaxrs.hateoas.LinkProducer;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 
@@ -32,6 +32,9 @@ import java.util.Map;
  * @author Kalle Stenflo
  */
 public class HateoasCollectionWrapper<T> implements Iterable<T> {
+    public final static String ROWS_FIELD_NAME = "rows";
+    public final static String LINKS_FIELD_NAME = "links";
+
 	private Collection<T> rows;
 	private Collection<Map<String, Object>> links;
 
@@ -61,12 +64,11 @@ public class HateoasCollectionWrapper<T> implements Iterable<T> {
 	}
 
 	public void transformRows(final HateoasLinkInjector<T> linkInjector,
-			final EachCallback<T> eachCallback, final HateoasVerbosity verbosity) {
+			final LinkProducer<T> linkProducer, final HateoasVerbosity verbosity) {
 		rows = Collections2.transform(rows, new Function<T, T>() {
 			@Override
 			public T apply(T from) {
-				return linkInjector.injectLinks(from,
-						eachCallback.getLinks(from), verbosity);
+				return linkInjector.injectLinks(from, linkProducer, verbosity);
 			}
 		});
 	}

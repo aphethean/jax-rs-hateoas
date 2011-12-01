@@ -16,10 +16,7 @@ package com.jayway.jaxrs.hateoas.support;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.jayway.jaxrs.hateoas.HateoasInjectException;
-import com.jayway.jaxrs.hateoas.HateoasLink;
-import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.*;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -65,18 +62,13 @@ public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector<O
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object injectLinks(Object entity, Collection<HateoasLink> links,
+	public Object injectLinks(Object entity, LinkProducer<Object> linkProducer,
 			final HateoasVerbosity verbosity) {
 		try {
-			if (Collection.class.isAssignableFrom(entity.getClass())) {
-				Collection<Object> entityAsCollection = (Collection<Object>) entity;
-				entity = new HateoasCollectionWrapper(entityAsCollection);
-			}
-
 			Field field = ReflectionUtils.getField(entity, linksFieldName);
 
 			if (Collection.class.isAssignableFrom(field.getType())) {
-				field.set(entity, Collections2.transform(links,
+				field.set(entity, Collections2.transform(linkProducer.getLinks(entity),
 						new Function<HateoasLink, Map<String, Object>>() {
 							@Override
 							public Map<String, Object> apply(HateoasLink from) {

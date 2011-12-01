@@ -17,10 +17,13 @@ package com.jayway.jaxrs.hateoas.support;
 import com.google.common.collect.Iterables;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.core.HateoasResponseBuilderImpl.FixedLinkProducer;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -33,11 +36,13 @@ public class JavassistHateoasLinkInjectorTest {
 	private final static Map<String, Object> EXPECTED_MAP = new HashMap<String, Object>();
 	private HateoasLink linkMock;
 	private JavassistHateoasLinkInjector tested;
+    private FixedLinkProducer linkProducer;
 
-	@Before
+    @Before
 	public void prepareTestedInstance() {
 		tested = new JavassistHateoasLinkInjector();
 		linkMock = mock(HateoasLink.class);
+        linkProducer = new FixedLinkProducer(linkMock);
 		when(linkMock.toMap(HateoasVerbosity.MINIMUM)).thenReturn(EXPECTED_MAP);
 	}
 
@@ -48,7 +53,7 @@ public class JavassistHateoasLinkInjectorTest {
 		dummyEntity.setId("someId");
 
 		DummyEntity returnedEntity = (DummyEntity) tested.injectLinks(
-				dummyEntity, Arrays.asList(linkMock), HateoasVerbosity.MINIMUM);
+				dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
 
 		assertNotSame(dummyEntity, returnedEntity);
 		assertEquals("someId", returnedEntity.getId());
@@ -56,21 +61,6 @@ public class JavassistHateoasLinkInjectorTest {
 		Collection<Map<String, Object>> links = (Collection<Map<String, Object>>) ReflectionUtils
 				.getFieldValue(returnedEntity, "links");
 		assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
-	}
-
-	@Test
-    @SuppressWarnings("unchecked")
-	public void entityCollectionWillResultInCollectionWrapper() {
-		DummyEntity expectedEntity = new DummyEntity();
-		List<DummyEntity> entityList = Arrays.asList(expectedEntity);
-
-		HateoasCollectionWrapper returnedEntity = (HateoasCollectionWrapper) tested
-				.injectLinks(entityList, Arrays.asList(linkMock),
-						HateoasVerbosity.MINIMUM);
-
-		assertSame(expectedEntity, Iterables.getOnlyElement(returnedEntity));
-		assertSame(EXPECTED_MAP,
-				Iterables.getOnlyElement(returnedEntity.getLinks()));
 	}
 
 	public static class DummyEntity {

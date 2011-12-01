@@ -25,6 +25,6 @@ import java.util.Collection;
  * @see com.jayway.jaxrs.hateoas.support.ReflectionBasedHateoasLinkInjector
  */
 public interface HateoasLinkInjector<T> {
-	T injectLinks(T entity, Collection<HateoasLink> links,
+	T injectLinks(T entity, LinkProducer<T> linkProducer,
 			HateoasVerbosity verbosity);
 }

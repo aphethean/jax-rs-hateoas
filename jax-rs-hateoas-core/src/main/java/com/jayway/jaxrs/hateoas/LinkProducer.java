@@ -17,16 +17,15 @@ package com.jayway.jaxrs.hateoas;
 import java.util.Collection;
 
 /**
- * Callback interface to be used for generating custom (in particular: more than one) links for nested items. Will
- * receive a callback for each item in a wrapped collection.
+ * Callback interface to be used for generating custom links for items.
  *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
- * @see com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder#each(EachCallback) 
+ * @see com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder#each(LinkProducer)
  */
-public interface EachCallback<T> {
+public interface LinkProducer<T> {
     /**
-     * Produce links for one item in the list.
+     * Produce links for an item.
      *
      * @param entity the entity to produce links for.
      * @return one or more links to be added for the entity.

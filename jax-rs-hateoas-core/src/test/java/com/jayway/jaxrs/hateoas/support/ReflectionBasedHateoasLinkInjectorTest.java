@@ -17,10 +17,15 @@ package com.jayway.jaxrs.hateoas.support;
 import com.google.common.collect.Iterables;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.LinkProducer;
+import com.jayway.jaxrs.hateoas.core.HateoasResponseBuilderImpl.FixedLinkProducer;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import static junit.framework.Assert.assertSame;
 import static org.mockito.Mockito.mock;
@@ -34,11 +39,13 @@ public class ReflectionBasedHateoasLinkInjectorTest {
 	private final static Map<String, Object> EXPECTED_MAP = new HashMap<String, Object>();
 	private ReflectionBasedHateoasLinkInjector tested;
 	private HateoasLink linkMock;
+    private LinkProducer<Object> linkProducer;
 
 	@Before
 	public void prepareTestedInstance() {
 		tested = new ReflectionBasedHateoasLinkInjector();
 		linkMock = mock(HateoasLink.class);
+        linkProducer = new FixedLinkProducer(linkMock);
 		when(linkMock.toMap(HateoasVerbosity.MINIMUM)).thenReturn(EXPECTED_MAP);
 	}
 
@@ -47,25 +54,10 @@ public class ReflectionBasedHateoasLinkInjectorTest {
 		DummyEntity entity = new DummyEntity();
 
 		Object returnedEntity = tested.injectLinks(entity,
-				Arrays.asList(linkMock), HateoasVerbosity.MINIMUM);
+				linkProducer, HateoasVerbosity.MINIMUM);
 
 		assertSame(entity, returnedEntity);
 		assertSame(EXPECTED_MAP, Iterables.getOnlyElement(entity.getLinks()));
-	}
-
-	@Test
-    @SuppressWarnings("unchecked")
-	public void entityCollectionWillResultInCollectionWrapper() {
-		DummyEntity expectedEntity = new DummyEntity();
-		List<DummyEntity> entityList = Arrays.asList(expectedEntity);
-
-		HateoasCollectionWrapper returnedEntity = (HateoasCollectionWrapper) tested
-				.injectLinks(entityList, Arrays.asList(linkMock),
-						HateoasVerbosity.MINIMUM);
-
-		assertSame(expectedEntity, Iterables.getOnlyElement(returnedEntity));
-		assertSame(EXPECTED_MAP,
-				Iterables.getOnlyElement(returnedEntity.getLinks()));
 	}
 
 	private final static class DummyEntity {

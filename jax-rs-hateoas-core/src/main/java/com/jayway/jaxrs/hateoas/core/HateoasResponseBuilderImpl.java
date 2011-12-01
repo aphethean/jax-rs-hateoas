@@ -14,12 +14,13 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import com.jayway.jaxrs.hateoas.EachCallback;
+import com.jayway.jaxrs.hateoas.LinkProducer;
 import com.jayway.jaxrs.hateoas.HateoasLink;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.AtomRels;
+import com.jayway.jaxrs.hateoas.support.FieldPath;
 import com.jayway.jaxrs.hateoas.support.HateoasCollectionWrapper;
 import com.jayway.jaxrs.hateoas.support.ReflectionUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.*;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Default implementation of {@link HateoasResponseBuilder}.
@@ -39,39 +41,51 @@ import java.util.*;
  */
 public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseBuilder {
 
-	private Response.StatusType statusType = Response.Status.NO_CONTENT;
+    private Response.StatusType statusType = Response.Status.NO_CONTENT;
 
-	private OutBoundHeaders headers;
+    private OutBoundHeaders headers;
 
-	private Object entity;
+    private Object entity;
 
-	private Type entityType;
+    private Type entityType;
 
-	private Collection<HateoasLink> links = new LinkedHashSet<HateoasLink>();
-
-	private final AggregateEachCallback eachCallback = new AggregateEachCallback();
+    private final Map<FieldPath, ChainedLinkProducer> linkMappings = new HashMap<FieldPath, ChainedLinkProducer>();
 
     @Override
-	public HateoasResponseBuilder link(String id, String rel, Object... params) {
-		return links(HateoasResponseBuilder.makeLink(id, rel, params));
-	}
+    public HateoasResponseBuilder link(String id, String rel, Object... params) {
+        return links(HateoasResponseBuilder.makeLink(id, rel, params));
+    }
 
-	@Override
-	public HateoasResponseBuilder selfLink(String id, Object... params) {
-		return link(id, AtomRels.SELF, params);
-	}
+    public HateoasResponseBuilder link(FieldPath fieldPath, String id, String rel, String... entityFields) {
+        return link(fieldPath, new ReflectionBasedLinkProducer(id, rel, entityFields));
+    }
 
-	@Override
-	public HateoasResponse.HateoasResponseBuilder links(HateoasLink... links) {
-		this.links.addAll(Arrays.asList(links));
+    @Override
+    public HateoasResponseBuilder link(FieldPath fieldPath, LinkProducer<?> linkProducer) {
+        if(!linkMappings.containsKey(fieldPath)) {
+            linkMappings.put(fieldPath, new ChainedLinkProducer());
+        }
 
-		return this;
-	}
+        ChainedLinkProducer chainedLinkProducer = linkMappings.get(fieldPath);
+        chainedLinkProducer.append(linkProducer);
 
-	@Override
-	public HateoasResponseBuilder each(final String id, String rel, final String... entityFields) {
-		return each(new ReflectionBasedEachCallback(id, rel, entityFields));
-	}
+        return this;
+    }
+
+    @Override
+    public HateoasResponseBuilder selfLink(String id, Object... params) {
+        return link(id, AtomRels.SELF, params);
+    }
+
+    @Override
+    public HateoasResponse.HateoasResponseBuilder links(HateoasLink... links) {
+        return link(FieldPath.EMPTY_PATH, new FixedLinkProducer(Arrays.asList(links)));
+    }
+
+    @Override
+    public HateoasResponseBuilder each(String id, String rel, String... entityFields) {
+        return each(new ReflectionBasedLinkProducer(id, rel, entityFields));
+    }
 
     @Override
     public HateoasResponseBuilder selfEach(String id, String... entityFields) {
@@ -79,308 +93,325 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     }
 
     @Override
-	public HateoasResponseBuilder each(EachCallback<?> callback) {
-		this.eachCallback.append(callback);
-		return this;
-	}
+    public HateoasResponseBuilder each(LinkProducer<?> linkProducer) {
+        return link(FieldPath.parse(HateoasCollectionWrapper.ROWS_FIELD_NAME), linkProducer);
+    }
 
-	public HateoasResponseBuilderImpl() {
-	}
+    public HateoasResponseBuilderImpl() {
+    }
 
-	private HateoasResponseBuilderImpl(HateoasResponseBuilderImpl that) {
-		this.statusType = that.statusType;
-		this.entity = that.entity;
-		if (that.headers != null) {
-			this.headers = new OutBoundHeaders(that.headers);
-		} else {
-			this.headers = null;
-		}
-		this.entityType = that.entityType;
-	}
+    private HateoasResponseBuilderImpl(HateoasResponseBuilderImpl that) {
+        this.statusType = that.statusType;
+        this.entity = that.entity;
+        if (that.headers != null) {
+            this.headers = new OutBoundHeaders(that.headers);
+        } else {
+            this.headers = null;
+        }
+        this.entityType = that.entityType;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder entityWithType(Object entity,
-			Type entityType) {
-		this.entity = entity;
-		this.entityType = entityType;
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder entityWithType(Object entity,
+                                                                 Type entityType) {
+        this.entity = entity;
+        this.entityType = entityType;
+        return this;
+    }
 
-	private OutBoundHeaders getHeaders() {
-		if (headers == null)
-			headers = new OutBoundHeaders();
-		return headers;
-	}
+    private OutBoundHeaders getHeaders() {
+        if (headers == null)
+            headers = new OutBoundHeaders();
+        return headers;
+    }
 
-	// Response.Builder
+    // Response.Builder
 
-	public HateoasResponse build() {
-		HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
-				.getLinkInjector();
-		HateoasVerbosity verbosity = HateoasVerbosity
-				.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
+    @SuppressWarnings("unchecked")
+    public HateoasResponse build() {
+        HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
+                .getLinkInjector();
+        HateoasVerbosity verbosity = HateoasVerbosity
+                .valueOf(RequestContext.getRequestContext().getVerbosityHeader());
 
-		Object newEntity = entity;
-		if (newEntity != null) {
-			newEntity = linkInjector.injectLinks(entity, new LinkedHashSet<HateoasLink>(links), verbosity);
+        Object newEntity = entity;
+        if (entity != null) {
+            if (Collection.class.isAssignableFrom(entity.getClass())) {
+                newEntity = new HateoasCollectionWrapper<Object>((Collection<Object>) entity);
+            }
 
-			if (newEntity instanceof HateoasCollectionWrapper) {
-				if (eachCallback != null) {
-					HateoasCollectionWrapper<Object> wrapper = (HateoasCollectionWrapper<Object>) newEntity;
-					wrapper.transformRows(linkInjector, eachCallback, verbosity);
-				}
-			}
-		}
+            Set<Entry<FieldPath,ChainedLinkProducer>> entries = linkMappings.entrySet();
+            for (Entry<FieldPath, ChainedLinkProducer> entry : entries) {
+                newEntity = entry.getKey().injectLinks(newEntity, linkInjector, entry.getValue(), verbosity);
+            }
+        }
 
-		final HateoasResponse r = new HateoasResponseImpl(statusType,
-				getHeaders(), newEntity, entityType);
-		reset();
-		return r;
-	}
+        final HateoasResponse r = new HateoasResponseImpl(statusType,
+                                                          getHeaders(), newEntity, entityType);
+        reset();
+        return r;
+    }
 
-	private void reset() {
-		statusType = Response.Status.NO_CONTENT;
-		headers = null;
-		entity = null;
-		entityType = null;
-        links.clear();
-	}
+    private void reset() {
+        statusType = Response.Status.NO_CONTENT;
+        headers = null;
+        entity = null;
+        entityType = null;
+        linkMappings.clear();
+    }
 
-	@Override
-	public HateoasResponse.HateoasResponseBuilder clone() {
-		return new HateoasResponseBuilderImpl(this);
-	}
+    @Override
+    public HateoasResponse.HateoasResponseBuilder clone() {
+        return new HateoasResponseBuilderImpl(this);
+    }
 
-	public HateoasResponse.HateoasResponseBuilder status(
-			Response.StatusType status) {
-		if (status == null)
-			throw new IllegalArgumentException();
-		this.statusType = status;
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder status(
+            Response.StatusType status) {
+        if (status == null)
+            throw new IllegalArgumentException();
+        this.statusType = status;
+        return this;
+    }
 
-	;
+    ;
 
-	public HateoasResponse.HateoasResponseBuilder status(int status) {
-		return status(ResponseImpl.toStatusType(status));
-	}
+    public HateoasResponse.HateoasResponseBuilder status(int status) {
+        return status(ResponseImpl.toStatusType(status));
+    }
 
-	public HateoasResponse.HateoasResponseBuilder entity(Object entity) {
-		this.entity = entity;
-		this.entityType = (entity != null) ? entity.getClass() : null;
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder entity(Object entity) {
+        this.entity = entity;
+        this.entityType = (entity != null) ? entity.getClass() : null;
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder type(MediaType type) {
-		headerSingle(HttpHeaders.CONTENT_TYPE, type);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder type(MediaType type) {
+        headerSingle(HttpHeaders.CONTENT_TYPE, type);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder type(String type) {
-		return type(type == null ? null : MediaType.valueOf(type));
-	}
+    public HateoasResponse.HateoasResponseBuilder type(String type) {
+        return type(type == null ? null : MediaType.valueOf(type));
+    }
 
-	public HateoasResponse.HateoasResponseBuilder variant(Variant variant) {
-		if (variant == null) {
-			type((MediaType) null);
-			language((String) null);
-			encoding(null);
-			return this;
-		}
+    public HateoasResponse.HateoasResponseBuilder variant(Variant variant) {
+        if (variant == null) {
+            type((MediaType) null);
+            language((String) null);
+            encoding(null);
+            return this;
+        }
 
-		type(variant.getMediaType());
-		// TODO set charset
-		language(variant.getLanguage());
-		encoding(variant.getEncoding());
+        type(variant.getMediaType());
+        // TODO set charset
+        language(variant.getLanguage());
+        encoding(variant.getEncoding());
 
-		return this;
-	}
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder variants(
-			List<Variant> variants) {
-		if (variants == null) {
-			header(HttpHeaders.VARY, null);
-			return this;
-		}
+    public HateoasResponse.HateoasResponseBuilder variants(
+            List<Variant> variants) {
+        if (variants == null) {
+            header(HttpHeaders.VARY, null);
+            return this;
+        }
 
-		if (variants.isEmpty())
-			return this;
+        if (variants.isEmpty())
+            return this;
 
-		MediaType accept = variants.get(0).getMediaType();
-		boolean vAccept = false;
+        MediaType accept = variants.get(0).getMediaType();
+        boolean vAccept = false;
 
-		Locale acceptLanguage = variants.get(0).getLanguage();
-		boolean vAcceptLanguage = false;
+        Locale acceptLanguage = variants.get(0).getLanguage();
+        boolean vAcceptLanguage = false;
 
-		String acceptEncoding = variants.get(0).getEncoding();
-		boolean vAcceptEncoding = false;
+        String acceptEncoding = variants.get(0).getEncoding();
+        boolean vAcceptEncoding = false;
 
-		for (Variant v : variants) {
-			vAccept |= !vAccept && vary(v.getMediaType(), accept);
-			vAcceptLanguage |= !vAcceptLanguage
-					&& vary(v.getLanguage(), acceptLanguage);
-			vAcceptEncoding |= !vAcceptEncoding
-					&& vary(v.getEncoding(), acceptEncoding);
-		}
+        for (Variant v : variants) {
+            vAccept |= !vAccept && vary(v.getMediaType(), accept);
+            vAcceptLanguage |= !vAcceptLanguage
+                    && vary(v.getLanguage(), acceptLanguage);
+            vAcceptEncoding |= !vAcceptEncoding
+                    && vary(v.getEncoding(), acceptEncoding);
+        }
 
-		StringBuilder vary = new StringBuilder();
-		append(vary, vAccept, HttpHeaders.ACCEPT);
-		append(vary, vAcceptLanguage, HttpHeaders.ACCEPT_LANGUAGE);
-		append(vary, vAcceptEncoding, HttpHeaders.ACCEPT_ENCODING);
+        StringBuilder vary = new StringBuilder();
+        append(vary, vAccept, HttpHeaders.ACCEPT);
+        append(vary, vAcceptLanguage, HttpHeaders.ACCEPT_LANGUAGE);
+        append(vary, vAcceptEncoding, HttpHeaders.ACCEPT_ENCODING);
 
-		if (vary.length() > 0)
-			header(HttpHeaders.VARY, vary.toString());
-		return this;
-	}
+        if (vary.length() > 0)
+            header(HttpHeaders.VARY, vary.toString());
+        return this;
+    }
 
-	private boolean vary(MediaType v, MediaType vary) {
-		return v != null && !v.equals(vary);
-	}
+    private boolean vary(MediaType v, MediaType vary) {
+        return v != null && !v.equals(vary);
+    }
 
-	private boolean vary(Locale v, Locale vary) {
-		return v != null && !v.equals(vary);
-	}
+    private boolean vary(Locale v, Locale vary) {
+        return v != null && !v.equals(vary);
+    }
 
-	private boolean vary(String v, String vary) {
-		return v != null && !v.equalsIgnoreCase(vary);
-	}
+    private boolean vary(String v, String vary) {
+        return v != null && !v.equalsIgnoreCase(vary);
+    }
 
-	private void append(StringBuilder sb, boolean v, String s) {
-		if (v) {
-			if (sb.length() > 0)
-				sb.append(',');
-			sb.append(s);
-		}
-	}
+    private void append(StringBuilder sb, boolean v, String s) {
+        if (v) {
+            if (sb.length() > 0)
+                sb.append(',');
+            sb.append(s);
+        }
+    }
 
-	public HateoasResponse.HateoasResponseBuilder language(String language) {
-		headerSingle(HttpHeaders.CONTENT_LANGUAGE, language);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder language(String language) {
+        headerSingle(HttpHeaders.CONTENT_LANGUAGE, language);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder language(Locale language) {
-		headerSingle(HttpHeaders.CONTENT_LANGUAGE, language);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder language(Locale language) {
+        headerSingle(HttpHeaders.CONTENT_LANGUAGE, language);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder location(URI location) {
-		headerSingle(HttpHeaders.LOCATION, location);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder location(URI location) {
+        headerSingle(HttpHeaders.LOCATION, location);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder location(HateoasLink location) {
-		headerSingle(HttpHeaders.LOCATION, location.getHref());
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder location(HateoasLink location) {
+        headerSingle(HttpHeaders.LOCATION, location.getHref());
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder contentLocation(URI location) {
-		headerSingle(HttpHeaders.CONTENT_LOCATION, location);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder contentLocation(URI location) {
+        headerSingle(HttpHeaders.CONTENT_LOCATION, location);
+        return this;
+    }
 
-	public Response.ResponseBuilder encoding(String encoding) {
-		headerSingle(HttpHeaders.CONTENT_ENCODING, encoding);
-		return this;
-	}
+    public Response.ResponseBuilder encoding(String encoding) {
+        headerSingle(HttpHeaders.CONTENT_ENCODING, encoding);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder tag(EntityTag tag) {
-		headerSingle(HttpHeaders.ETAG, tag);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder tag(EntityTag tag) {
+        headerSingle(HttpHeaders.ETAG, tag);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder tag(String tag) {
-		return tag(tag == null ? null : new EntityTag(tag));
-	}
+    public HateoasResponse.HateoasResponseBuilder tag(String tag) {
+        return tag(tag == null ? null : new EntityTag(tag));
+    }
 
-	public HateoasResponse.HateoasResponseBuilder lastModified(Date lastModified) {
-		headerSingle(HttpHeaders.LAST_MODIFIED, lastModified);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder lastModified(Date lastModified) {
+        headerSingle(HttpHeaders.LAST_MODIFIED, lastModified);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder cacheControl(
-			CacheControl cacheControl) {
-		headerSingle(HttpHeaders.CACHE_CONTROL, cacheControl);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder cacheControl(
+            CacheControl cacheControl) {
+        headerSingle(HttpHeaders.CACHE_CONTROL, cacheControl);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder expires(Date expires) {
-		headerSingle(HttpHeaders.EXPIRES, expires);
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder expires(Date expires) {
+        headerSingle(HttpHeaders.EXPIRES, expires);
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder cookie(NewCookie... cookies) {
-		if (cookies != null) {
-			for (NewCookie cookie : cookies)
-				header(HttpHeaders.SET_COOKIE, cookie);
-		} else {
-			header(HttpHeaders.SET_COOKIE, null);
-		}
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder cookie(NewCookie... cookies) {
+        if (cookies != null) {
+            for (NewCookie cookie : cookies)
+                header(HttpHeaders.SET_COOKIE, cookie);
+        } else {
+            header(HttpHeaders.SET_COOKIE, null);
+        }
+        return this;
+    }
 
-	public HateoasResponse.HateoasResponseBuilder header(String name,
-			Object value) {
-		return header(name, value, false);
-	}
+    public HateoasResponse.HateoasResponseBuilder header(String name,
+                                                         Object value) {
+        return header(name, value, false);
+    }
 
-	public HateoasResponse.HateoasResponseBuilder headerSingle(String name,
-			Object value) {
-		return header(name, value, true);
-	}
+    public HateoasResponse.HateoasResponseBuilder headerSingle(String name,
+                                                               Object value) {
+        return header(name, value, true);
+    }
 
-	public HateoasResponse.HateoasResponseBuilder header(String name,
-			Object value, boolean single) {
-		if (value != null) {
-			if (single) {
-				getHeaders().putSingle(name, value);
-			} else {
-				getHeaders().add(name, value);
-			}
-		} else {
-			getHeaders().remove(name);
-		}
-		return this;
-	}
+    public HateoasResponse.HateoasResponseBuilder header(String name,
+                                                         Object value, boolean single) {
+        if (value != null) {
+            if (single) {
+                getHeaders().putSingle(name, value);
+            } else {
+                getHeaders().add(name, value);
+            }
+        } else {
+            getHeaders().remove(name);
+        }
+        return this;
+    }
 
-	private final static class ReflectionBasedEachCallback implements EachCallback<Object> {
-		private final String id;
+    private final static class ReflectionBasedLinkProducer implements LinkProducer<Object> {
+        private final String id;
         private final String rel;
-        private final String[] entityField;
+        private final String[] entityFields;
 
-		private ReflectionBasedEachCallback(String id, String rel, String[] entityField) {
-			this.id = id;
+        private ReflectionBasedLinkProducer(String id, String rel, String... entityFields) {
+            this.id = id;
             this.rel = rel;
-            this.entityField = entityField;
-		}
+            this.entityFields = entityFields;
+        }
 
-		@Override
-		public Collection<HateoasLink> getLinks(Object entity) {
-			LinkedList<Object> argumentList = new LinkedList<Object>();
+        @Override
+        public Collection<HateoasLink> getLinks(Object entity) {
+            LinkedList<Object> argumentList = new LinkedList<Object>();
 
-			for (String fieldName : entityField) {
-				Object fieldValue = ReflectionUtils.getFieldValue(entity, fieldName);
-				argumentList.add(fieldValue);
-			}
+            for (String fieldName : entityFields) {
+                Object fieldValue = ReflectionUtils.getFieldValue(entity, fieldName);
+                argumentList.add(fieldValue);
+            }
 
-			return Collections.singletonList(makeLink(id, rel, argumentList.toArray()));
-		}
-	}
+            return Collections.singletonList(makeLink(id, rel, argumentList.toArray()));
+        }
+    }
 
-    private final static class AggregateEachCallback implements EachCallback<Object> {
-        private final Collection<EachCallback<Object>> wrappedCallbacks = new LinkedList<EachCallback<Object>>();
+    private final static class ChainedLinkProducer implements LinkProducer<Object> {
+        private final Collection<LinkProducer<Object>> wrappedCallbacks = new LinkedList<LinkProducer<Object>>();
 
         @SuppressWarnings("unchecked")
-        public void append(EachCallback<?> callback){
-            wrappedCallbacks.add((EachCallback<Object>) callback);
+        public void append(LinkProducer<?> callback) {
+            wrappedCallbacks.add((LinkProducer<Object>) callback);
         }
 
         @Override
         public Collection<HateoasLink> getLinks(Object entity) {
             Collection<HateoasLink> result = new LinkedList<HateoasLink>();
-            for (EachCallback<Object> callback : wrappedCallbacks) {
+            for (LinkProducer<Object> callback : wrappedCallbacks) {
                 result.addAll(callback.getLinks(entity));
             }
 
             return result;
+        }
+    }
+
+    public final static class FixedLinkProducer implements LinkProducer<Object> {
+        private Collection<HateoasLink> links;
+
+        public FixedLinkProducer(HateoasLink link) {
+            this(Collections.singleton(link));
+        }
+
+        public FixedLinkProducer(Collection<HateoasLink> links) {
+            this.links = links;
+        }
+
+        @Override
+        public Collection<HateoasLink> getLinks(Object entity) {
+            return links;
         }
     }
 

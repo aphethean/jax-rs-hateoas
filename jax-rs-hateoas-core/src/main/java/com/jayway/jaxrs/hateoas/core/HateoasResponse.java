@@ -15,6 +15,7 @@
 package com.jayway.jaxrs.hateoas.core;
 
 import com.jayway.jaxrs.hateoas.*;
+import com.jayway.jaxrs.hateoas.support.FieldPath;
 
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -366,7 +367,7 @@ public abstract class HateoasResponse extends Response {
      * @see #links(com.jayway.jaxrs.hateoas.HateoasLink...)
      * @see #selfLink(String, Object...) 
      * @see #each(String, String, String...)
-     * @see #each(com.jayway.jaxrs.hateoas.EachCallback)
+     * @see #each(com.jayway.jaxrs.hateoas.LinkProducer)
      * @see #makeLink(String, String, Object...)
      */
 	public static abstract class HateoasResponseBuilder extends ResponseBuilder {
@@ -377,14 +378,45 @@ public abstract class HateoasResponse extends Response {
         //public abstract HateoasLinkBuilder linkBuilder(String id);
 
         /**
-         * Append a link corresponding to the supplied id, building the URI using the specified parameters.
-         *
+         * Append a link to the entity root, corresponding to the supplied id, building the URI using the specified
+         * parameters.
          *
          * @param id the @Linkable id of the target method.
          * @param rel the relation of the linked resource in the current context.
          * @param params the parameters to use for populating path parameters.  @return this.
+         * @return this
          */
         public abstract HateoasResponseBuilder link(String id, String rel, Object... params);
+
+        /**
+         * Append a link to the object at the specified FieldPath, corresponding to the supplied id,
+         * building the URI using the specified parameters.
+         *
+         * If the object at the target FieldPath is a {@link java.util.Collection},
+         * the link will be applied to <b>each</b> entry in the collection.
+         * 
+         * @param fieldPath The FieldPath of the targeted object in the object graph represented by the entity root.
+         * @param id the @Linkable id of the target method.
+         * @param rel the relation of the linked resource in the current context.
+         * @param entityFields the fields in the nested elements that should be retrieved using reflection and used for
+         * populating the path parameters.
+         * @return this
+         */
+        public abstract HateoasResponseBuilder link(FieldPath fieldPath, String id, String rel,
+                                                    String... entityFields);
+
+        /**
+         * Append a LinkProducer to be applied for generating links for the object at the specified FieldPath.
+         *
+         * If the object at the target FieldPath is a {@link java.util.Collection},
+         * the LinkProducer will be applied to <b>each</b> entry in the collection,
+         * and the resulting links will be appended to the links collection of each individual entry.
+         * 
+         * @param fieldPath The FieldPath of the targeted object in the object graph represented by the entity root.
+         * @param linkProducer The LinkProducer to be applied to the target for producing links for it.
+         * @return this.
+         */
+        public abstract HateoasResponseBuilder link(FieldPath fieldPath, LinkProducer<?> linkProducer);
 
         /**
          * Append a number of HateoasLinks.
@@ -426,7 +458,7 @@ public abstract class HateoasResponse extends Response {
          */
         public abstract HateoasResponseBuilder selfEach(String id, String... entityFields);
 
-		public abstract HateoasResponseBuilder each(EachCallback<?> callback);
+		public abstract HateoasResponseBuilder each(LinkProducer<?> linkProducer);
 
         /**
          * Construct a {@link HateoasLink} for the supplied id, building the URI using the specified parameters.
