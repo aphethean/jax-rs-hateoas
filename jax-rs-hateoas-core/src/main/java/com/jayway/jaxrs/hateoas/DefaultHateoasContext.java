@@ -103,7 +103,7 @@ public class DefaultHateoasContext implements HateoasContext {
 						linkAnnotation.templateClass());
 				linkableMapping.put(id, linkableInfo);
 			} else {
-				logger.warn("Method {} is missing Link annotation", method);
+				logger.warn("Method {} is missing Linkable annotation", method);
 			}
 		}
 	}
