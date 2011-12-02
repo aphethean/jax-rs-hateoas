@@ -6,8 +6,8 @@ Adding hypermedia to your existing application is easily done in four steps:
 * Use HateoasResponse instead for building responses with HATEOAS links.
   The normal Response methods (ok, created, entity, etc.) will now return a HateoasResponseBuilder.
   The HateoasResponseBuilder contains methods to easily add links to your responses:
-** link(String linkId, Object... params) - adds a link to the referenced linkId
+** link(String linkId, String rel, Object... params) - adds a link to the referenced linkId
    (as defined by an @Linkable annotation).
-** selfLink(String linkId, Object... params) - adds a link to the referenced linkId with a 'self' rel
+** selfLink(String linkId, String rel, Object... params) - adds a link to the referenced linkId with a 'self' rel
    (rather than the default rel defined in the referenced @Linkable annotation
 ** ...etc
