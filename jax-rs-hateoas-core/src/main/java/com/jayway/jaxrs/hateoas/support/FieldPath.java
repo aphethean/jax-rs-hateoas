@@ -50,7 +50,7 @@ public class FieldPath implements Iterable<String> {
         }
     }
 
-    public static FieldPath parse(String path) {
+    public static FieldPath path(String path) {
         String[] pathElement = path.split("\\.");
         return new FieldPath(Arrays.asList(pathElement));
     }

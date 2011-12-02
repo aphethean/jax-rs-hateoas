@@ -94,7 +94,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     @Override
     public HateoasResponseBuilder each(LinkProducer<?> linkProducer) {
-        return link(FieldPath.parse(HateoasCollectionWrapper.ROWS_FIELD_NAME), linkProducer);
+        return link(FieldPath.path(HateoasCollectionWrapper.ROWS_FIELD_NAME), linkProducer);
     }
 
     public HateoasResponseBuilderImpl() {

@@ -36,7 +36,7 @@ public class FieldPathTest {
 
     @Test
     public void testParse() {
-        FieldPath tested = FieldPath.parse("oneField.anotherField");
+        FieldPath tested = FieldPath.path("oneField.anotherField");
 
         assertEquals(2, Iterables.size(tested));
         assertEquals("oneField", Iterables.get(tested, 0));
@@ -45,7 +45,7 @@ public class FieldPathTest {
 
     @Test
     public void verifyThatEmptySegmentIsRemoved() {
-        FieldPath tested = FieldPath.parse("oneField.anotherField.");
+        FieldPath tested = FieldPath.path("oneField.anotherField.");
 
         assertEquals(2, Iterables.size(tested));
         assertEquals("oneField", Iterables.get(tested, 0));
@@ -54,12 +54,12 @@ public class FieldPathTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void verifyThatBlankSegmentIsNotAllowed() {
-        FieldPath tested = FieldPath.parse("oneField..anotherField");
+        FieldPath tested = FieldPath.path("oneField..anotherField");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void verifyThatBlankSegmentIsNotAllowed2() {
-        FieldPath tested = FieldPath.parse("..oneField");
+        FieldPath tested = FieldPath.path("..oneField");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyInjectLinksForSinglePath() throws NoSuchFieldException, IllegalAccessException {
-        FieldPath tested = FieldPath.parse("nested");
+        FieldPath tested = FieldPath.path("nested");
 
         HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
 
@@ -106,7 +106,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyInjectLinksDeeperNestedPath() throws NoSuchFieldException, IllegalAccessException {
-        FieldPath tested = FieldPath.parse("nested.nested2");
+        FieldPath tested = FieldPath.path("nested.nested2");
 
         HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
 
@@ -128,7 +128,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyInjectLinksDeeperNestedPathThatIsNull() throws NoSuchFieldException, IllegalAccessException {
-        FieldPath tested = FieldPath.parse("nested.nested2");
+        FieldPath tested = FieldPath.path("nested.nested2");
 
         HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
 
@@ -146,7 +146,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyWithNestedCollection() throws NoSuchFieldException, IllegalAccessException {
-        FieldPath tested = FieldPath.parse("nestedBeans");
+        FieldPath tested = FieldPath.path("nestedBeans");
 
         HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
 
@@ -176,7 +176,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyWithNestedCollectionThatIsNull() throws NoSuchFieldException, IllegalAccessException {
-        FieldPath tested = FieldPath.parse("nestedBeans");
+        FieldPath tested = FieldPath.path("nestedBeans");
 
         HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
 
@@ -194,7 +194,7 @@ public class FieldPathTest {
     @Test
     @SuppressWarnings("unchecked")
     public void verifyWithPathExtendingOverNestedCollection() {
-        FieldPath tested = FieldPath.parse("nestedBeans.nested2");
+        FieldPath tested = FieldPath.path("nestedBeans.nested2");
 
 
         NestedBean expectedInputItem1 = new NestedBean();
