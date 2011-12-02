@@ -191,6 +191,35 @@ public class FieldPathTest {
         assertSame(expectedInput, result);
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void verifyWithPathExtendingOverNestedCollection() {
+        FieldPath tested = FieldPath.parse("nestedBeans.nested2");
+
+
+        NestedBean expectedInputItem1 = new NestedBean();
+        NestedBean expectedInputItem2 = new NestedBean();
+        NestedBean2 expectedOutputItem1 = new NestedBean2();
+        NestedBean2 expectedOutputItem2 = new NestedBean2();
+
+        HateoasLinkInjector<Object> linkInjector = mock(HateoasLinkInjector.class);
+        LinkProducer<Object> expectedLinkProducer = mock(LinkProducer.class);
+
+        CollectionContainingNested expectedInput =
+                new CollectionContainingNested(Arrays.asList(expectedInputItem1, expectedInputItem2));
+
+        when(linkInjector.injectLinks(expectedInputItem1.nested2, expectedLinkProducer, HateoasVerbosity.MAXIMUM))
+                .thenReturn(expectedOutputItem1);
+        when(linkInjector.injectLinks(expectedInputItem2.nested2, expectedLinkProducer, HateoasVerbosity.MAXIMUM))
+                .thenReturn(expectedOutputItem2);
+
+        CollectionContainingNested result = (CollectionContainingNested) tested.injectLinks(expectedInput, linkInjector,
+                expectedLinkProducer,
+                HateoasVerbosity.MAXIMUM);
+
+        assertSame(expectedOutputItem1, Iterables.get(result.nestedBeans, 0).nested2);
+        assertSame(expectedOutputItem2, Iterables.get(result.nestedBeans, 1).nested2);
+    }
 
 
     public final static class DummyBean {

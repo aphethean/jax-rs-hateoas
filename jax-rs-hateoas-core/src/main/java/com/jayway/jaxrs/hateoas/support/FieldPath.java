@@ -17,6 +17,9 @@ package com.jayway.jaxrs.hateoas.support;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.jayway.jaxrs.hateoas.HateoasInjectException;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
@@ -60,14 +63,14 @@ public class FieldPath implements Iterable<String> {
     public Object injectLinks(Object target, HateoasLinkInjector<Object> injector, LinkProducer linkProducer,
                               HateoasVerbosity verbosity) {
 
-        if(target == null){
+        if (target == null) {
             return target;
         }
         try {
             return injectLinks(iterator(), target, injector, linkProducer, verbosity);
         } catch (Exception e) {
             throw new HateoasInjectException(e);
-        } 
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -75,7 +78,7 @@ public class FieldPath implements Iterable<String> {
                                final HateoasLinkInjector<Object> injector, final LinkProducer linkProducer,
                                final HateoasVerbosity verbosity) throws NoSuchFieldException, IllegalAccessException {
 
-        if(currentTarget == null){
+        if (currentTarget == null) {
             return currentTarget;
         }
 
@@ -97,7 +100,24 @@ public class FieldPath implements Iterable<String> {
         Field currentField = ReflectionUtils.getField(currentTarget, currentFieldName);
 
         Object nextTarget = currentField.get(currentTarget);
-        Object nextResult = injectLinks(pathIterator, nextTarget, injector, linkProducer, verbosity);
+        Object nextResult = null;
+        if (nextTarget != null && Collection.class.isAssignableFrom(nextTarget.getClass())) {
+            // We have not yet arrived at the end of the FieldPath, and the object at the current position in the
+            // path is a Collection - the rest of the path should be traversed for _each_ if the items in the
+            // collection.
+            final ImmutableList<String> restOfPath = ImmutableList.copyOf(pathIterator);
+            Collection<Object> targetAsCollection = (Collection<Object>) nextTarget;
+            nextResult = Collections2.transform(targetAsCollection, new Function<Object, Object>() {
+                @Override
+                public Object apply(Object entry) {
+                    FieldPath nestedPath = new FieldPath(restOfPath);
+                    return nestedPath.injectLinks(entry, injector, linkProducer, verbosity);
+                }
+            });
+        } else {
+            nextResult = injectLinks(pathIterator, nextTarget, injector, linkProducer, verbosity);
+        }
+
         currentField.set(currentTarget, nextResult);
 
         return currentTarget;
