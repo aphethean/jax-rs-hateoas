@@ -395,6 +395,10 @@ public abstract class HateoasResponse extends Response {
          * If the object at the target FieldPath is a {@link java.util.Collection},
          * the link will be applied to <b>each</b> entry in the collection.
          * 
+         * If any object encountered in the middle of the FieldPath is a Collection,
+         * the rest of the path will be traversed for each element in that collection,
+         * making sure that the links will be applied at each end node.
+         *
          * @param fieldPath The FieldPath of the targeted object in the object graph represented by the entity root.
          * @param id the @Linkable id of the target method.
          * @param rel the relation of the linked resource in the current context.
@@ -411,6 +415,10 @@ public abstract class HateoasResponse extends Response {
          * If the object at the target FieldPath is a {@link java.util.Collection},
          * the LinkProducer will be applied to <b>each</b> entry in the collection,
          * and the resulting links will be appended to the links collection of each individual entry.
+         *
+         * If any object encountered in the middle of the FieldPath is a Collection,
+         * the rest of the path will be traversed for each element in that collection,
+         * making sure that the links will be applied at each end node.
          * 
          * @param fieldPath The FieldPath of the targeted object in the object graph represented by the entity root.
          * @param linkProducer The LinkProducer to be applied to the target for producing links for it.
