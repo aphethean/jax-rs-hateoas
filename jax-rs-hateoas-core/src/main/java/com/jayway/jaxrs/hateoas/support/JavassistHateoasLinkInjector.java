@@ -25,7 +25,6 @@ import org.dozer.DozerBeanMapper;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +36,8 @@ import java.util.Map;
  * @author Kalle Stenflo
  */
 public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object> {
+
+    private static final DozerBeanMapper BEAN_MAPPER = new DozerBeanMapper();
 
 	private static final ClassPool CLASS_POOL = ClassPool.getDefault();
 
@@ -94,9 +95,8 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 		} else {
 			clazz = transformedClasses.get(newClassName);
 		}
-		DozerBeanMapper mapper = new DozerBeanMapper();
 
-		Object newInstance = mapper.map(entity, clazz);
+        Object newInstance = BEAN_MAPPER.map(entity, clazz);
 		ReflectionUtils.setField(newInstance, "links", Collections2.transform(
                 linkProducer.getLinks(entity), new Function<HateoasLink, Map<String, Object>>() {
 					@Override
