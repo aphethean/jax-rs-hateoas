@@ -373,6 +373,7 @@ public abstract class HateoasResponse extends Response {
 	public static abstract class HateoasResponseBuilder extends ResponseBuilder {
 
 		private static HateoasLinkInjector<Object> linkInjector;
+        private static CollectionWrapperStrategy collectionWrapperStrategy;
 
 
         //public abstract HateoasLinkBuilder linkBuilder(String id);
@@ -744,13 +745,19 @@ public abstract class HateoasResponse extends Response {
 		 */
 		public abstract HateoasResponseBuilder cookie(NewCookie... cookies);
 
-		public static void configure(HateoasLinkInjector<Object> linkInjector) {
+		public static void configure(HateoasLinkInjector<Object> linkInjector,
+                                     CollectionWrapperStrategy collectionWrapperStrategy) {
 			HateoasResponseBuilder.linkInjector = linkInjector;
+            HateoasResponseBuilder.collectionWrapperStrategy= collectionWrapperStrategy;
 		}
 
 		public static HateoasLinkInjector<Object> getLinkInjector() {
-			return HateoasResponseBuilder.linkInjector;
+			return linkInjector;
 		}
+
+        public static CollectionWrapperStrategy getCollectionWrapperStrategy(){
+            return collectionWrapperStrategy;
+        }
 	}
 
 }

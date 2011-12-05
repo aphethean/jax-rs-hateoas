@@ -14,14 +14,10 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import com.jayway.jaxrs.hateoas.LinkProducer;
-import com.jayway.jaxrs.hateoas.HateoasLink;
-import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.*;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.AtomRels;
 import com.jayway.jaxrs.hateoas.support.FieldPath;
-import com.jayway.jaxrs.hateoas.support.HateoasCollectionWrapper;
 import com.jayway.jaxrs.hateoas.support.ReflectionUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
 import com.sun.jersey.core.header.OutBoundHeaders;
@@ -94,7 +90,8 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     @Override
     public HateoasResponseBuilder each(LinkProducer<?> linkProducer) {
-        return link(FieldPath.path(HateoasCollectionWrapper.ROWS_FIELD_NAME), linkProducer);
+        CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
+        return link(FieldPath.path(collectionWrapperStrategy.rowsFieldName()), linkProducer);
     }
 
     public HateoasResponseBuilderImpl() {
@@ -130,13 +127,14 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     public HateoasResponse build() {
         HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
                 .getLinkInjector();
+        CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
         HateoasVerbosity verbosity = HateoasVerbosity
                 .valueOf(RequestContext.getRequestContext().getVerbosityHeader());
 
         Object newEntity = entity;
         if (entity != null) {
             if (Collection.class.isAssignableFrom(entity.getClass())) {
-                newEntity = new HateoasCollectionWrapper<Object>((Collection<Object>) entity);
+                newEntity = collectionWrapperStrategy.wrapRootCollection((Collection<Object>) entity);
             }
 
             Set<Entry<FieldPath,ChainedLinkProducer>> entries = linkMappings.entrySet();

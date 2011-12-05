@@ -15,10 +15,12 @@
 
 package com.jayway.jaxrs.hateoas.core.spring;
 
+import com.jayway.jaxrs.hateoas.CollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
@@ -42,7 +44,9 @@ public class SpringHateoasServlet extends SpringServlet {
     private final static Logger logger = LoggerFactory.getLogger(SpringHateoasServlet.class);
 
     public final static String PROPERTY_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.property.LinkInjector";
-    public static final String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.property.Verbosity";
+    public final static String PROPERTY_COLLECTION_WRAPPER_STRATEGY = "com.jayway.jaxrs.hateoas.property" +
+            ".CollectionWrapperStrategy";
+    public final static String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.property.Verbosity";
 
     @Override
     protected ResourceConfig getDefaultResourceConfig(Map<String, Object> props,
@@ -59,7 +63,7 @@ public class SpringHateoasServlet extends SpringServlet {
             HateoasContextProvider.getDefaultContext().mapClass(clazz);
         }
 
-        HateoasResponseBuilder.configure(getLinkInjector(rc));
+        HateoasResponseBuilder.configure(getLinkInjector(rc), getCollectionWrapperStrategy(rc));
         HateoasVerbosity.setDefaultVerbosity(getVerbosity(rc));
     }
 
@@ -69,7 +73,7 @@ public class SpringHateoasServlet extends SpringServlet {
 
         Object linkInjectorProperty = rc.getProperty(PROPERTY_LINK_INJECTOR);
         if (linkInjectorProperty == null) {
-            logger.info("Using default LinkInjcetor", linkInjectorProperty);
+            logger.info("Using default LinkInjcetor");
             linkInjector = new JavassistHateoasLinkInjector();
         } else {
             logger.info("Using {} as LinkInjector", linkInjectorProperty);
@@ -93,6 +97,22 @@ public class SpringHateoasServlet extends SpringServlet {
         } else {
             logger.info("Using default verbosity");
             return HateoasVerbosity.MAXIMUM;
+        }
+    }
+
+    private CollectionWrapperStrategy getCollectionWrapperStrategy(ResourceConfig rc) {
+        Object propertyValue = rc.getProperty(PROPERTY_COLLECTION_WRAPPER_STRATEGY);
+
+        if (propertyValue == null) {
+            logger.info("Using default CollectionWrapperStrategy");
+            return new DefaultCollectionWrapperStrategy();
+        } else {
+            logger.info("Using {} as LinkInjector", propertyValue);
+            try {
+                return (CollectionWrapperStrategy) Class.forName((String) propertyValue).newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to instantiate " + propertyValue);
+            }
         }
     }
 }

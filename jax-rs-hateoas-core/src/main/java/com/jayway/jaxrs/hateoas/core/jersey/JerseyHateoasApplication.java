@@ -14,10 +14,12 @@
  */
 package com.jayway.jaxrs.hateoas.core.jersey;
 
+import com.jayway.jaxrs.hateoas.CollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 
@@ -38,11 +40,12 @@ public abstract class JerseyHateoasApplication extends PackagesResourceConfig {
 
 	public JerseyHateoasApplication(HateoasVerbosity verbosity,
 			String... packages) {
-		this(new JavassistHateoasLinkInjector(), verbosity, packages);
+		this(new JavassistHateoasLinkInjector(), new DefaultCollectionWrapperStrategy(), verbosity, packages);
 	}
 
 	public JerseyHateoasApplication(HateoasLinkInjector<Object> linkInjector,
-			HateoasVerbosity verbosity, String... packages) {
+                                    CollectionWrapperStrategy collectionWrapperStrategy, HateoasVerbosity verbosity,
+                                    String... packages) {
 		super(packages);
 
 		Set<Class<?>> allClasses = getClasses();
@@ -50,14 +53,12 @@ public abstract class JerseyHateoasApplication extends PackagesResourceConfig {
 			HateoasContextProvider.getDefaultContext().mapClass(clazz);
 		}
 
-        HateoasResponseBuilder.configure(linkInjector);
+        HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy);
         HateoasVerbosity.setDefaultVerbosity(verbosity);
 
         JerseyHateoasContextFilter filter = new JerseyHateoasContextFilter();
 
         super.getContainerRequestFilters().add(filter);
         super.getContainerResponseFilters().add(filter);
-
-
 	}
 }

@@ -31,14 +31,14 @@ import java.util.Map;
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
-public class HateoasCollectionWrapper<T> implements Iterable<T> {
+public class DefaultCollectionWrapper<T> implements Iterable<T> {
     public final static String ROWS_FIELD_NAME = "rows";
     public final static String LINKS_FIELD_NAME = "links";
 
 	private Collection<T> rows;
 	private Collection<Map<String, Object>> links;
 
-	public HateoasCollectionWrapper(Collection<T> originalCollection) {
+	public DefaultCollectionWrapper(Collection<T> originalCollection) {
 		rows = originalCollection;
 	}
 
