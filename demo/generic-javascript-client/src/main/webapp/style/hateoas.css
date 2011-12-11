@@ -1,0 +1,216 @@
+/*
+ *
+ * Global html and body
+ *
+ */
+* {
+    margin: 0px;
+    padding: 0px;
+    font-size: small;
+    font-family: arial, sans-serif;
+}
+body { background-color: #f5f5f5; }
+
+body:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url('../images/Jay.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 50% 50%;
+    opacity: 0.1;
+}
+/*
+ *
+ * Shared classes
+ *
+ */
+.header {
+    background-color: #464646;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-topleft: 8px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    padding: 6px;
+}
+.title {
+    color: RGB(79,180,226);
+    font-size: 2em;
+    font-weight: bold;
+}
+/*
+ *
+ * Horizontal nav
+ *
+ */
+.horizontal-nav {
+    background-color: #2D2D2D;
+    border-top: 1px solid #f5f5f5;
+    padding-left: 0px;
+}
+.nav-bar {
+    display: block;
+    list-style: none;
+    height: 27px;
+}
+.nav-bar-item {
+    display: inline-block;
+    position: relative;
+    line-height: 27px;
+    vertical-align: top;
+    border-right: 1px solid #464646;
+    padding-right: 6px;
+    padding-left: 6px;
+}
+.right {
+    float: right;
+    border-right: none;
+    border-left: 1px solid #464646;
+    padding-left: 5px;
+}
+.nav-bar-item a {
+    color: #f5f5f5;
+    text-decoration: none;
+}
+.nav-bar-item a:hover {
+    color: RGB(79,180,226);
+}
+/*
+ *
+ * Vertical nav
+ *
+ */
+.vertical-nav {
+    background-color: transparent;
+    border-top: none;
+}
+.vertical-nav .nav-bar .nav-bar-item {
+    display: block;
+    line-height: 18px;
+    vertical-align: top;
+    float: right;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+.vertical-nav .nav-bar .nav-bar-item a {
+    display: block;
+    float: right;
+    color: #464646;
+    padding-right: 18px;
+    background: transparent url('../images/link-internal-icon.gif') no-repeat center right;
+}
+.vertical-nav .nav-bar .nav-bar-item a:hover {
+    color: RGB(79,180,226);
+}
+/*
+ *
+ * Property list
+ *
+ */
+.property-list, .resource-property-list {
+    padding-top: 10px;
+    background-color: #464646;
+    color: #f5f5f5;
+}
+.resource-property-list {
+    background-color: transparent;
+    padding: 0px;
+    color: #2D2D2D;
+    display: inline-block;
+    width: 80%;
+}
+
+.property-list p label {
+    display: block;
+    width: 150px;
+    float: left;
+}
+.resource-property-list p label {
+    display: block;
+    width: 150px;
+    float: left;
+}
+/*
+ *
+ * Resource info
+ *
+ */
+.collection-rows {
+    list-style-type: none;
+}
+.collection-rows li {
+}
+.collection-rows li:nth-child(odd) {
+    background-color: RGBA(79,180,226, 0.2);
+}
+.collection-rows li:nth-child(even){
+    background-color: transparent;
+}
+.resource {
+    display: inline-block;
+    width: 100%;
+    margin: 5px;
+}
+
+.resource-links {
+    display: inline-block;
+    vertical-align:top;
+    width: 18%;
+}
+/*
+ *
+ * Form
+ *
+ */
+form {
+    padding: 6px;
+}
+form p {
+    padding-bottom: 3px;
+}
+form p input[type="button"]{
+    margin-right: 5px;
+}
+form p input[type="text"]{
+}
+
+
+.json-view {
+    background-color: white;
+    display: block;
+    max-height: 400px;
+    height: auto !important;
+    height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.border {
+    border: 1px solid #E5E5E5;
+    background-color: RGBA(255,255,255, 0.2);
+}
+
+/*
+ *
+ * ID items
+ *
+ */
+#hateoas {
+    width: 600px;
+    padding: 20px;
+}
+#entry-point-wrapper {
+    padding-bottom: 10px;
+
+}
+#resource-wrapper {
+    padding-bottom: 10px;
+
+}

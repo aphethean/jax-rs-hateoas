@@ -23,6 +23,7 @@ import com.jayway.demo.library.rest.dto.BookListDto;
 import com.jayway.jaxrs.hateoas.Linkable;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.support.AtomRels;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -67,7 +68,7 @@ public class BookResource {
         Book book = bookRepository.getBookById(id);
         HateoasResponseBuilder builder = HateoasResponse
                 .ok(BookDto.fromBean(book))
-                .link(LinkableIds.BOOK_UPDATE_ID, Rels.UPDATE, id);
+                .link(LinkableIds.BOOK_UPDATE_ID, AtomRels.SELF, id);
 
         if (!book.isBorrowed()) {
             builder.link(LinkableIds.LOAN_NEW_ID, Rels.LOANS);

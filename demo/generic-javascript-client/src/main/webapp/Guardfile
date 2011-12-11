@@ -1,0 +1,8 @@
+#
+# Start coffeescript compilation by running `guard` in the webapp directory
+#
+# If you don't have it installed, installed it ($ gem install guard guard-coffeescript)
+# or start coffeescript compilation by running `coffee -cwo lib coffee`, if you have installed coffeescript.
+#
+
+guard 'coffeescript', :input => 'coffee', :output => 'lib'

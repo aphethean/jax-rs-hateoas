@@ -1,0 +1,129 @@
+<html>
+<head>
+    <title>Generic HATEOAS client</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+
+    <link rel="stylesheet" href="style/hateoas.css">
+</head>
+<body>
+    <div id="hateoas">
+
+        <div id="entry-point-wrapper">
+            <div class="header">
+                <span class="title">Entry point</span>
+            </div>
+            <div class="horizontal-nav">
+                <ol class="nav-bar">
+                    <li class="nav-bar-item"><a href="/">books-GET</a></li>
+                    <li class="nav-bar-item"><a href="/">customers-GET</a></li>
+                    <li class="nav-bar-item"><a href="/">loans-GET</a></li>
+                </ol>
+            </div>
+        </div>
+
+
+        <div id="resource-wrapper">
+            <div class="header">
+                <span class="title">Collection info</span>
+                <div class="property-list">
+                    <p><label>url</label><span>http://localhost:8080/api/library/books</span></p>
+                    <p><label>method</label><span>GET</span></p>
+                    <p><label>content-type</label><span>application/json</span></p>
+                    <p><label>status</label><span>200</span></p>
+                </div>
+            </div>
+            <div class="horizontal-nav">
+                <ol class="nav-bar">
+                    <li class="nav-bar-item"><a href="/">self-GET</a></li>
+                    <li class="nav-bar-item"><a href="/">self-POST</a></li>
+                    <li class="nav-bar-item right"><a href="/">view json</a></li>
+                </ol>
+            </div>
+
+            <div id="resource-data-w">
+
+                <div class="resource">
+                    <div class="resource-property-list">
+                        <p><label>id</label><span>0</span></p>
+                        <p><label>author</label><span>Dustin Hoffman</span></p>
+                        <p><label>title</label><span>About time to write a book</span></p>
+                    </div>
+                    <div class="resource-links">
+                        <div class="vertical-nav">
+                            <ol class="nav-bar">
+                                <li class="nav-bar-item"><a href="/">self-GET</a></li>
+                                <li class="nav-bar-item"><a href="/">book-GET</a></li>
+                                <li class="nav-bar-item"><a href="/">customer-GET</a></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="resource-data">
+                <ol class="collection-rows">
+                    <li>
+                        <div class="resource">
+                            <div class="resource-property-list">
+                                <p><label>id</label><span>0</span></p>
+                                <p><label>author</label><span>Dustin Hoffman</span></p>
+                                <p><label>title</label><span>About time to write a book</span></p>
+                            </div>
+                            <div class="resource-links">
+                                <div class="vertical-nav">
+                                    <ol class="nav-bar">
+                                        <li class="nav-bar-item"><a href="/">self-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">book-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">customer-GET</a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="resource">
+                            <div class="resource-property-list">
+                                <p><label>id</label><span>0</span></p>
+                                <p><label>author</label><span>Dustin Hoffman</span></p>
+                                <p><label>title</label><span>About time to write a book</span></p>
+                            </div>
+                            <div class="resource-links">
+                                <div class="vertical-nav">
+                                    <ol class="nav-bar">
+                                        <li class="nav-bar-item"><a href="/">self-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">book-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">customer-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">customer-GET</a></li>
+                                        <li class="nav-bar-item"><a href="/">customer-GET</a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="resource">
+                            <div class="resource-property-list">
+                                <p><label>id</label><span>0</span></p>
+                                <p><label>author</label><span>Dustin Hoffman</span></p>
+                                <p><label>title</label><span>About time to write a book</span></p>
+                            </div>
+                            <div class="resource-links">
+                                <div class="vertical-nav">
+                                    <ol class="nav-bar">
+                                        <li class="nav-bar-item"><a href="/">self-GET</a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
