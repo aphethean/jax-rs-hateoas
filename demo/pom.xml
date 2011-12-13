@@ -29,6 +29,7 @@
     <modules>
         <module>demo-domain</module>
         <module>generic-javascript-client</module>
+        <module>demo-base</module>
         <module>demo-jersey</module>
         <module>demo-spring</module>
     </modules>
