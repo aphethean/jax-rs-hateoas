@@ -43,9 +43,8 @@ public class BookResource {
    	@GET
    	@Produces("application/vnd.demo.library.list.book+json")
    	public Response getAllBooks() {
-   		return Response.ok(
-                   BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
-   				.build();
+   		return Response.ok(BookListDto.fromBeanCollection(bookRepository.getAllBooks()))
+                          .build();
    	}
 
    	@POST
