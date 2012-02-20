@@ -19,6 +19,7 @@ import com.jayway.jaxrs.hateoas.CollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.HateoasContextProvider;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.core.HateoasConfigurationFactory;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
@@ -38,15 +39,11 @@ import java.util.Set;
  * hypermedia capability to a Spring/Jersey application.
  *
  * @author Mattias Hellborg Arthursson
+ * @author Kalle Stenflo
  */
 public class SpringHateoasServlet extends SpringServlet {
 
     private final static Logger logger = LoggerFactory.getLogger(SpringHateoasServlet.class);
-
-    public final static String PROPERTY_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.property.LinkInjector";
-    public final static String PROPERTY_COLLECTION_WRAPPER_STRATEGY = "com.jayway.jaxrs.hateoas.property" +
-            ".CollectionWrapperStrategy";
-    public final static String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.property.Verbosity";
 
     @Override
     protected ResourceConfig getDefaultResourceConfig(Map<String, Object> props,
@@ -63,56 +60,11 @@ public class SpringHateoasServlet extends SpringServlet {
             HateoasContextProvider.getDefaultContext().mapClass(clazz);
         }
 
-        HateoasResponseBuilder.configure(getLinkInjector(rc), getCollectionWrapperStrategy(rc));
-        HateoasVerbosity.setDefaultVerbosity(getVerbosity(rc));
-    }
+        HateoasLinkInjector<Object> linkInjector = HateoasConfigurationFactory.createLinkInjector(rc.getProperties());
+        CollectionWrapperStrategy collectionWrapperStrategy = HateoasConfigurationFactory.createCollectionWrapperStrategy(rc.getProperties());
+        HateoasVerbosity verbosity = HateoasConfigurationFactory.createVerbosity(rc.getProperties());
 
-    @SuppressWarnings("unchecked")
-    private HateoasLinkInjector<Object> getLinkInjector(ResourceConfig rc) {
-        HateoasLinkInjector<Object> linkInjector = null;
-
-        Object linkInjectorProperty = rc.getProperty(PROPERTY_LINK_INJECTOR);
-        if (linkInjectorProperty == null) {
-            logger.info("Using default LinkInjcetor");
-            linkInjector = new JavassistHateoasLinkInjector();
-        } else {
-            logger.info("Using {} as LinkInjector", linkInjectorProperty);
-            try {
-                linkInjector = (HateoasLinkInjector<Object>)
-                        Class.forName((String) linkInjectorProperty).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to instantiate " + linkInjector);
-            }
-        }
-
-        return linkInjector;
-    }
-
-    private HateoasVerbosity getVerbosity(ResourceConfig rc) {
-        Object hateoasVerbosity = rc.getProperty(PROPERTY_HATEOAS_VERBOSITY);
-
-        if (hateoasVerbosity != null) {
-            logger.info("Using Verbosity: {}", hateoasVerbosity);
-            return HateoasVerbosity.valueOf((String) hateoasVerbosity);
-        } else {
-            logger.info("Using default verbosity");
-            return HateoasVerbosity.MAXIMUM;
-        }
-    }
-
-    private CollectionWrapperStrategy getCollectionWrapperStrategy(ResourceConfig rc) {
-        Object propertyValue = rc.getProperty(PROPERTY_COLLECTION_WRAPPER_STRATEGY);
-
-        if (propertyValue == null) {
-            logger.info("Using default CollectionWrapperStrategy");
-            return new DefaultCollectionWrapperStrategy();
-        } else {
-            logger.info("Using {} as LinkInjector", propertyValue);
-            try {
-                return (CollectionWrapperStrategy) Class.forName((String) propertyValue).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to instantiate " + propertyValue);
-            }
-        }
+        HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy);
+        HateoasVerbosity.setDefaultVerbosity(verbosity);
     }
 }
