@@ -17,12 +17,12 @@
 
     <groupId>com.jayway.jax-rs-hateoas</groupId>
     <artifactId>jax-rs-hateoas-core</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
+    <version>0.4.2</version>
     <packaging>jar</packaging>
     <parent>
         <groupId>com.jayway.jax-rs-hateoas</groupId>
         <artifactId>jax-rs-hateoas-parent</artifactId>
-        <version>0.4.2-SNAPSHOT</version>
+        <version>0.4.2</version>
     </parent>
 
     <name>jax-rs-hateoas-core</name>
