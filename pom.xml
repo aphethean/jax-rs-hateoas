@@ -30,7 +30,7 @@
     <artifactId>jax-rs-hateoas-parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>0.4.2</version>
+    <version>0.5-SNAPSHOT</version>
     <name>jax-rs-hateoas build root</name>
 
     <issueManagement>
