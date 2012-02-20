@@ -59,8 +59,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 		}
 
 		if (ReflectionUtils.hasField(entity, "links")) {
-			return reflectionBasedDelegate
-					.injectLinks(entity, linkProducer, verbosity);
+			return reflectionBasedDelegate.injectLinks(entity, linkProducer, verbosity);
 		}
 
 		String newClassName = entity.getClass().getPackage().getName() + "."
@@ -71,21 +70,16 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 			synchronized (this) {
 				try {
 					CtClass newClass = CLASS_POOL.makeClass(newClassName);
-					newClass.setSuperclass(CLASS_POOL.get(entity.getClass()
-							.getName()));
-					CtConstructor ctConstructor = new CtConstructor(
-							new CtClass[0], newClass);
+					newClass.setSuperclass(CLASS_POOL.get(entity.getClass().getName()));
+					CtConstructor ctConstructor = new CtConstructor(new CtClass[0], newClass);
 					ctConstructor.setBody("super();");
 					newClass.addConstructor(ctConstructor);
 
-					CtField newField = CtField.make(
-							"public java.util.Collection links;", newClass);
+					CtField newField = CtField.make("public java.util.Collection links;", newClass);
 					newClass.addField(newField);
 
-					URLClassLoader classLoader = new URLClassLoader(new URL[0],
-							this.getClass().getClassLoader());
-					clazz = newClass.toClass(classLoader, this.getClass()
-							.getProtectionDomain());
+					URLClassLoader classLoader = new URLClassLoader(new URL[0], this.getClass().getClassLoader());
+					clazz = newClass.toClass(classLoader, this.getClass().getProtectionDomain());
 
 					transformedClasses.put(newClassName, clazz);
 				} catch (Exception e) {

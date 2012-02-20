@@ -33,8 +33,18 @@ public class HateoasVerbosityTest {
     }
 
     @Test
-    public void verifyValueOfWithMultipleOptions() {
+    public void verifyValueOfWithMultipleCommaSeparatedOptions() {
         HateoasVerbosity verbosity = HateoasVerbosity.valueOf("REL, METHOD, CONSUMES");
+        HateoasOption[] options = verbosity.getOptions();
+        assertEquals(3, options.length);
+        assertEquals(HateoasOption.REL, options[0]);
+        assertEquals(HateoasOption.METHOD, options[1]);
+        assertEquals(HateoasOption.CONSUMES, options[2]);
+    }
+
+    @Test
+    public void verifyValueOfWithMultipleSemicolonSeparatesOptions() {
+        HateoasVerbosity verbosity = HateoasVerbosity.valueOf("REL;METHOD;CONSUMES");
         HateoasOption[] options = verbosity.getOptions();
         assertEquals(3, options.length);
         assertEquals(HateoasOption.REL, options[0]);

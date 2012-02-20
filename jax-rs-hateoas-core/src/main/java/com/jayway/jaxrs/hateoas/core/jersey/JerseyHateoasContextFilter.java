@@ -37,19 +37,15 @@ public class JerseyHateoasContextFilter implements ContainerRequestFilter, Conta
 
     @Override
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
-
-        log.debug("container response filter");
-
-
         return response;
     }
 
     @Override
     public ContainerRequest filter(final ContainerRequest request) {
-
-        log.debug("container request filter");
-        log.debug("request.getAbsolutePath : " + request.getAbsolutePath());
-        log.debug("request.getBaseUri : " + request.getBaseUri());
+        if(log.isDebugEnabled()){
+            log.debug("request.getAbsolutePath : " + request.getAbsolutePath());
+            log.debug("request.getBaseUri : " + request.getBaseUri());
+        }
 
         RequestContext.clearRequestContext();
 

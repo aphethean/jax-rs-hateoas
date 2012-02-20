@@ -14,39 +14,74 @@
   -->
 
 <!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-	<display-name>JAX-RS HATEOAS Jersey</display-name>
-    <!--
-	<filter>
-		<filter-name>RequestContextFilter</filter-name>
-		<filter-class>com.jayway.jaxrs.hateoas.web.RequestContextFilter</filter-class>
-	</filter>
+    <display-name>JAX-RS HATEOAS Jersey</display-name>
 
-	<filter-mapping>
-		<filter-name>RequestContextFilter</filter-name>
-		<url-pattern>/api/*</url-pattern>
-	</filter-mapping>
-    -->
-	<servlet>
-		<servlet-name>Hateoas</servlet-name>
-		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-		<init-param>
-			<param-name>javax.ws.rs.Application</param-name>
-			<param-value>com.jayway.demo.library.rest.application.hateoas.LibraryApplication</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+    <servlet>
+        <servlet-name>Hateoas</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.jayway.demo.library.rest.application.hateoas.LibraryApplication</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.config.feature.logging.DisableEntitylogging</param-name>
+            <param-value>true</param-value>
+        </init-param>
 
 
-	<servlet-mapping>
-		<servlet-name>Hateoas</servlet-name>
-		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.jayway.demo.library.rest.resources.hateoas</param-value>
+            <description>REST resource package</description>
+        </init-param>
+
+        <!--
+           Configure HATEOAS. Note that all the HATEOAS configurations are optional. The configuration
+           below mirrors the default values used if no config is provided.
+
+           For details see com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasApplication
+          -->
+        <init-param>
+            <param-name>com.jayway.jaxrs.hateoas.verbosity</param-name>
+            <param-value>GENERIC_CLIENT</param-value>
+            <!--
+            The configuration above is a shortcut (named configuration), equivalent
+            to the detailed configuration below.
+
+            <param-value>REL, HREF, CONSUMES, METHOD, TEMPLATE</param-value>
+            -->
+        </init-param>
+        <init-param>
+            <param-name>com.jayway.jaxrs.hateoas.linkInjector</param-name>
+            <param-value>com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.jayway.jaxrs.hateoas.collectionWrapperStrategy</param-name>
+            <param-value>com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>Hateoas</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
 </web-app>

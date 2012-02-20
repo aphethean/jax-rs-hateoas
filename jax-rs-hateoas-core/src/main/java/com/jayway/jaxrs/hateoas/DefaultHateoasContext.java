@@ -29,137 +29,154 @@ import java.util.Set;
 /**
  * Default implementation of {@link HateoasContext}. Not intended for external use. This class is configured by the
  * Application classes in the core package.
-
+ *
  * @author Mattias Hellborg Arthursson
  * @author Kalle Stenflo
  */
 public class DefaultHateoasContext implements HateoasContext {
 
-	private static final String[] DEFAULT_MEDIA_TYPE = { "*/*" };
+    private static final String[] DEFAULT_MEDIA_TYPE = {"*/*"};
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(DefaultHateoasContext.class);
+    private final static Logger logger = LoggerFactory
+            .getLogger(DefaultHateoasContext.class);
 
-	private final Map<String, LinkableInfo> linkableMapping = new LinkedHashMap<String, LinkableInfo>();
+    private final Map<String, LinkableInfo> linkableMapping = new LinkedHashMap<String, LinkableInfo>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.jayway.jaxrs.hateoas.HateoasContext#mapClass(java.lang.Class)
-	 */
-	@Override
-	public void mapClass(Class<?> clazz) {
-		if (clazz.isAnnotationPresent(Path.class)) {
-			logger.info("Mapping class {}", clazz);
+    /*
+      * (non-Javadoc)
+      * 
+      * @see com.jayway.jaxrs.hateoas.HateoasContext#mapClass(java.lang.Class)
+      */
+    @Override
+    public void mapClass(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(Path.class)) {
+            String rootPath = clazz.getAnnotation(Path.class).value();
+            mapClass(clazz, rootPath);
+        } else {
+            logger.debug("Class {} is not annotated with @Path", clazz);
+        }
+    }
 
-			String rootPath = clazz.getAnnotation(Path.class).value();
-			if (rootPath.endsWith("/")) {
-				rootPath = StringUtils.removeEnd(rootPath, "/");
-			}
+    /*
+      * (non-Javadoc)
+      * 
+      * @see
+      * com.jayway.jaxrs.hateoas.HateoasContext#getLinkableInfo(java.lang.String)
+      */
+    @Override
+    public LinkableInfo getLinkableInfo(String link) {
+        LinkableInfo linkableInfo = linkableMapping.get(link);
+        Validate.notNull(linkableInfo, "Invalid link: " + link);
 
-			Method[] methods = clazz.getMethods();
-			for (Method method : methods) {
-				mapMethod(clazz, rootPath, method);
-			}
+        return linkableInfo;
+    }
 
-		} else {
-			logger.debug("Class {} is not annotated with @Path", clazz);
-		}
-	}
+    private void mapClass(Class<?> clazz, String path) {
+        logger.info("Mapping class {}", clazz);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.jayway.jaxrs.hateoas.HateoasContext#getLinkableInfo(java.lang.String)
-	 */
-	@Override
-	public LinkableInfo getLinkableInfo(String link) {
-		LinkableInfo linkableInfo = linkableMapping.get(link);
-		Validate.notNull(linkableInfo, "Invalid link: " + link);
+        if (path.endsWith("/")) {
+            path = StringUtils.removeEnd(path, "/");
+        }
 
-		return linkableInfo;
-	}
+        Method[] methods = clazz.getMethods();
+        for (Method method : methods) {
+            if (!method.getDeclaringClass().equals(Object.class)) {
+                mapMethod(clazz, path, method);
+            }
+        }
+    }
 
-	private void mapMethod(Class<?> clazz, String rootPath, Method method) {
-		String httpMethod = findHttpMethod(method);
+    private void mapMethod(Class<?> clazz, String rootPath, Method method) {
+        String httpMethod = findHttpMethod(method);
 
-		if (httpMethod != null) {
-			String path = getPath(rootPath, method);
-			String[] consumes = getConsumes(method);
-			String[] produces = getProduces(method);
+        if (httpMethod != null) {
+            String path = getPath(rootPath, method);
+            String[] consumes = getConsumes(method);
+            String[] produces = getProduces(method);
 
-			if (method.isAnnotationPresent(Linkable.class)) {
-				Linkable linkAnnotation = method.getAnnotation(Linkable.class);
-				String id = linkAnnotation.value();
-				if (linkableMapping.containsKey(id)) {
-					throw new IllegalArgumentException("Id '" + id
-							+ "' mapped in class " + clazz
-							+ " is already mapped from another class");
-				}
-				LinkableInfo linkableInfo = new LinkableInfo(id, path,
-                                                             httpMethod, consumes, produces,
-						linkAnnotation.label(), linkAnnotation.description(),
-						linkAnnotation.templateClass());
-				linkableMapping.put(id, linkableInfo);
-			} else {
-				logger.warn("Method {} is missing Linkable annotation", method);
-			}
-		}
-	}
+            if (method.isAnnotationPresent(Linkable.class)) {
+                Linkable linkAnnotation = method.getAnnotation(Linkable.class);
+                String id = linkAnnotation.value();
+                if (linkableMapping.containsKey(id)) {
+                    throw new IllegalArgumentException("Id '" + id
+                            + "' mapped in class " + clazz
+                            + " is already mapped from another class");
+                }
+                LinkableInfo linkableInfo = new LinkableInfo(id, path,
+                        httpMethod, consumes, produces,
+                        linkAnnotation.label(), linkAnnotation.description(),
+                        linkAnnotation.templateClass());
+                linkableMapping.put(id, linkableInfo);
+            } else {
+                logger.warn("Method {} is missing Linkable annotation", method);
+            }
+        } else {
+            //this might be a sub resource method
+            if (method.isAnnotationPresent(Path.class)) {
+                String path = method.getAnnotation(Path.class).value();
+                if (path.endsWith("/")) {
+                    path = StringUtils.removeEnd(path, "/");
+                }
 
-	private String[] getConsumes(Method method) {
-		if (method.isAnnotationPresent(Consumes.class)) {
-			return method.getAnnotation(Consumes.class).value();
-		}
+                Class<?> subResourceType = method.getReturnType();
 
-		return DEFAULT_MEDIA_TYPE;
-	}
+                mapClass(subResourceType, rootPath + path);
+            }
+        }
+    }
 
-	private String[] getProduces(Method method) {
-		if (method.isAnnotationPresent(Produces.class)) {
-			return method.getAnnotation(Produces.class).value();
-		}
+    private String[] getConsumes(Method method) {
+        if (method.isAnnotationPresent(Consumes.class)) {
+            return method.getAnnotation(Consumes.class).value();
+        }
 
-		return DEFAULT_MEDIA_TYPE;
-	}
+        return DEFAULT_MEDIA_TYPE;
+    }
 
-	private String getPath(String rootPath, Method method) {
-		if (method.isAnnotationPresent(Path.class)) {
-			Path pathAnnotation = method.getAnnotation(Path.class);
-			return rootPath + pathAnnotation.value();
-		}
+    private String[] getProduces(Method method) {
+        if (method.isAnnotationPresent(Produces.class)) {
+            return method.getAnnotation(Produces.class).value();
+        }
 
-		return rootPath.isEmpty() ? "/" : rootPath;
-	}
+        return DEFAULT_MEDIA_TYPE;
+    }
 
-	private String findHttpMethod(Method method) {
-		if (method.isAnnotationPresent(GET.class)) {
-			return HttpMethod.GET;
-		}
-		if (method.isAnnotationPresent(POST.class)) {
-			return HttpMethod.POST;
-		}
-		if (method.isAnnotationPresent(PUT.class)) {
-			return HttpMethod.PUT;
-		}
-		if (method.isAnnotationPresent(DELETE.class)) {
-			return HttpMethod.DELETE;
-		}
-		if (method.isAnnotationPresent(OPTIONS.class)) {
-			return HttpMethod.OPTIONS;
-		}
-		return null;
-	}
+    private String getPath(String rootPath, Method method) {
+        if (method.isAnnotationPresent(Path.class)) {
+            Path pathAnnotation = method.getAnnotation(Path.class);
+            return rootPath + pathAnnotation.value();
+        }
 
-	@Override
-	public String toString() {
-		Set<Entry<String, LinkableInfo>> entrySet = linkableMapping.entrySet();
-		StringBuilder sb = new StringBuilder();
-		for (Entry<String, LinkableInfo> relInfo : entrySet) {
-			sb.append(relInfo.toString()).append("<br/>");
-		}
+        return rootPath.isEmpty() ? "/" : rootPath;
+    }
 
-		return sb.toString();
-	}
+    private String findHttpMethod(Method method) {
+        if (method.isAnnotationPresent(GET.class)) {
+            return HttpMethod.GET;
+        }
+        if (method.isAnnotationPresent(POST.class)) {
+            return HttpMethod.POST;
+        }
+        if (method.isAnnotationPresent(PUT.class)) {
+            return HttpMethod.PUT;
+        }
+        if (method.isAnnotationPresent(DELETE.class)) {
+            return HttpMethod.DELETE;
+        }
+        if (method.isAnnotationPresent(OPTIONS.class)) {
+            return HttpMethod.OPTIONS;
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        Set<Entry<String, LinkableInfo>> entrySet = linkableMapping.entrySet();
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, LinkableInfo> relInfo : entrySet) {
+            sb.append(relInfo.toString()).append("<br/>");
+        }
+
+        return sb.toString();
+    }
 }
