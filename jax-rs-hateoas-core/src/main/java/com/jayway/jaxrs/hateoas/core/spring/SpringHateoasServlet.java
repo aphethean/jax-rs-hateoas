@@ -21,8 +21,6 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasConfigurationFactory;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
-import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
-import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.WebConfig;

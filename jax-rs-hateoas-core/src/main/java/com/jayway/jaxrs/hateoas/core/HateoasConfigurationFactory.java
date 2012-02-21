@@ -61,7 +61,7 @@ public class HateoasConfigurationFactory {
 
         Object linkInjectorProperty = props.get(PROPERTY_HATEOAS_LINK_INJECTOR);
         if (linkInjectorProperty == null) {
-            logger.info("Using default LinkInjcetor");
+            logger.info("Using default LinkInjector");
             linkInjector = new JavassistHateoasLinkInjector();
         } else {
             logger.info("Using {} as LinkInjector", linkInjectorProperty);
