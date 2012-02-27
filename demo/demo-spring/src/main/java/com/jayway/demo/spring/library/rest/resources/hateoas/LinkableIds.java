@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.jayway.demo.library.rest.resources.hateoas;
+package com.jayway.demo.spring.library.rest.resources.hateoas;
 
 public class LinkableIds {
 

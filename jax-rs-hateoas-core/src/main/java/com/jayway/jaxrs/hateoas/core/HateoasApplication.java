@@ -20,6 +20,7 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
 import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
+import com.jayway.jaxrs.hateoas.support.DefaultHateoasViewFactory;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
 
 import javax.ws.rs.core.Application;
@@ -49,7 +50,7 @@ public class HateoasApplication extends Application {
 			HateoasContextProvider.getDefaultContext().mapClass(clazz);
 		}
 
-		HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy);
+		HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy, new DefaultHateoasViewFactory());
         HateoasVerbosity.setDefaultVerbosity(verbosity);
 	}
 }

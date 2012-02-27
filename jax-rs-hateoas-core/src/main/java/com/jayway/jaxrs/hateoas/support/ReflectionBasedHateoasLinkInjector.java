@@ -60,14 +60,20 @@ public class ReflectionBasedHateoasLinkInjector implements HateoasLinkInjector<O
 		this.linksFieldName = linksFieldName;
 	}
 
-	@SuppressWarnings({ "unchecked" })
+    @Override
+    public boolean canInject(Object entity) {
+        return ReflectionUtils.hasFieldHierarchical(entity, linksFieldName);
+    }
+
+    @SuppressWarnings({ "unchecked" })
 	@Override
 	public Object injectLinks(Object entity, LinkProducer<Object> linkProducer,
 			final HateoasVerbosity verbosity) {
 		try {
-			Field field = ReflectionUtils.getField(entity, linksFieldName);
+			Field field = ReflectionUtils.getFieldHierarchical(entity.getClass(), linksFieldName);
 
 			if (Collection.class.isAssignableFrom(field.getType())) {
+
 				field.set(entity, Collections2.transform(linkProducer.getLinks(entity),
 						new Function<HateoasLink, Map<String, Object>>() {
 							@Override

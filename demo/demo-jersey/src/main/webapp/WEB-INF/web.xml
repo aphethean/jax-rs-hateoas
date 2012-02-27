@@ -68,11 +68,11 @@
             -->
         </init-param>
         <init-param>
-            <param-name>com.jayway.jaxrs.hateoas.linkInjector</param-name>
+            <param-name>com.jayway.jaxrs.hateoas.HateoasLinkInjector</param-name>
             <param-value>com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector</param-value>
         </init-param>
         <init-param>
-            <param-name>com.jayway.jaxrs.hateoas.collectionWrapperStrategy</param-name>
+            <param-name>com.jayway.jaxrs.hateoas.CollectionWrapperStrategy</param-name>
             <param-value>com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy</param-value>
         </init-param>
 

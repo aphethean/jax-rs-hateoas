@@ -20,6 +20,7 @@ import com.jayway.jaxrs.hateoas.support.AtomRels;
 import com.jayway.jaxrs.hateoas.support.FieldPath;
 import com.jayway.jaxrs.hateoas.support.ReflectionUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
+import com.sun.jersey.api.view.Viewable;
 import com.sun.jersey.core.header.OutBoundHeaders;
 import com.sun.jersey.core.spi.factory.ResponseImpl;
 
@@ -125,11 +126,10 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     @SuppressWarnings("unchecked")
     public HateoasResponse build() {
-        HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder
-                .getLinkInjector();
+        HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder.getLinkInjector();
+
         CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
-        HateoasVerbosity verbosity = HateoasVerbosity
-                .valueOf(RequestContext.getRequestContext().getVerbosityHeader());
+        HateoasVerbosity verbosity = HateoasVerbosity.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
 
         Object newEntity = entity;
         if (entity != null) {
@@ -145,6 +145,31 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
         final HateoasResponse r = new HateoasResponseImpl(statusType,
                                                           getHeaders(), newEntity, entityType);
+        reset();
+        return r;
+    }
+
+    public HateoasResponse render(String template){
+        HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder.getLinkInjector();
+
+        CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
+        HateoasVerbosity verbosity = HateoasVerbosity.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
+
+        Object newEntity = entity;
+        if (entity != null) {
+            if (Collection.class.isAssignableFrom(entity.getClass())) {
+                newEntity = collectionWrapperStrategy.wrapRootCollection((Collection<Object>) entity);
+            }
+
+            Set<Entry<FieldPath,ChainedLinkProducer>> entries = linkMappings.entrySet();
+            for (Entry<FieldPath, ChainedLinkProducer> entry : entries) {
+                Object oldEntity = newEntity;
+                newEntity = entry.getKey().injectLinks(newEntity, linkInjector, entry.getValue(), verbosity);
+                Object postEntity = newEntity;
+            }
+        }
+
+        final HateoasResponse r = new HateoasResponseImpl(statusType, getHeaders(), HateoasResponseBuilder.getViewFactory().createView(template, newEntity), entityType);
         reset();
         return r;
     }
@@ -369,7 +394,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
             LinkedList<Object> argumentList = new LinkedList<Object>();
 
             for (String fieldName : entityFields) {
-                Object fieldValue = ReflectionUtils.getFieldValue(entity, fieldName);
+                Object fieldValue = ReflectionUtils.getFieldValueHierarchical(entity, fieldName);
                 argumentList.add(fieldValue);
             }
 

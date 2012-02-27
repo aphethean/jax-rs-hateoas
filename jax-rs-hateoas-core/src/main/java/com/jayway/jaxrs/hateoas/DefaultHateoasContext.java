@@ -21,10 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Default implementation of {@link HateoasContext}. Not intended for external use. This class is configured by the
@@ -35,6 +39,8 @@ import java.util.Set;
  */
 public class DefaultHateoasContext implements HateoasContext {
 
+    private static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
+
     private static final String[] DEFAULT_MEDIA_TYPE = {"*/*"};
 
     private final static Logger logger = LoggerFactory
@@ -42,9 +48,11 @@ public class DefaultHateoasContext implements HateoasContext {
 
     private final Map<String, LinkableInfo> linkableMapping = new LinkedHashMap<String, LinkableInfo>();
 
+    private final Set<Class<?>> initializedClasses = new HashSet<Class<?>>();
+
     /*
       * (non-Javadoc)
-      * 
+      *
       * @see com.jayway.jaxrs.hateoas.HateoasContext#mapClass(java.lang.Class)
       */
     @Override
@@ -72,17 +80,23 @@ public class DefaultHateoasContext implements HateoasContext {
     }
 
     private void mapClass(Class<?> clazz, String path) {
-        logger.info("Mapping class {}", clazz);
 
-        if (path.endsWith("/")) {
-            path = StringUtils.removeEnd(path, "/");
-        }
 
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-            if (!method.getDeclaringClass().equals(Object.class)) {
-                mapMethod(clazz, path, method);
+        if (!isInitialized(clazz)) {
+            logger.info("Mapping class {}", clazz);
+
+            if (path.endsWith("/")) {
+                path = StringUtils.removeEnd(path, "/");
             }
+
+            Method[] methods = clazz.getMethods();
+            for (Method method : methods) {
+                if (!method.getDeclaringClass().equals(Object.class)) {
+                    mapMethod(clazz, path, method);
+                }
+            }
+        } else {
+            logger.info("Class {} already mapped. Skipped mapping.", clazz);
         }
     }
 
@@ -178,5 +192,38 @@ public class DefaultHateoasContext implements HateoasContext {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Checks if the specified class has been registered. If not add the class to the set mapping
+     * registred classes.
+     *
+     * @param clazz the class to check
+     * @return <code>true</code> if the class has already been registered,
+     *         <code>false</code> otherwise.
+     */
+    public boolean isInitialized(Class<?> clazz) {
+        Lock readLock = LOCK.readLock();
+        try {
+            readLock.lock();
+            if (initializedClasses.contains(clazz)) {
+                return true;
+            }
+        } finally {
+            readLock.unlock();
+        }
+
+        Lock writeLock = LOCK.writeLock();
+        try {
+            writeLock.lock();
+            if (!initializedClasses.contains(clazz)) { // check again - things might have changed
+                initializedClasses.add(clazz);
+                return false;
+            }
+        } finally {
+            writeLock.unlock();
+        }
+
+        return true;
     }
 }

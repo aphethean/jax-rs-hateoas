@@ -19,17 +19,7 @@
 
 <web-app>
 	<display-name>JAX-RS HATEOAS Jersey</display-name>
-    <!--
-	<filter>
-		<filter-name>RequestContextFilter</filter-name>
-		<filter-class>com.jayway.jaxrs.hateoas.web.RequestContextFilter</filter-class>
-	</filter>
 
-	<filter-mapping>
-		<filter-name>RequestContextFilter</filter-name>
-		<url-pattern>/api/*</url-pattern>
-	</filter-mapping>
-    -->
 	<servlet>
 		<servlet-name>Hateoas</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
@@ -41,6 +31,11 @@
 			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
 			<param-value>true</param-value>
 		</init-param>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.jayway.demo.library.rest.resources.hateoas</param-value>
+            <description>REST resource package</description>
+        </init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

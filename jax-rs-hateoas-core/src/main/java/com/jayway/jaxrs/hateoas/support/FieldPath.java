@@ -117,8 +117,11 @@ public class FieldPath implements Iterable<String> {
         } else {
             nextResult = injectLinks(pathIterator, nextTarget, injector, linkProducer, verbosity);
         }
+        ReflectionUtils.setFieldAccessible(currentField);
 
-        currentField.set(currentTarget, nextResult);
+
+        ReflectionUtils.setField(currentTarget, currentField.getName(), nextResult);
+
 
         return currentTarget;
     }

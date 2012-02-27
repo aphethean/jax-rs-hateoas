@@ -15,21 +15,19 @@
 
 package com.jayway.jaxrs.hateoas.core.spring;
 
-import com.jayway.jaxrs.hateoas.CollectionWrapperStrategy;
-import com.jayway.jaxrs.hateoas.HateoasContextProvider;
-import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.*;
 import com.jayway.jaxrs.hateoas.core.HateoasConfigurationFactory;
 import com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder;
+import com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasContextFilter;
+import com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasViewFactory;
 import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.spi.container.ContainerRequestFilter;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 import com.sun.jersey.spi.container.WebApplication;
-import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,14 +41,15 @@ public class SpringHateoasServlet extends SpringServlet {
 
     private final static Logger logger = LoggerFactory.getLogger(SpringHateoasServlet.class);
 
-    @Override
-    protected ResourceConfig getDefaultResourceConfig(Map<String, Object> props,
-                                                      WebConfig webConfig) throws ServletException {
-        return new DefaultSpringResourceConfig();
-    }
+
+    private final static JerseyHateoasContextFilter HATEOAS_CONTEXT_FILTER = new JerseyHateoasContextFilter();
+
 
     @Override
     protected void initiate(ResourceConfig rc, WebApplication wa) {
+        addHateoasRequestFilterIfApplicable(rc);
+        addHateoasResponseFilterIfApplicable(rc);
+
         super.initiate(rc, wa);
 
         Set<Class<?>> allClasses = rc.getRootResourceClasses();
@@ -61,8 +60,59 @@ public class SpringHateoasServlet extends SpringServlet {
         HateoasLinkInjector<Object> linkInjector = HateoasConfigurationFactory.createLinkInjector(rc.getProperties());
         CollectionWrapperStrategy collectionWrapperStrategy = HateoasConfigurationFactory.createCollectionWrapperStrategy(rc.getProperties());
         HateoasVerbosity verbosity = HateoasConfigurationFactory.createVerbosity(rc.getProperties());
+        HateoasViewFactory viewFactory = HateoasConfigurationFactory.createHateoasViewFactory(rc.getProperties(), JerseyHateoasViewFactory.class.getName());
 
-        HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy);
+        HateoasResponseBuilder.configure(linkInjector, collectionWrapperStrategy, viewFactory);
         HateoasVerbosity.setDefaultVerbosity(verbosity);
     }
+
+
+    private void addHateoasRequestFilterIfApplicable(ResourceConfig rc) {
+        if (!rc.getContainerRequestFilters().contains(HATEOAS_CONTEXT_FILTER)) {
+            boolean found = false;
+            for (Object f : rc.getContainerRequestFilters()) {
+                if (f instanceof String) {
+                    String filterString = (String) f;
+                    if (filterString.contains(HATEOAS_CONTEXT_FILTER.getClass().getName())) {
+                        found = true;
+                        break;
+                    }
+                } else if (f instanceof ContainerRequestFilter) {
+                    ContainerRequestFilter r = (ContainerRequestFilter) f;
+                    if (HATEOAS_CONTEXT_FILTER.equals(r)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(!found){
+                rc.getContainerRequestFilters().add(HATEOAS_CONTEXT_FILTER);
+            }
+        }
+    }
+
+    private void addHateoasResponseFilterIfApplicable(ResourceConfig rc) {
+        if (!rc.getContainerResponseFilters().contains(HATEOAS_CONTEXT_FILTER)) {
+            boolean found = false;
+            for (Object f : rc.getContainerResponseFilters()) {
+                if (f instanceof String) {
+                    String filterString = (String) f;
+                    if (filterString.contains(HATEOAS_CONTEXT_FILTER.getClass().getName())) {
+                        found = true;
+                        break;
+                    }
+                } else if (f instanceof ContainerResponseFilter) {
+                    ContainerResponseFilter r = (ContainerResponseFilter) f;
+                    if (HATEOAS_CONTEXT_FILTER.equals(r)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(!found){
+                rc.getContainerResponseFilters().add(HATEOAS_CONTEXT_FILTER);
+            }
+        }
+    }
+
 }

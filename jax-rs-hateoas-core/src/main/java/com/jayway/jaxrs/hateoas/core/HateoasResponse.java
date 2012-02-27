@@ -44,7 +44,7 @@ public abstract class HateoasResponse extends Response {
 	 * MessageBodyWriter for either the class of the entity or, in the case of
 	 * {@link javax.ws.rs.core.GenericEntity}, the value of
 	 * {@link javax.ws.rs.core.GenericEntity#getRawType()}.
-	 * 
+	 *
 	 * @return an object instance or null if there is no entity
 	 * @see javax.ws.rs.ext.MessageBodyWriter
 	 */
@@ -52,7 +52,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Get the status code associated with the response.
-	 * 
+	 *
 	 * @return the response status code or -1 if the status was not set.
 	 */
 	public abstract int getStatus();
@@ -65,7 +65,7 @@ public abstract class HateoasResponse extends Response {
 	 * {@link javax.ws.rs.ext.RuntimeDelegate#createHeaderDelegate(java.lang.Class)}
 	 * for the class of the value or using the values {@code toString} method if
 	 * a header delegate is not available.
-	 * 
+	 *
 	 * @return response metadata as a map
 	 */
 	public abstract MultivaluedMap<String, Object> getMetadata();
@@ -75,7 +75,7 @@ public abstract class HateoasResponse extends Response {
 	 * Response. The returned builder has its own metadata map but entries are
 	 * simply references to the keys and values contained in the supplied
 	 * Response metadata map.
-	 * 
+	 *
 	 * @param response
 	 *            a Response from which the status code, entity and metadata
 	 *            will be copied
@@ -95,7 +95,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with the supplied status.
-	 * 
+	 *
 	 * @param status
 	 *            the response status
 	 * @return a new ResponseBuilder
@@ -110,7 +110,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with the supplied status.
-	 * 
+	 *
 	 * @param status
 	 *            the response status
 	 * @return a new ResponseBuilder
@@ -123,7 +123,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with the supplied status.
-	 * 
+	 *
 	 * @param status
 	 *            the response status
 	 * @return a new ResponseBuilder
@@ -138,7 +138,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with an OK status.
-	 * 
+	 *
 	 * @return a new ResponseBuilder
 	 */
 	public static HateoasResponseBuilder ok() {
@@ -151,7 +151,7 @@ public abstract class HateoasResponse extends Response {
 	 * callers responsibility to wrap the actual entity with
 	 * {@link javax.ws.rs.core.GenericEntity} if preservation of its generic
 	 * type is required.
-	 * 
+	 *
 	 * @param entity
 	 *            the representation entity data
 	 * @return a new ResponseBuilder
@@ -167,7 +167,7 @@ public abstract class HateoasResponse extends Response {
 	 * callers responsibility to wrap the actual entity with
 	 * {@link javax.ws.rs.core.GenericEntity} if preservation of its generic
 	 * type is required.
-	 * 
+	 *
 	 * @param entity
 	 *            the representation entity data
 	 * @param type
@@ -186,7 +186,7 @@ public abstract class HateoasResponse extends Response {
 	 * callers responsibility to wrap the actual entity with
 	 * {@link javax.ws.rs.core.GenericEntity} if preservation of its generic
 	 * type is required.
-	 * 
+	 *
 	 * @param entity
 	 *            the representation entity data
 	 * @param type
@@ -205,7 +205,7 @@ public abstract class HateoasResponse extends Response {
 	 * callers responsibility to wrap the actual entity with
 	 * {@link javax.ws.rs.core.GenericEntity} if preservation of its generic
 	 * type is required.
-	 * 
+	 *
 	 * @param entity
 	 *            the representation entity data
 	 * @param variant
@@ -221,7 +221,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with an server error status.
-	 * 
+	 *
 	 * @return a new ResponseBuilder
 	 */
 	public static HateoasResponseBuilder serverError() {
@@ -232,7 +232,7 @@ public abstract class HateoasResponse extends Response {
 	/**
 	 * Create a new ResponseBuilder for a created resource, set the location
 	 * header using the supplied value.
-	 * 
+	 *
 	 * @param location
 	 *            the URI of the new resource. If a relative URI is supplied it
 	 *            will be converted into an absolute URI by resolving it
@@ -262,7 +262,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder for an empty response.
-	 * 
+	 *
 	 * @return a new ResponseBuilder
 	 */
 	public static HateoasResponseBuilder noContent() {
@@ -272,7 +272,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with a not-modified status.
-	 * 
+	 *
 	 * @return a new ResponseBuilder
 	 */
 	public static HateoasResponseBuilder notModified() {
@@ -282,7 +282,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder with a not-modified status.
-	 * 
+	 *
 	 * @param tag
 	 *            a tag for the unmodified entity
 	 * @return a new ResponseBuilder
@@ -299,7 +299,7 @@ public abstract class HateoasResponse extends Response {
 	 * Create a new ResponseBuilder with a not-modified status and a strong
 	 * entity tag. This is a shortcut for
 	 * <code>notModified(new EntityTag(<i>value</i>))</code>.
-	 * 
+	 *
 	 * @param tag
 	 *            the string content of a strong entity tag. The JAX-RS runtime
 	 *            will quote the supplied value when creating the header.
@@ -316,7 +316,7 @@ public abstract class HateoasResponse extends Response {
 	/**
 	 * Create a new ResponseBuilder for a redirection. Used in the
 	 * redirect-after-POST (aka POST/redirect/GET) pattern.
-	 * 
+	 *
 	 * @param location
 	 *            the redirection URI. If a relative URI is supplied it will be
 	 *            converted into an absolute URI by resolving it relative to the
@@ -332,7 +332,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder for a temporary redirection.
-	 * 
+	 *
 	 * @param location
 	 *            the redirection URI. If a relative URI is supplied it will be
 	 *            converted into an absolute URI by resolving it relative to the
@@ -349,7 +349,7 @@ public abstract class HateoasResponse extends Response {
 
 	/**
 	 * Create a new ResponseBuilder for a not acceptable response.
-	 * 
+	 *
 	 * @param variants
 	 *            list of variants that were available, a null value is
 	 *            equivalent to an empty list.
@@ -365,7 +365,7 @@ public abstract class HateoasResponse extends Response {
      * Extension of the standard JAX-RS {@link ResponseBuilder}, adding methods to specify hypermedia in responses.
      * @see #link(String, String, Object...)
      * @see #links(com.jayway.jaxrs.hateoas.HateoasLink...)
-     * @see #selfLink(String, Object...) 
+     * @see #selfLink(String, Object...)
      * @see #each(String, String, String...)
      * @see #each(com.jayway.jaxrs.hateoas.LinkProducer)
      * @see #makeLink(String, String, Object...)
@@ -374,6 +374,7 @@ public abstract class HateoasResponse extends Response {
 
 		private static HateoasLinkInjector<Object> linkInjector;
         private static CollectionWrapperStrategy collectionWrapperStrategy;
+        private static HateoasViewFactory viewFactory;
 
 
         //public abstract HateoasLinkBuilder linkBuilder(String id);
@@ -395,7 +396,7 @@ public abstract class HateoasResponse extends Response {
          *
          * If the object at the target FieldPath is a {@link java.util.Collection},
          * the link will be applied to <b>each</b> entry in the collection.
-         * 
+         *
          * If any object encountered in the middle of the FieldPath is a Collection,
          * the rest of the path will be traversed for each element in that collection,
          * making sure that the links will be applied at each end node.
@@ -420,7 +421,7 @@ public abstract class HateoasResponse extends Response {
          * If any object encountered in the middle of the FieldPath is a Collection,
          * the rest of the path will be traversed for each element in that collection,
          * making sure that the links will be applied at each end node.
-         * 
+         *
          * @param fieldPath The FieldPath of the targeted object in the object graph represented by the entity root.
          * @param linkProducer The LinkProducer to be applied to the target for producing links for it.
          * @return this.
@@ -471,7 +472,7 @@ public abstract class HateoasResponse extends Response {
 
         /**
          * Construct a {@link HateoasLink} for the supplied id, building the URI using the specified parameters.
-         * 
+         *
          *
          * @param id the @Linkable id of the target method.
          * @param rel the relation of the linked resource in the current context.
@@ -493,7 +494,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Create a new builder instance.
-		 * 
+		 *
 		 * @return a new ResponseBuilder
 		 */
 		protected static HateoasResponseBuilder newInstance() {
@@ -505,14 +506,21 @@ public abstract class HateoasResponse extends Response {
 		 * Create a Response instance from the current ResponseBuilder. The
 		 * builder is reset to a blank state equivalent to calling the ok
 		 * method.
-		 * 
+		 *
 		 * @return a Response instance
 		 */
 		public abstract HateoasResponse build();
 
+        /**
+         * Create a Response by wrapping the entity in a Viewable using the provided template.
+         *
+         * @return a Response instance
+         */
+        public abstract HateoasResponse render(String template);
+
 		/**
 		 * Create a copy of the ResponseBuilder preserving its state.
-		 * 
+		 *
 		 * @return a copy of the ResponseBuilder
 		 */
 		@Override
@@ -520,7 +528,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the status on the ResponseBuilder.
-		 * 
+		 *
 		 * @param status
 		 *            the response status
 		 * @return the updated ResponseBuilder
@@ -531,7 +539,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the status on the ResponseBuilder.
-		 * 
+		 *
 		 * @param status
 		 *            the response status
 		 * @return the updated ResponseBuilder
@@ -548,7 +556,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the status on the ResponseBuilder.
-		 * 
+		 *
 		 * @param status
 		 *            the response status
 		 * @return the updated ResponseBuilder
@@ -563,7 +571,7 @@ public abstract class HateoasResponse extends Response {
 		 * Set the entity on the ResponseBuilder. It is the callers
 		 * responsibility to wrap the actual entity with {@link GenericEntity}
 		 * if preservation of its generic type is required.
-		 * 
+		 *
 		 * @param entity
 		 *            the response entity
 		 * @return the updated ResponseBuilder
@@ -572,7 +580,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the response media type on the ResponseBuilder.
-		 * 
+		 *
 		 * @param type
 		 *            the media type of the response entity, if null any
 		 *            existing value for type will be removed
@@ -582,7 +590,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the response media type on the ResponseBuilder.
-		 * 
+		 *
 		 * @param type
 		 *            the media type of the response entity, if null any
 		 *            existing value for type will be removed
@@ -596,7 +604,7 @@ public abstract class HateoasResponse extends Response {
 		 * Set representation metadata on the ResponseBuilder. Equivalent to
 		 * setting the values of content type, content language, and content
 		 * encoding separately using the values of the variant properties.
-		 * 
+		 *
 		 * @param variant
 		 *            metadata of the response entity, a null value is
 		 *            equivalent to a variant with all null properties.
@@ -606,7 +614,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Add a Vary header that lists the available variants.
-		 * 
+		 *
 		 * @param variants
 		 *            a list of available representation variants, a null value
 		 *            will remove an existing value for vary.
@@ -616,7 +624,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the language on the ResponseBuilder.
-		 * 
+		 *
 		 * @param language
 		 *            the language of the response entity, if null any existing
 		 *            value for language will be removed
@@ -626,7 +634,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the language on the ResponseBuilder.
-		 * 
+		 *
 		 * @param language
 		 *            the language of the response entity, if null any existing
 		 *            value for type will be removed
@@ -636,7 +644,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the location on the ResponseBuilder.
-		 * 
+		 *
 		 * @param location
 		 *            the location. If a relative URI is supplied it will be
 		 *            converted into an absolute URI by resolving it relative to
@@ -651,7 +659,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the content location on the ResponseBuilder.
-		 * 
+		 *
 		 * @param location
 		 *            the content location. Relative or absolute URIs may be
 		 *            used for the value of content location. If null any
@@ -662,7 +670,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set an entity tag on the ResponseBuilder.
-		 * 
+		 *
 		 * @param tag
 		 *            the entity tag, if null any existing entity tag value will
 		 *            be removed.
@@ -673,7 +681,7 @@ public abstract class HateoasResponse extends Response {
 		/**
 		 * Set a strong entity tag on the ResponseBuilder. This is a shortcut
 		 * for <code>tag(new EntityTag(<i>value</i>))</code>.
-		 * 
+		 *
 		 * @param tag
 		 *            the string content of a strong entity tag. The JAX-RS
 		 *            runtime will quote the supplied value when creating the
@@ -685,7 +693,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the last modified date on the ResponseBuilder.
-		 * 
+		 *
 		 * @param lastModified
 		 *            the last modified date, if null any existing last modified
 		 *            value will be removed.
@@ -695,7 +703,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the cache control data on the ResponseBuilder.
-		 * 
+		 *
 		 * @param cacheControl
 		 *            the cache control directives, if null removes any existing
 		 *            cache control directives.
@@ -706,7 +714,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Set the expires date on the ResponseBuilder.
-		 * 
+		 *
 		 * @param expires
 		 *            the expiration date, if null removes any existing expires
 		 *            value.
@@ -716,7 +724,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Add a header to the ResponseBuilder.
-		 * 
+		 *
 		 * @param name
 		 *            the name of the header
 		 * @param value
@@ -735,7 +743,7 @@ public abstract class HateoasResponse extends Response {
 
 		/**
 		 * Add cookies to the ResponseBuilder.
-		 * 
+		 *
 		 * @param cookies
 		 *            new cookies that will accompany the response. A null value
 		 *            will remove all cookies, including those added via the
@@ -746,11 +754,16 @@ public abstract class HateoasResponse extends Response {
 		public abstract HateoasResponseBuilder cookie(NewCookie... cookies);
 
 		public static void configure(HateoasLinkInjector<Object> linkInjector,
-                                     CollectionWrapperStrategy collectionWrapperStrategy) {
+                                     CollectionWrapperStrategy collectionWrapperStrategy,
+                                     HateoasViewFactory hateoasViewFactory) {
 			HateoasResponseBuilder.linkInjector = linkInjector;
             HateoasResponseBuilder.collectionWrapperStrategy= collectionWrapperStrategy;
+            HateoasResponseBuilder.viewFactory = hateoasViewFactory;
 		}
 
+        public static HateoasViewFactory getViewFactory(){
+            return viewFactory;
+        }
 		public static HateoasLinkInjector<Object> getLinkInjector() {
 			return linkInjector;
 		}

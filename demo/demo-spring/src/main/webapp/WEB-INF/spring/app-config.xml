@@ -22,6 +22,6 @@
     <bean id="bookRepo" class="com.jayway.demo.library.domain.internal.BookRepositoryInMemory" />
     <bean id="customerRepo" class="com.jayway.demo.library.domain.internal.CustomerRepositoryInMemory" />
 
-    <context:component-scan base-package="com.jayway.demo.library.rest.resources.hateoas" />
+    <context:component-scan base-package="com.jayway.demo.spring.library.rest.resources.hateoas" />
 
 </beans>

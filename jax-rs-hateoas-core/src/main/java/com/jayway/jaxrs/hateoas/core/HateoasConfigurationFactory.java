@@ -3,12 +3,16 @@ package com.jayway.jaxrs.hateoas.core;
 import com.jayway.jaxrs.hateoas.CollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
+import com.jayway.jaxrs.hateoas.HateoasViewFactory;
 import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
+import com.jayway.jaxrs.hateoas.support.DefaultHateoasViewFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+
+import static org.apache.commons.lang.Validate.notEmpty;
 
 /**
  * Helper factory to create Hateoas configuration classes
@@ -31,7 +35,7 @@ public class HateoasConfigurationFactory {
      * @see com.jayway.jaxrs.hateoas.HateoasVerbosity
      * @see com.jayway.jaxrs.hateoas.HateoasOption
      */
-    public static final String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.verbosity";
+    public static final String PROPERTY_HATEOAS_VERBOSITY = "com.jayway.jaxrs.hateoas.HateoasVerbosity";
 
     /**
      * If set specifies the implementation class of the {@link com.jayway.jaxrs.hateoas.HateoasLinkInjector}
@@ -42,7 +46,7 @@ public class HateoasConfigurationFactory {
      * <p/>
      * If not set the default {@link com.jayway.jaxrs.hateoas.HateoasLinkInjector} implementation will be used.
      */
-    public static final String PROPERTY_HATEOAS_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.linkInjector";
+    public static final String PROPERTY_HATEOAS_LINK_INJECTOR = "com.jayway.jaxrs.hateoas.HateoasLinkInjector";
 
     /**
      * If set specifies the implementation class of the {@link com.jayway.jaxrs.hateoas.CollectionWrapperStrategy}
@@ -53,58 +57,73 @@ public class HateoasConfigurationFactory {
      * <p/>
      * If not set the default {@link com.jayway.jaxrs.hateoas.CollectionWrapperStrategy} implementation will be used.
      */
-    public static final String PROPERTY_HATEOAS_COLLECTION_WRAPPER_STRATEGY = "com.jayway.jaxrs.hateoas.collectionWrapperStrategy";
+    public static final String PROPERTY_HATEOAS_COLLECTION_WRAPPER_STRATEGY = "com.jayway.jaxrs.hateoas.CollectionWrapperStrategy";
+
+    /**
+     * If set specifies the implementation class of the {@link com.jayway.jaxrs.hateoas.HateoasViewFactory}
+     * <p/>
+     * The type of this property must be a String that is a Class name,
+     * and the Class must a implement  {@link com.jayway.jaxrs.hateoas.HateoasViewFactory}.
+     * <p/>
+     * If not set the default {@link com.jayway.jaxrs.hateoas.HateoasViewFactory} implementation will be used. Note that this
+     * implementation will not produce a view, only return the model provided.
+     */
+    public static final String PROPERTY_HATEOAS_VIEW_FACTORY = "com.jayway.jaxrs.hateoas.HateoasViewFactory";
+
+    
+
+    
+    @SuppressWarnings("unchecked")
+    public static HateoasViewFactory createHateoasViewFactory(Map<String, Object> props, String... defaults){
+        String implClass = getProperty(props, PROPERTY_HATEOAS_VIEW_FACTORY, DefaultHateoasViewFactory.class.getName(), defaults);
+        try {
+            return (HateoasViewFactory)Class.forName((String) implClass).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to instantiate " + implClass);
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
-    public static HateoasLinkInjector<Object> createLinkInjector(Map<String, Object> props) {
-        HateoasLinkInjector<Object> linkInjector = null;
-
-        Object linkInjectorProperty = props.get(PROPERTY_HATEOAS_LINK_INJECTOR);
-        if (linkInjectorProperty == null) {
-            logger.info("Using default LinkInjector");
-            linkInjector = new JavassistHateoasLinkInjector();
-        } else {
-            logger.info("Using {} as LinkInjector", linkInjectorProperty);
-            try {
-                linkInjector = (HateoasLinkInjector<Object>)
-                        Class.forName((String) linkInjectorProperty).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to instantiate " + linkInjector);
-            }
-        }
-
-        return linkInjector;
-    }
-
-    public static HateoasVerbosity createVerbosity(Map<String, Object> props) {
-        String verbosityConfig = (String) props.get(PROPERTY_HATEOAS_VERBOSITY);
-
-        if (verbosityConfig != null && !verbosityConfig.trim().isEmpty()) {
-            HateoasVerbosity verbosity = HateoasVerbosity.findByName(verbosityConfig);
-            if (verbosity != null) {
-                return verbosity;
-            }
-            return HateoasVerbosity.valueOf(verbosityConfig);
-        } else {
-            logger.info("No HATEOAS verbosity defined in props. Using default verbosity (HateoasVerbosity.MAXIMUM)");
-            return HateoasVerbosity.MAXIMUM;
+    public static HateoasLinkInjector<Object> createLinkInjector(Map<String, Object> props, String... defaults) {
+        String implClass = getProperty(props, PROPERTY_HATEOAS_LINK_INJECTOR, JavassistHateoasLinkInjector.class.getName(), defaults);
+        try {
+            return (HateoasLinkInjector<Object>)Class.forName((String) implClass).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to instantiate " + implClass);
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static CollectionWrapperStrategy createCollectionWrapperStrategy(Map<String, Object> props, String... defaults) {
+        String implClass = getProperty(props, PROPERTY_HATEOAS_COLLECTION_WRAPPER_STRATEGY, DefaultCollectionWrapperStrategy.class.getName(), defaults);
+        try {
+            return (CollectionWrapperStrategy)Class.forName((String) implClass).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to instantiate " + implClass);
+        }
+    }
 
-    public static CollectionWrapperStrategy createCollectionWrapperStrategy(Map<String, Object> props) {
-        Object propertyValue = props.get(PROPERTY_HATEOAS_COLLECTION_WRAPPER_STRATEGY);
+    public static HateoasVerbosity createVerbosity(Map<String, Object> props, String... defaults) {
+        String verbosityConfig = getProperty(props, PROPERTY_HATEOAS_VERBOSITY, "MAXIMUM", defaults);
+        HateoasVerbosity verbosity = HateoasVerbosity.findByName(verbosityConfig);
+        if (verbosity != null) {
+            return verbosity;
+        }
+        return HateoasVerbosity.valueOf(verbosityConfig);
+    }
 
-        if (propertyValue == null) {
-            logger.info("Using default CollectionWrapperStrategy");
-            return new DefaultCollectionWrapperStrategy();
-        } else {
-            logger.info("Using {} as LinkInjector", propertyValue);
-            try {
-                return (CollectionWrapperStrategy) Class.forName((String) propertyValue).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to instantiate " + propertyValue);
+
+    private static String getProperty(Map<String, Object> props, String property, String systemDefault, String... defaults){
+        notEmpty(property, "property must not be null or empty.");
+        String propertyValue = (String) props.get(property);
+        if(propertyValue == null || propertyValue.trim().isEmpty()){
+            if(defaults != null && defaults.length > 0){
+                propertyValue = defaults[0];
+            } else {
+                propertyValue = systemDefault;
             }
         }
+        return propertyValue;
     }
 }

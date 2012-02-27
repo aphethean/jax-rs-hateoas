@@ -31,47 +31,106 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Mattias Hellborg Arthursson
+ * @author Kalle Stenflo
  */
 public class JavassistHateoasLinkInjectorTest {
-	private final static Map<String, Object> EXPECTED_MAP = new HashMap<String, Object>();
-	private HateoasLink linkMock;
-	private JavassistHateoasLinkInjector tested;
+    private final static Map<String, Object> EXPECTED_MAP = new HashMap<String, Object>();
+    private HateoasLink linkMock;
+    private JavassistHateoasLinkInjector tested;
     private FixedLinkProducer linkProducer;
 
     @Before
-	public void prepareTestedInstance() {
-		tested = new JavassistHateoasLinkInjector();
-		linkMock = mock(HateoasLink.class);
+    public void prepareTestedInstance() {
+        tested = new JavassistHateoasLinkInjector();
+        linkMock = mock(HateoasLink.class);
         linkProducer = new FixedLinkProducer(linkMock);
-		when(linkMock.toMap(HateoasVerbosity.MINIMUM)).thenReturn(EXPECTED_MAP);
-	}
+        when(linkMock.toMap(HateoasVerbosity.MINIMUM)).thenReturn(EXPECTED_MAP);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void linksFieldIsInjectedAutomatically() {
-		DummyEntity dummyEntity = new DummyEntity();
-		dummyEntity.setId("someId");
+    @SuppressWarnings("unchecked")
+    @Test
+    public void linksFieldIsInjectedAutomatically() {
+        DummyEntity dummyEntity = new DummyEntity();
+        dummyEntity.setId("someId");
 
-		DummyEntity returnedEntity = (DummyEntity) tested.injectLinks(
-				dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
+        DummyEntity returnedEntity = (DummyEntity) tested.injectLinks(
+                dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
 
-		assertNotSame(dummyEntity, returnedEntity);
-		assertEquals("someId", returnedEntity.getId());
+        assertNotSame(dummyEntity, returnedEntity);
+        assertEquals("someId", returnedEntity.getId());
 
-		Collection<Map<String, Object>> links = (Collection<Map<String, Object>>) ReflectionUtils
-				.getFieldValue(returnedEntity, "links");
-		assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
-	}
+        Collection<Map<String, Object>> links = (Collection<Map<String, Object>>) ReflectionUtils
+                .getFieldValue(returnedEntity, "links");
+        assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
+    }
 
-	public static class DummyEntity {
-		private String id;
+    @SuppressWarnings("unchecked")
+    @Test
+    public void linksFieldIsInjectedAutomaticallyInSublass() {
+        DummySubClass dummyEntity = new DummySubClass("someId", 1L);
 
-		public String getId() {
-			return id;
-		}
+        DummySubClass returnedEntity = (DummySubClass) tested.injectLinks(
+                dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
 
-		public void setId(String id) {
-			this.id = id;
-		}
-	}
+        assertNotSame(dummyEntity, returnedEntity);
+        assertEquals("someId", returnedEntity.getId());
+        assertEquals(1L, returnedEntity.getTime());
+
+        Collection<Map<String, Object>> links = (Collection<Map<String, Object>>) ReflectionUtils
+                .getFieldValue(returnedEntity, "links");
+        assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void linksFieldIsInjectedAutomaticallyInMaps() {
+        Map<String, Object> dummyEntity = new HashMap<String, Object>();
+        dummyEntity.put("id", "someId");
+
+        Map<String, Object> returnedEntity = (Map<String, Object>) tested.injectLinks(
+                dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
+
+        assertSame(dummyEntity, returnedEntity);
+        assertEquals("someId", dummyEntity.get("id"));
+
+        Collection<Map<String, Object>> links = (Collection<Map<String, Object>>)dummyEntity.get("links");
+        assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
+    }
+
+
+    public static class DummyEntity {
+        private String id;
+
+        public DummyEntity() {
+        }
+
+        public DummyEntity(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
+
+    public static class DummySubClass extends DummyEntity {
+
+        private long time;
+
+        public DummySubClass() {
+        }
+
+        public DummySubClass(String id, long time) {
+            super(id);
+            this.time = time;
+        }
+
+        public long getTime() {
+            return time;
+        }
+    }
 }

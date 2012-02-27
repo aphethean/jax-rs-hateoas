@@ -16,6 +16,7 @@
 package com.jayway.jaxrs.hateoas;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -121,6 +122,11 @@ public class DefaultHateoasContextTest {
         assertEquals("dummy.sub.resource.get", result.getId());
         assertEquals("GET", result.getHttpMethod());
         assertEquals("/root/{id}", result.getMethodPath());
+    }
+
+    @Test
+    public void sameClassCanBeScannedTwice() throws Exception {
+        tested.mapClass(DummyAnnotatedClass.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

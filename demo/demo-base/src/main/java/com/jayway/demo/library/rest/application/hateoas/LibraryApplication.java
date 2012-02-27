@@ -15,12 +15,12 @@
 
 package com.jayway.demo.library.rest.application.hateoas;
 
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.core.jersey.JerseyHateoasApplication;
 
+import java.util.Map;
+
 public class LibraryApplication extends JerseyHateoasApplication {
-	public LibraryApplication() {
-		super(HateoasVerbosity.GENERIC_CLIENT,
-				"com.jayway.demo.library.rest.resources.hateoas");
-	}
+    public LibraryApplication(Map<String, Object> props) {
+        super(props);
+    }
 }
