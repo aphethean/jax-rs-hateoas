@@ -26,6 +26,5 @@ public interface HateoasLinkInjector<T> {
     
     boolean canInject(T entity);
     
-	T injectLinks(T entity, LinkProducer<T> linkProducer,
-			HateoasVerbosity verbosity);
+	T injectLinks(T entity, LinkProducer<T> linkProducer, HateoasVerbosity verbosity);
 }

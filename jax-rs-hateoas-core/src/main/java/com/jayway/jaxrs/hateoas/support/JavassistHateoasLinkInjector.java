@@ -16,10 +16,7 @@ package com.jayway.jaxrs.hateoas.support;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.jayway.jaxrs.hateoas.HateoasLink;
-import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
-import com.jayway.jaxrs.hateoas.HateoasVerbosity;
-import com.jayway.jaxrs.hateoas.LinkProducer;
+import com.jayway.jaxrs.hateoas.*;
 import javassist.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +25,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,9 +49,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 				JavassistHateoasLinkInjector.class.getClassLoader()));
 	}
 
-	private HateoasLinkInjector<Object> reflectionBasedDelegate = new ReflectionBasedHateoasLinkInjector();
-
-    private HateoasLinkInjector<Object> mapBasedLinkInjector = new MapBasedHateoasLinkInjector();
+    private HateoasLinkInjector<Object> injector = new HateoasLinkBeanLinkInjector();
 
     @Override
     public boolean canInject(Object entity) {
@@ -68,16 +64,8 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 			return null;
 		}
 
-        if(mapBasedLinkInjector.canInject(entity)){
-            return mapBasedLinkInjector.injectLinks(entity, linkProducer, verbosity);
-        }
 
-        if (reflectionBasedDelegate.canInject(entity)) {
-			return reflectionBasedDelegate.injectLinks(entity, linkProducer, verbosity);
-		}
-
-		String newClassName = entity.getClass().getPackage().getName() + "."
-				+ entity.getClass().getSimpleName() + "_generated";
+		String newClassName = entity.getClass().getPackage().getName() + "." + entity.getClass().getSimpleName() + "_generated";
 
 		Class<?> clazz;
 		if (!TRANSFORMED_CLASSES.containsKey(newClassName)) {
@@ -92,6 +80,15 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 					CtField newField = CtField.make("public java.util.Collection links;", newClass);
 					newClass.addField(newField);
 
+                    CtMethod linksGetterMethod = CtMethod.make("public java.util.Collection getLinks(){ return this.links; }", newClass);
+                    newClass.addMethod(linksGetterMethod);
+
+                    CtMethod linksSetterMethod = CtMethod.make("public void setLinks(java.util.Collection links){ this.links = links; }", newClass);
+                    newClass.addMethod(linksSetterMethod);
+
+                    newClass.addInterface(CLASS_POOL.get("com.jayway.jaxrs.hateoas.HateoasLinkBean"));
+
+
                     StringBuilder cloneMethodBody = new StringBuilder();
 
                     for (Field field : ReflectionUtils.getFieldsHierarchical(entity.getClass())) {
@@ -103,10 +100,6 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 
                     CtMethod cloneMethod = CtMethod.make(method, newClass);
                     newClass.addMethod(cloneMethod);
-
-
-                    CtMethod linksGetterMethod = CtMethod.make("public java.util.Collection getLinks(){ return links; }", newClass);
-                    newClass.addMethod(linksGetterMethod);
 
 					URLClassLoader classLoader = new URLClassLoader(new URL[0], this.getClass().getClassLoader());
 					clazz = newClass.toClass(classLoader, this.getClass().getProtectionDomain());
@@ -122,6 +115,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
 
         Object newInstance = null;
         try {
+            //newInstance = clazz.getConstructor(entity.getClass()).newInstance(entity);
             newInstance = clazz.newInstance();
             Method copyMethod = newInstance.getClass().getMethod("hateoasCopy", entity.getClass());
             copyMethod.invoke(newInstance, entity);
@@ -129,15 +123,7 @@ public class JavassistHateoasLinkInjector implements HateoasLinkInjector<Object>
             log.error("could not create instance of " + clazz.getName(), e);
         }
 
-		ReflectionUtils.setField(newInstance, "links", Collections2.transform(
-                linkProducer.getLinks(entity), new Function<HateoasLink, Map<String, Object>>() {
-					@Override
-					public Map<String, Object> apply(HateoasLink link) {
-						return link.toMap(verbosity);
-					}
-				}));
-
-		return newInstance;
+        return injector.injectLinks(newInstance, linkProducer, verbosity);
 	}
 
 }

@@ -5,7 +5,7 @@ import com.jayway.jaxrs.hateoas.HateoasLinkInjector;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.HateoasViewFactory;
 import com.jayway.jaxrs.hateoas.support.DefaultCollectionWrapperStrategy;
-import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
+import com.jayway.jaxrs.hateoas.support.StrategyBasedLinkInjector;
 import com.jayway.jaxrs.hateoas.support.DefaultHateoasViewFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ public class HateoasConfigurationFactory {
 
     @SuppressWarnings("unchecked")
     public static HateoasLinkInjector<Object> createLinkInjector(Map<String, Object> props, String... defaults) {
-        String implClass = getProperty(props, PROPERTY_HATEOAS_LINK_INJECTOR, JavassistHateoasLinkInjector.class.getName(), defaults);
+        String implClass = getProperty(props, PROPERTY_HATEOAS_LINK_INJECTOR, StrategyBasedLinkInjector.class.getName(), defaults);
         try {
             return (HateoasLinkInjector<Object>)Class.forName((String) implClass).newInstance();
         } catch (Exception e) {

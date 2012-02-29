@@ -81,21 +81,7 @@ public class JavassistHateoasLinkInjectorTest {
         assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void linksFieldIsInjectedAutomaticallyInMaps() {
-        Map<String, Object> dummyEntity = new HashMap<String, Object>();
-        dummyEntity.put("id", "someId");
 
-        Map<String, Object> returnedEntity = (Map<String, Object>) tested.injectLinks(
-                dummyEntity, linkProducer, HateoasVerbosity.MINIMUM);
-
-        assertSame(dummyEntity, returnedEntity);
-        assertEquals("someId", dummyEntity.get("id"));
-
-        Collection<Map<String, Object>> links = (Collection<Map<String, Object>>)dummyEntity.get("links");
-        assertSame(EXPECTED_MAP, Iterables.getOnlyElement(links));
-    }
 
 
     public static class DummyEntity {

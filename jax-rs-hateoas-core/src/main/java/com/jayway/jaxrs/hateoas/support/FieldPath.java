@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 /**
  * @author Mattias Hellborg Arthursson
+ * @author Kalle Stenflo
  */
 public class FieldPath implements Iterable<String> {
     public final static FieldPath EMPTY_PATH = new FieldPath(Collections.<String>emptyList());
@@ -92,7 +93,6 @@ public class FieldPath implements Iterable<String> {
                     }
                 });
             }
-
             return injector.injectLinks(currentTarget, linkProducer, verbosity);
         }
 
@@ -103,7 +103,7 @@ public class FieldPath implements Iterable<String> {
         Object nextResult = null;
         if (nextTarget != null && Collection.class.isAssignableFrom(nextTarget.getClass())) {
             // We have not yet arrived at the end of the FieldPath, and the object at the current position in the
-            // path is a Collection - the rest of the path should be traversed for _each_ if the items in the
+            // path is a Collection - the rest of the path should be traversed for _each_ of the items in the
             // collection.
             final ImmutableList<String> restOfPath = ImmutableList.copyOf(pathIterator);
             Collection<Object> targetAsCollection = (Collection<Object>) nextTarget;
@@ -117,7 +117,7 @@ public class FieldPath implements Iterable<String> {
         } else {
             nextResult = injectLinks(pathIterator, nextTarget, injector, linkProducer, verbosity);
         }
-        ReflectionUtils.setFieldAccessible(currentField);
+        //ReflectionUtils.setFieldAccessible(currentField);
 
 
         ReflectionUtils.setField(currentTarget, currentField.getName(), nextResult);

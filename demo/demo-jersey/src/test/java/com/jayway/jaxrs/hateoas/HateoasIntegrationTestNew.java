@@ -1,22 +1,11 @@
-/*
- * Copyright 2011 the original author or authors.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.jayway.jaxrs.hateoas;
 
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.path.json.JsonPath;
+import com.sun.jersey.test.framework.AppDescriptor;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +18,25 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
-public class HateoasIntegrationTest {
+/**
+ * Created by IntelliJ IDEA.
+ * User: kallestenflo
+ * Date: 2/27/12
+ * Time: 6:19 PM
+ */
+public class HateoasIntegrationTestNew extends JerseyTest {
+
+
+    @Override
+    protected AppDescriptor configure() {
+        return new WebAppDescriptor
+                        .Builder("com.jayway.demo.library.rest.resources.hateoas")
+                        .contextPath("/")
+                        .servletPath("api")
+                        .initParam("javax.ws.rs.Application", "com.jayway.demo.library.rest.application.hateoas.LibraryApplication")
+                        .initParam("com.sun.jersey.api.json.POJOMappingFeature", "true")
+                        .build();
+    }
 
     private String customersHref;
     private String loansHref;
@@ -37,11 +44,12 @@ public class HateoasIntegrationTest {
 
     @BeforeClass
     public static void registerParsers() {
-        registerParser("application/vnd.demo.library.root+json", Parser.JSON);
-        registerParser("application/vnd.demo.library.list.book+json", Parser.JSON);
-        registerParser("application/vnd.demo.library.book+json", Parser.JSON);
-        registerParser("application/vnd.demo.library.list.customer+json", Parser.JSON);
-        registerParser("application/vnd.demo.library.customer+json", Parser.JSON);
+        RestAssured.port = 9998;
+        RestAssured.registerParser("application/vnd.demo.library.root+json", Parser.JSON);
+        RestAssured.registerParser("application/vnd.demo.library.list.book+json", Parser.JSON);
+        RestAssured.registerParser("application/vnd.demo.library.book+json", Parser.JSON);
+        RestAssured.registerParser("application/vnd.demo.library.list.customer+json", Parser.JSON);
+        RestAssured.registerParser("application/vnd.demo.library.customer+json", Parser.JSON);
     }
 
     @Before
@@ -107,5 +115,6 @@ public class HateoasIntegrationTest {
                 body("links[1].method", equalTo("POST")).
                 statusCode(200).
                 when().get(bookHref);
+
     }
 }

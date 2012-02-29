@@ -3,6 +3,7 @@ package com.jayway.demo.spring;
 import com.jayway.jaxrs.hateoas.HateoasVerbosity;
 import com.jayway.jaxrs.hateoas.LinkProducer;
 import com.jayway.jaxrs.hateoas.support.JavassistHateoasLinkInjector;
+import com.jayway.jaxrs.hateoas.support.StrategyBasedLinkInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * Date: 2/21/12
  * Time: 7:07 PM
  */
-public class CustomLinkInjector extends JavassistHateoasLinkInjector {
+public class CustomLinkInjector extends StrategyBasedLinkInjector {
 
     private static final Logger log = LoggerFactory.getLogger(CustomLinkInjector.class);
 
