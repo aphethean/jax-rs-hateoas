@@ -103,11 +103,26 @@ public abstract class HateoasResponse extends Response {
 	 *             if status is null
 	 */
 	public static HateoasResponseBuilder status(StatusType status) {
-		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance();
+		return status(null, status);
+	}
+
+	/**
+	 * Create a new ResponseBuilder with the supplied context and status.
+	 *
+	 * @param context
+	 *            the response context {@link HateoasContext}
+	 * @param status
+	 *            the response status
+	 * @return a new ResponseBuilder
+	 * @throws IllegalArgumentException
+	 *             if status is null
+	 */
+	public static HateoasResponseBuilder status(HateoasContext context, StatusType status) {
+		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance(context);
 		b.status(status);
 		return b;
 	}
-
+	
 	/**
 	 * Create a new ResponseBuilder with the supplied status.
 	 *
@@ -131,7 +146,22 @@ public abstract class HateoasResponse extends Response {
 	 *             if status is less than 100 or greater than 599.
 	 */
 	public static HateoasResponseBuilder status(int status) {
-		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance();
+		return status(null, status);
+	}
+
+	/**
+	 * Create a new ResponseBuilder with the supplied context and status.
+	 *
+	 * @param context
+	 *            the response context {@link HateoasContext}
+	 * @param status
+	 *            the response status
+	 * @return a new ResponseBuilder
+	 * @throws IllegalArgumentException
+	 *             if status is less than 100 or greater than 599.
+	 */
+	public static HateoasResponseBuilder status(HateoasContext context, int status) {
+		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance(context);
 		b.status(status);
 		return b;
 	}
@@ -257,7 +287,8 @@ public abstract class HateoasResponse extends Response {
 
 	public static HateoasResponseBuilder created(String linkId,
 			Object... parameters) {
-		return created(HateoasResponseBuilder.makeLink(linkId, null, parameters));
+		
+		return created(HateoasResponseBuilder.newInstance(null).makeLink(linkId, null, parameters));
 	}
 
 	/**
@@ -375,6 +406,8 @@ public abstract class HateoasResponse extends Response {
 		private static HateoasLinkInjector<Object> linkInjector;
         private static CollectionWrapperStrategy collectionWrapperStrategy;
         private static HateoasViewFactory viewFactory;
+        
+        private final HateoasContext context;
 
 
         //public abstract HateoasLinkBuilder linkBuilder(String id);
@@ -478,9 +511,8 @@ public abstract class HateoasResponse extends Response {
          * @param rel the relation of the linked resource in the current context.
          * @param params the parameters to use for populating path parameters.  @return a populated HateoasLink instance.
          */
-		public static HateoasLink makeLink(String id, String rel, Object... params) {
-			HateoasContext hateoasContext = HateoasContextProvider
-					.getDefaultContext();
+		public HateoasLink makeLink(String id, String rel, Object... params) {
+			HateoasContext hateoasContext = getContext();
 			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
 			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, rel, params);
 		}
@@ -489,7 +521,8 @@ public abstract class HateoasResponse extends Response {
 		 * Protected constructor, use one of the static methods of
 		 * <code>Response</code> to obtain an instance.
 		 */
-		protected HateoasResponseBuilder() {
+		protected HateoasResponseBuilder(HateoasContext context) {
+			this.context = context;
 		}
 
 		/**
@@ -497,11 +530,16 @@ public abstract class HateoasResponse extends Response {
 		 *
 		 * @return a new ResponseBuilder
 		 */
-		protected static HateoasResponseBuilder newInstance() {
-			HateoasResponseBuilder b = new HateoasResponseBuilderImpl(); // RuntimeDelegate.getInstance().createResponseBuilder();
+		protected static HateoasResponseBuilder newInstance(HateoasContext ctx) {
+			HateoasResponseBuilder b = new HateoasResponseBuilderImpl(ctx); // RuntimeDelegate.getInstance().createResponseBuilder();
 			return b;
 		}
 
+		protected HateoasContext getContext() {
+			if (context == null)
+				return HateoasContextProvider.getDefaultContext();
+			return context;
+		}
 		/**
 		 * Create a Response instance from the current ResponseBuilder. The
 		 * builder is reset to a blank state equivalent to calling the ok
