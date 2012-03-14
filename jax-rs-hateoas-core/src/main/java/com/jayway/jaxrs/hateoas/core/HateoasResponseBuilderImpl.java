@@ -50,16 +50,27 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     @Override
     public HateoasResponseBuilder link(String id, String rel, Object... params) {
-        return links(makeLink(id, rel, params));
+        return links(makeLink(null, id, rel, params));
     }
 
+    @Override
+    public HateoasResponseBuilder link(HateoasContext context, String id, String rel, Object... params) {
+        return links(makeLink(context, id, rel, params));
+    }
+
+    @Override
     public HateoasResponseBuilder link(FieldPath fieldPath, String id, String rel, String... entityFields) {
-        return link(fieldPath, new ReflectionBasedLinkProducer(this, id, rel, entityFields));
+        return link(null, fieldPath, id, rel, entityFields);
+    }
+
+    @Override
+    public HateoasResponseBuilder link(HateoasContext context, FieldPath fieldPath, String id, String rel, String... entityFields) {
+        return link(fieldPath, new ReflectionBasedLinkProducer(this, context, id, rel, entityFields));
     }
 
     @Override
     public HateoasResponseBuilder link(FieldPath fieldPath, LinkProducer<?> linkProducer) {
-        if(!linkMappings.containsKey(fieldPath)) {
+    	if(!linkMappings.containsKey(fieldPath)) {
             linkMappings.put(fieldPath, new ChainedLinkProducer());
         }
 
@@ -75,13 +86,28 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     }
 
     @Override
+    public HateoasResponseBuilder selfLink(HateoasContext context, String id, Object... params) {
+        return link(context, id, AtomRels.SELF, params);
+    }
+
+    @Override
     public HateoasResponse.HateoasResponseBuilder links(HateoasLink... links) {
         return link(FieldPath.EMPTY_PATH, new FixedLinkProducer(Arrays.asList(links)));
     }
 
     @Override
+    public HateoasResponse.HateoasResponseBuilder links(HateoasContext context, HateoasLink... links) {
+        return link(FieldPath.EMPTY_PATH, new FixedLinkProducer(Arrays.asList(links)));
+    }
+
+    @Override
     public HateoasResponseBuilder each(String id, String rel, String... entityFields) {
-        return each(new ReflectionBasedLinkProducer(this, id, rel, entityFields));
+    	return each(null, id, rel, entityFields);
+    }
+
+    @Override
+    public HateoasResponseBuilder each(HateoasContext context, String id, String rel, String... entityFields) {
+    	return each(new ReflectionBasedLinkProducer(this, context, id, rel, entityFields));
     }
 
     @Override
@@ -90,17 +116,27 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     }
 
     @Override
+    public HateoasResponseBuilder selfEach(HateoasContext context, String id, String... entityFields) {
+        return each(context, id, AtomRels.SELF, entityFields);
+    }
+
+    @Override
     public HateoasResponseBuilder each(LinkProducer<?> linkProducer) {
-        CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
+    	return each(null, linkProducer);
+    }
+    
+    @Override
+    public HateoasResponseBuilder each(HateoasContext context, LinkProducer<?> linkProducer) {
+    	CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
         return link(FieldPath.path(collectionWrapperStrategy.rowsFieldName()), linkProducer);
     }
 
-    public HateoasResponseBuilderImpl(HateoasContext context) {
-    	super(context);
+    public HateoasResponseBuilderImpl() {
+    	super();
     }
 
     private HateoasResponseBuilderImpl(HateoasResponseBuilderImpl that) {
-    	super(that.getContext());
+    	super();
         this.statusType = that.statusType;
         this.entity = that.entity;
         if (that.headers != null) {
@@ -382,12 +418,14 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     private final class ReflectionBasedLinkProducer implements LinkProducer<Object> {
         private final HateoasResponseBuilder builder;
+        private final HateoasContext hateoasContext;
         private final String id;
         private final String rel;
         private final String[] entityFields;
 
-        private ReflectionBasedLinkProducer(HateoasResponseBuilder builder, String id, String rel, String... entityFields) {
+        private ReflectionBasedLinkProducer(HateoasResponseBuilder builder, HateoasContext hateoasContext, String id, String rel, String... entityFields) {
             this.builder = builder;
+            this.hateoasContext = hateoasContext;
         	this.id = id;
             this.rel = rel;
             this.entityFields = entityFields;
@@ -402,7 +440,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
                 argumentList.add(fieldValue);
             }
 
-            return Collections.singletonList(builder.makeLink(id, rel, argumentList.toArray()));
+            return Collections.singletonList(builder.makeLink(hateoasContext, id, rel, argumentList.toArray()));
         }
     }
 

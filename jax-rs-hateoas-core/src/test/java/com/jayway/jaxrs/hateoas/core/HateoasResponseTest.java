@@ -40,7 +40,7 @@ public class HateoasResponseTest {
 	}
 
 	@Test
-	public void testNewInstanceLink() throws URISyntaxException {
+	public void testLinkDefaultContext() throws URISyntaxException {
 		RequestContext mockRequestContext = mock(RequestContext.class);
 		UriBuilder mockURIBuilder = mock(UriBuilder.class);
 		when(mockURIBuilder.path(anyString())).thenReturn(mockURIBuilder);
@@ -58,7 +58,7 @@ public class HateoasResponseTest {
 		
 
 		HateoasResponseBuilder builder = HateoasResponse.status(Response.Status.OK);
-		// try to put a related link in the response, should use the HateoasContextProvider.getDefaultContext() (and fail)
+		// try to put a related link in the response, should use the HateoasContextProvider.getDefaultContext()
 		builder.link("test", AtomRels.RELATED);
 		assertEquals(200, builder.build().getStatus());
 		
@@ -68,27 +68,73 @@ public class HateoasResponseTest {
 	}
 
 	@Test
-	public void testNewInstanceWithContextStatus() {
-		mockStatic(RequestContext.class);
+	public void testLinkSuppliedContext() throws URISyntaxException {
 		RequestContext mockRequestContext = mock(RequestContext.class);
+		UriBuilder mockURIBuilder = mock(UriBuilder.class);
+		when(mockURIBuilder.path(anyString())).thenReturn(mockURIBuilder);
+		when(mockURIBuilder.build()).thenReturn(new URI("/test"));
+		when(mockRequestContext.getBasePath()).thenReturn(mockURIBuilder);
+		
+		mockStatic(RequestContext.class);
 		when(RequestContext.getRequestContext()).thenReturn(mockRequestContext);
 
-		HateoasContext context = mock(HateoasContext.class);
-		HateoasResponseBuilder builder = HateoasResponse.status(context, Response.Status.OK);
+		HateoasContext hc = mock(HateoasContext.class);
+		when(hc.getLinkableInfo(anyString())).thenReturn(new LinkableInfo("test", "/test", "GET", new String[] {"*"}, new String[] {"*"}, "label", "description", null));
+
+
+		HateoasResponseBuilder builder = HateoasResponse.status(Response.Status.OK);
+		// try to put a related link in the response, should use the supplied HateoasContext
+		builder.link(hc, "test", AtomRels.RELATED);
 		assertEquals(200, builder.build().getStatus());
-		assertEquals(context, builder.getContext());
 	}
 
 	@Test
-	public void testNewInstanceWithContextStatusInt() {
-		mockStatic(RequestContext.class);
+	public void testSelfLinkDefaultContext() throws URISyntaxException {
 		RequestContext mockRequestContext = mock(RequestContext.class);
+		UriBuilder mockURIBuilder = mock(UriBuilder.class);
+		when(mockURIBuilder.path(anyString())).thenReturn(mockURIBuilder);
+		when(mockURIBuilder.build()).thenReturn(new URI("/test"));
+		when(mockRequestContext.getBasePath()).thenReturn(mockURIBuilder);
+		
+		mockStatic(RequestContext.class);
 		when(RequestContext.getRequestContext()).thenReturn(mockRequestContext);
 
-		HateoasContext context = mock(HateoasContext.class);
-		HateoasResponseBuilder builder = HateoasResponse.status(context, 200);
+		HateoasContext hc = mock(HateoasContext.class);
+		when(hc.getLinkableInfo(anyString())).thenReturn(new LinkableInfo("test", "/test", "GET", new String[] {"*"}, new String[] {"*"}, "label", "description", null));
+
+		mockStatic(HateoasContextProvider.class);
+		when(HateoasContextProvider.getDefaultContext()).thenReturn(hc);
+		
+
+		HateoasResponseBuilder builder = HateoasResponse.status(Response.Status.OK);
+		// try to put a related link in the response, should use the HateoasContextProvider.getDefaultContext()
+		builder.selfLink("test");
 		assertEquals(200, builder.build().getStatus());
-		assertEquals(context, builder.getContext());
+		
+		// verify that the static method for constructing a HateoasContext was called
+		verifyStatic();
+		HateoasContextProvider.getDefaultContext();
+	}
+
+	@Test
+	public void testSelfLinkSuppliedContext() throws URISyntaxException {
+		RequestContext mockRequestContext = mock(RequestContext.class);
+		UriBuilder mockURIBuilder = mock(UriBuilder.class);
+		when(mockURIBuilder.path(anyString())).thenReturn(mockURIBuilder);
+		when(mockURIBuilder.build()).thenReturn(new URI("/test"));
+		when(mockRequestContext.getBasePath()).thenReturn(mockURIBuilder);
+		
+		mockStatic(RequestContext.class);
+		when(RequestContext.getRequestContext()).thenReturn(mockRequestContext);
+
+		HateoasContext hc = mock(HateoasContext.class);
+		when(hc.getLinkableInfo(anyString())).thenReturn(new LinkableInfo("test", "/test", "GET", new String[] {"*"}, new String[] {"*"}, "label", "description", null));
+
+
+		HateoasResponseBuilder builder = HateoasResponse.status(Response.Status.OK);
+		// try to put a related link in the response, should use the supplied HateoasContext
+		builder.selfLink(hc, "test");
+		assertEquals(200, builder.build().getStatus());
 	}
 
 }

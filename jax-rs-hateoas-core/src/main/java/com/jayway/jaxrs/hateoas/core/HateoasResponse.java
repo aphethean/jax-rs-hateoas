@@ -103,22 +103,7 @@ public abstract class HateoasResponse extends Response {
 	 *             if status is null
 	 */
 	public static HateoasResponseBuilder status(StatusType status) {
-		return status(null, status);
-	}
-
-	/**
-	 * Create a new ResponseBuilder with the supplied context and status.
-	 *
-	 * @param context
-	 *            the response context {@link HateoasContext}
-	 * @param status
-	 *            the response status
-	 * @return a new ResponseBuilder
-	 * @throws IllegalArgumentException
-	 *             if status is null
-	 */
-	public static HateoasResponseBuilder status(HateoasContext context, StatusType status) {
-		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance(context);
+		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance();
 		b.status(status);
 		return b;
 	}
@@ -146,22 +131,7 @@ public abstract class HateoasResponse extends Response {
 	 *             if status is less than 100 or greater than 599.
 	 */
 	public static HateoasResponseBuilder status(int status) {
-		return status(null, status);
-	}
-
-	/**
-	 * Create a new ResponseBuilder with the supplied context and status.
-	 *
-	 * @param context
-	 *            the response context {@link HateoasContext}
-	 * @param status
-	 *            the response status
-	 * @return a new ResponseBuilder
-	 * @throws IllegalArgumentException
-	 *             if status is less than 100 or greater than 599.
-	 */
-	public static HateoasResponseBuilder status(HateoasContext context, int status) {
-		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance(context);
+		HateoasResponseBuilder b = HateoasResponseBuilder.newInstance();
 		b.status(status);
 		return b;
 	}
@@ -287,8 +257,13 @@ public abstract class HateoasResponse extends Response {
 
 	public static HateoasResponseBuilder created(String linkId,
 			Object... parameters) {
+		return created(null, linkId, parameters);
+	}
+	
+	public static HateoasResponseBuilder created(HateoasContext context, String linkId,
+			Object... parameters) {
 		
-		return created(HateoasResponseBuilder.newInstance(null).makeLink(linkId, null, parameters));
+		return created(HateoasResponseBuilder.newInstance().makeLink(context, linkId, null, parameters));
 	}
 
 	/**
@@ -407,9 +382,6 @@ public abstract class HateoasResponse extends Response {
         private static CollectionWrapperStrategy collectionWrapperStrategy;
         private static HateoasViewFactory viewFactory;
         
-        private final HateoasContext context;
-
-
         //public abstract HateoasLinkBuilder linkBuilder(String id);
 
         /**
@@ -423,6 +395,17 @@ public abstract class HateoasResponse extends Response {
          */
         public abstract HateoasResponseBuilder link(String id, String rel, Object... params);
 
+        /**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#link(String, String, Object...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+         * @param id
+         * @param rel
+         * @param params
+         * @return
+         */
+        public abstract HateoasResponseBuilder link(HateoasContext context, String id, String rel, Object... params);
+        
         /**
          * Append a link to the object at the specified FieldPath, corresponding to the supplied id,
          * building the URI using the specified parameters.
@@ -443,6 +426,19 @@ public abstract class HateoasResponse extends Response {
          */
         public abstract HateoasResponseBuilder link(FieldPath fieldPath, String id, String rel,
                                                     String... entityFields);
+
+        /**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#link(FieldPath, String, String, String...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+         * @param fieldPath
+         * @param id
+         * @param rel
+         * @param entityFields
+         * @return
+         */
+        public abstract HateoasResponseBuilder link(HateoasContext context, FieldPath fieldPath, String id, String rel,
+                String... entityFields);
 
         /**
          * Append a LinkProducer to be applied for generating links for the object at the specified FieldPath.
@@ -471,6 +467,15 @@ public abstract class HateoasResponse extends Response {
          */
 		public abstract HateoasResponseBuilder links(HateoasLink... link);
 
+		/**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#links(HateoasLink...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+		 * @param link
+		 * @return
+		 */
+		public abstract HateoasResponseBuilder links(HateoasContext context, HateoasLink... link);
+
         /**
          * Append a link corresponding to the supplied id, defaulting the rel to 'self' and building the URI using
          * the specified parameters.
@@ -480,6 +485,16 @@ public abstract class HateoasResponse extends Response {
          * @return this.
          */
 		public abstract HateoasResponseBuilder selfLink(String id, Object... params);
+
+		/**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#selfLink(String, Object...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+		 * @param id
+		 * @param params
+		 * @return
+		 */
+		public abstract HateoasResponseBuilder selfLink(HateoasContext context, String id, Object... params);
 
         /**
          * Append a link to be included for each element nested in the entity (which is expected to be a Collection).
@@ -492,6 +507,17 @@ public abstract class HateoasResponse extends Response {
         public abstract HateoasResponseBuilder each(String id, String rel, String... entityFields);
 
         /**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#each(String, String, String...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+         * @param id
+         * @param rel
+         * @param entityFields
+         * @return
+         */
+        public abstract HateoasResponseBuilder each(HateoasContext context, String id, String rel, String... entityFields);
+
+        /**
          * Append a link to be included for each element nested in the entity (which is expected to be a Collection),
          * defaulting the rel to 'self'.
          * @param id the @Linkable id of the target method.
@@ -501,7 +527,18 @@ public abstract class HateoasResponse extends Response {
          */
         public abstract HateoasResponseBuilder selfEach(String id, String... entityFields);
 
+        /**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#selfEach(String, String...)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+         * @param id
+         * @param entityFields
+         * @return
+         */
+        public abstract HateoasResponseBuilder selfEach(HateoasContext context, String id, String... entityFields);
+
 		public abstract HateoasResponseBuilder each(LinkProducer<?> linkProducer);
+		public abstract HateoasResponseBuilder each(HateoasContext context, LinkProducer<?> linkProducer);
 
         /**
          * Construct a {@link HateoasLink} for the supplied id, building the URI using the specified parameters.
@@ -512,7 +549,21 @@ public abstract class HateoasResponse extends Response {
          * @param params the parameters to use for populating path parameters.  @return a populated HateoasLink instance.
          */
 		public HateoasLink makeLink(String id, String rel, Object... params) {
-			HateoasContext hateoasContext = getContext();
+			return makeLink(null, id, rel, params);
+		}
+		
+		/**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#selfEach(String, String...)}
+		 * @param hateoasContext
+		 * @param id
+		 * @param rel
+		 * @param params
+		 * @return
+		 */
+		public HateoasLink makeLink(HateoasContext hateoasContext, String id, String rel, Object... params) {
+			if (hateoasContext == null)
+				hateoasContext = HateoasContextProvider.getDefaultContext();
 			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
 			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, rel, params);
 		}
@@ -521,25 +572,18 @@ public abstract class HateoasResponse extends Response {
 		 * Protected constructor, use one of the static methods of
 		 * <code>Response</code> to obtain an instance.
 		 */
-		protected HateoasResponseBuilder(HateoasContext context) {
-			this.context = context;
-		}
+		protected HateoasResponseBuilder() {}
 
 		/**
 		 * Create a new builder instance.
 		 *
 		 * @return a new ResponseBuilder
 		 */
-		protected static HateoasResponseBuilder newInstance(HateoasContext ctx) {
-			HateoasResponseBuilder b = new HateoasResponseBuilderImpl(ctx); // RuntimeDelegate.getInstance().createResponseBuilder();
+		protected static HateoasResponseBuilder newInstance() {
+			HateoasResponseBuilder b = new HateoasResponseBuilderImpl(); // RuntimeDelegate.getInstance().createResponseBuilder();
 			return b;
 		}
 
-		protected HateoasContext getContext() {
-			if (context == null)
-				return HateoasContextProvider.getDefaultContext();
-			return context;
-		}
 		/**
 		 * Create a Response instance from the current ResponseBuilder. The
 		 * builder is reset to a blank state equivalent to calling the ok

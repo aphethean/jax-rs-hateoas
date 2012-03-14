@@ -30,8 +30,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.Collection;
 
-import static com.jayway.jaxrs.hateoas.core.HateoasResponse.HateoasResponseBuilder.makeLink;
-
 @Path("/library/loans")
 @Component
 public class LoanResource {
@@ -101,7 +99,7 @@ public class LoanResource {
         Book book = bookRepository.getBookById(id);
         book.returned();
 
-        return HateoasResponse.ok()
-                .location(makeLink(LinkableIds.LOANS_LIST_ID, Rels.LOANS)).build();
+		HateoasResponse.HateoasResponseBuilder builder = HateoasResponse.ok();
+		return builder.location(builder.makeLink(LinkableIds.LOANS_LIST_ID, Rels.LOANS)).build();
     }
 }
