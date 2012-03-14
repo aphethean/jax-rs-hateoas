@@ -14,8 +14,6 @@
  */
 package com.jayway.jaxrs.hateoas.core;
 
-import com.sun.jersey.core.header.OutBoundHeaders;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
@@ -45,8 +43,8 @@ public class HateoasResponseImpl extends HateoasResponse {
      * @param entityType the entity type, it is the callers responsibility to
      *                   ensure the entity type is compatible with the entity.
      */
-    protected HateoasResponseImpl(Response.StatusType statusType, OutBoundHeaders headers, Object entity, Type entityType) {
-        this.statusType = statusType;
+    protected HateoasResponseImpl(Response.StatusType statusType, MultivaluedMap<String, Object> headers, Object entity, Type entityType) {
+    	this.statusType = statusType;
         this.headers = headers;
         this.entity = entity;
         this.entityType = entityType;
@@ -62,7 +60,7 @@ public class HateoasResponseImpl extends HateoasResponse {
      * @param entityType the entity type, it is the callers responsibility to
      *                   ensure the entity type is compatible with the entity.
      */
-    protected HateoasResponseImpl(int status, OutBoundHeaders headers, Object entity, Type entityType) {
+    protected HateoasResponseImpl(int status, MultivaluedMap<String, Object> headers, Object entity, Type entityType) {
         this.statusType = toStatusType(status);
         this.headers = headers;
         this.entity = entity;

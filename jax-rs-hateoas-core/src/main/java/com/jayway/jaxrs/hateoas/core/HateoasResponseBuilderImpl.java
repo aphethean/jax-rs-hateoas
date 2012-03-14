@@ -20,11 +20,9 @@ import com.jayway.jaxrs.hateoas.support.AtomRels;
 import com.jayway.jaxrs.hateoas.support.FieldPath;
 import com.jayway.jaxrs.hateoas.support.ReflectionUtils;
 import com.jayway.jaxrs.hateoas.web.RequestContext;
-import com.sun.jersey.api.view.Viewable;
-import com.sun.jersey.core.header.OutBoundHeaders;
-import com.sun.jersey.core.spi.factory.ResponseImpl;
 
 import javax.ws.rs.core.*;
+
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.*;
@@ -40,7 +38,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
 
     private Response.StatusType statusType = Response.Status.NO_CONTENT;
 
-    private OutBoundHeaders headers;
+    private MultivaluedMap<String, Object> headers;
 
     private Object entity;
 
@@ -140,7 +138,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
         this.statusType = that.statusType;
         this.entity = that.entity;
         if (that.headers != null) {
-            this.headers = new OutBoundHeaders(that.headers);
+            this.headers = that.headers;
         } else {
             this.headers = null;
         }
@@ -154,12 +152,12 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
         return this;
     }
 
-    private OutBoundHeaders getHeaders() {
+    private MultivaluedMap<String, Object> getHeaders() {
         if (headers == null)
-            headers = new OutBoundHeaders();
+            headers = new ResponseHeaders<Object>();
         return headers;
     }
-
+    
     // Response.Builder
 
     @SuppressWarnings("unchecked")
@@ -236,7 +234,7 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     ;
 
     public HateoasResponse.HateoasResponseBuilder status(int status) {
-        return status(ResponseImpl.toStatusType(status));
+        return status(Response.Status.fromStatusCode(status));
     }
 
     public HateoasResponse.HateoasResponseBuilder entity(Object entity) {
