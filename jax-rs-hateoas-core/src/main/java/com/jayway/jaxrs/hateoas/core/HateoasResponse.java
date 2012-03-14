@@ -263,7 +263,7 @@ public abstract class HateoasResponse extends Response {
 	public static HateoasResponseBuilder created(HateoasContext context, String linkId,
 			Object... parameters) {
 		
-		return created(HateoasResponseBuilder.newInstance().makeLink(context, linkId, null, parameters));
+		return created(HateoasResponseBuilder.makeLink(context, linkId, null, parameters));
 	}
 
 	/**
@@ -548,7 +548,7 @@ public abstract class HateoasResponse extends Response {
          * @param rel the relation of the linked resource in the current context.
          * @param params the parameters to use for populating path parameters.  @return a populated HateoasLink instance.
          */
-		public HateoasLink makeLink(String id, String rel, Object... params) {
+		public static HateoasLink makeLink(String id, String rel, Object... params) {
 			return makeLink(null, id, rel, params);
 		}
 		
@@ -561,7 +561,7 @@ public abstract class HateoasResponse extends Response {
 		 * @param params
 		 * @return
 		 */
-		public HateoasLink makeLink(HateoasContext hateoasContext, String id, String rel, Object... params) {
+		public static HateoasLink makeLink(HateoasContext hateoasContext, String id, String rel, Object... params) {
 			if (hateoasContext == null)
 				hateoasContext = HateoasContextProvider.getDefaultContext();
 			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
