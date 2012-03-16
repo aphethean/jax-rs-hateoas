@@ -165,7 +165,8 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
         HateoasLinkInjector<Object> linkInjector = HateoasResponseBuilder.getLinkInjector();
 
         CollectionWrapperStrategy collectionWrapperStrategy = HateoasResponseBuilder.getCollectionWrapperStrategy();
-        HateoasVerbosity verbosity = HateoasVerbosity.valueOf(RequestContext.getRequestContext().getVerbosityHeader());
+        RequestContext requestContext = RequestContext.getRequestContext();
+        HateoasVerbosity verbosity = HateoasVerbosity.valueOf((requestContext != null ? requestContext.getVerbosityHeader() : ""));
 
         Object newEntity = entity;
         if (entity != null) {
