@@ -8,6 +8,7 @@ import com.jayway.jaxrs.hateoas.LinkProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,6 +28,11 @@ public class StrategyBasedLinkInjector implements HateoasLinkInjector<Object> {
         strategies.add(new HateoasLinkBeanLinkInjector());
         strategies.add(new ReflectionBasedHateoasLinkInjector());
         strategies.add(new JavassistHateoasLinkInjector());
+    }
+
+    public StrategyBasedLinkInjector(Collection<HateoasLinkInjector<Object>> newStrategies) {
+        strategies = Lists.newArrayList();
+        strategies.addAll(newStrategies);
     }
 
     @Override
