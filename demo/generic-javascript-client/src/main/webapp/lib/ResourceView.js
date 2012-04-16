@@ -1,18 +1,14 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
-    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
-    function ctor() { this.constructor = child; }
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor;
-    child.__super__ = parent.prototype;
-    return child;
-  };
-  this.ResourceView = (function() {
-    __extends(ResourceView, View);
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  this.ResourceView = (function(_super) {
+
+    __extends(ResourceView, _super);
+
     function ResourceView(selfLink, target) {
-      if (target == null) {
-        target = '#resource-wrapper';
-      }
+      if (target == null) target = '#resource-wrapper';
       this.renderResourceAsJsonLink = __bind(this.renderResourceAsJsonLink, this);
       this.renderForm = __bind(this.renderForm, this);
       this.renderFormHeader = __bind(this.renderFormHeader, this);
@@ -28,9 +24,11 @@
         success: this.render
       });
     }
+
     ResourceView.prototype.refresh = function() {
       return this.selfLink.trigger();
     };
+
     ResourceView.prototype.render = function(model, textStatus, jqXHR) {
       this.model = model;
       this.clear();
@@ -40,6 +38,7 @@
         return this.append(this.renderResource(this.model));
       }
     };
+
     ResourceView.prototype.renderHeader = function(jqXHR) {
       var div, props, title;
       div = this.createDiv('header');
@@ -58,21 +57,19 @@
       }
       return div;
     };
+
     ResourceView.prototype.renderResource = function(model, isListItem) {
-      var div, ol, re;
-      if (isListItem == null) {
-        isListItem = false;
-      }
+      var div, ol, re,
+        _this = this;
+      if (isListItem == null) isListItem = false;
       div = this.createDiv('resource-data');
-      if (!isListItem) {
-        div.addClass('border');
-      }
+      if (!isListItem) div.addClass('border');
       if (this.hasRows(model)) {
         ol = this.createOl('collection-rows');
         ol.appendTo(div);
-        _.each(model.rows, __bind(function(row) {
-          return ol.append(this.createLi().append(this.renderResource(row, true)));
-        }, this));
+        _.each(model.rows, function(row) {
+          return ol.append(_this.createLi().append(_this.renderResource(row, true)));
+        });
       } else {
         re = this.createDiv('resource');
         re.append(this.renderPropertyList(model, 'resource-property-list'));
@@ -81,43 +78,42 @@
       }
       return div;
     };
+
     ResourceView.prototype.renderLinks = function(model, isListItem, isNav, clazz) {
-      var div, li, ol;
+      var div, li, ol,
+        _this = this;
       div = this.createDiv(clazz);
       ol = this.createOl('nav-bar').appendTo(div);
-      _.each(model.links, __bind(function(linkModel) {
-        if (this.isEntryPoint()) {
-          return ol.append(this.createLi('nav-bar-item').append(this.createLink(this, linkModel).hyperLink));
+      _.each(model.links, function(linkModel) {
+        if (_this.isEntryPoint()) {
+          return ol.append(_this.createLi('nav-bar-item').append(_this.createLink(_this, linkModel).hyperLink));
         } else if (model.rows != null) {
-          return ol.append(this.createLi('nav-bar-item').append(this.createLink(this, linkModel).hyperLink));
+          return ol.append(_this.createLi('nav-bar-item').append(_this.createLink(_this, linkModel).hyperLink));
         } else if (isListItem) {
-          return ol.append(this.createLi('nav-bar-item').append(this.createLink(this, linkModel).hyperLink));
+          return ol.append(_this.createLi('nav-bar-item').append(_this.createLink(_this, linkModel).hyperLink));
         } else {
           if (isNav) {
             if (linkModel.rel === 'self') {
-              return ol.append(this.createLi('nav-bar-item').append(this.createLink(this, linkModel).hyperLink));
+              return ol.append(_this.createLi('nav-bar-item').append(_this.createLink(_this, linkModel).hyperLink));
             }
           } else {
             if (linkModel.rel !== 'self') {
-              return ol.append(this.createLi('nav-bar-item').append(this.createLink(this, linkModel).hyperLink));
+              return ol.append(_this.createLi('nav-bar-item').append(_this.createLink(_this, linkModel).hyperLink));
             }
           }
         }
-      }, this));
+      });
       if (isNav && !this.isEntryPoint()) {
         li = this.createLi('nav-bar-item right').append(this.renderResourceAsJsonLink());
         li.appendTo(ol);
       }
       return div;
     };
+
     ResourceView.prototype.renderPropertyList = function(model, clazz, editable) {
       var div, name;
-      if (clazz == null) {
-        clazz = "";
-      }
-      if (editable == null) {
-        editable = false;
-      }
+      if (clazz == null) clazz = "";
+      if (editable == null) editable = false;
       div = this.createDiv(clazz);
       for (name in model) {
         if (name !== 'links' && name !== 'rows') {
@@ -126,6 +122,7 @@
       }
       return div;
     };
+
     ResourceView.prototype.renderFormHeader = function(link) {
       var div, props, title;
       div = this.createDiv('header');
@@ -139,6 +136,7 @@
       div.append(this.renderPropertyList(props, 'property-list'));
       return div;
     };
+
     ResourceView.prototype.renderForm = function(formActionLink) {
       var div;
       this.clear();
@@ -147,19 +145,24 @@
       div.append(this.createFormForModel(formActionLink.formModel, this.createButton('Save', formActionLink), this.createButton('Cancel', this.selfLink)));
       return this.append(div);
     };
+
     ResourceView.prototype.renderResourceAsJsonLink = function() {
-      var a;
-      a = this.createHyperLink('json').addClass('json-link').click(__bind(function() {
+      var a,
+        _this = this;
+      a = this.createHyperLink('json').addClass('json-link').click(function() {
         if ($('.json-link').text() === 'json') {
           $('.json-link').text('model');
-          this.clear('.resource-data').append('<pre class="json-view">' + JSON.stringify(this.model, null, 3) + '</pre>');
+          _this.clear('.resource-data').append('<pre class="json-view">' + JSON.stringify(_this.model, null, 3) + '</pre>');
         } else {
-          this.refresh();
+          _this.refresh();
         }
         return false;
-      }, this));
+      });
       return a;
     };
+
     return ResourceView;
-  })();
+
+  })(View);
+
 }).call(this);

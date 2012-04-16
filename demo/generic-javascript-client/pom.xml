@@ -14,5 +14,28 @@
   <url>http://maven.apache.org</url>
   <build>
     <finalName>generic-javascript-client</finalName>
+    <plugins>
+      <plugin>
+        <groupId>com.github.iron9light</groupId>
+        <artifactId>coffeescript-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <configuration>
+          <srcDir>${basedir}/src/main/webapp/coffee</srcDir>
+          <outputDir>${basedir}/src/main/webapp/lib</outputDir>
+          <bare>false</bare>
+          <modifiedOnly>false</modifiedOnly>
+          <allowedDelete>true</allowedDelete>
+          <compilerUrl></compilerUrl>
+         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
+  
 </project>
