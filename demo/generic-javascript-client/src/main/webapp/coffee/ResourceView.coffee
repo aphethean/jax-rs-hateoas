@@ -3,7 +3,12 @@ class @ResourceView extends View
   constructor: (selfLink, target = '#resource-wrapper') ->
     super target
     @selfLink = @createLink(this, selfLink)
-    $.ajax @selfLink.model.href, success: @render
+    $.ajax @selfLink.model.href, 
+        error: (jqXHR, textStatus, errorThrown) ->
+            debugger
+            console.log("HTTP Error: #{jqXHR.status} #{this.url} (#{errorThrown})")
+            alert("HTTP Error: #{jqXHR.status} #{this.url} (#{errorThrown})")
+        success: @render
 
   refresh: =>
     @selfLink.trigger()
