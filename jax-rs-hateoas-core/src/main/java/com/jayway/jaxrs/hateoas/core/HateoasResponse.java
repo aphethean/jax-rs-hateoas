@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Extension of the standard JAX-RS {@link Response}, providing access to a {@link HateoasResponseBuilder} rather
@@ -405,7 +406,29 @@ public abstract class HateoasResponse extends Response {
          * @return
          */
         public abstract HateoasResponseBuilder link(HateoasContext context, String id, String rel, Object... params);
-        
+
+        /**
+         * Append a link to the entity root, corresponding to the supplied id, building the URI using the specified
+         * parameters.
+         *
+         * @param id the @Linkable id of the target method.
+         * @param rel the relation of the linked resource in the current context.
+         * @param paramMap A map of the parameters to use for populating path parameters.  @return this.
+         * @return this
+         */
+        public abstract HateoasResponseBuilder link(String id, String rel, Map<String, Object> paramMap);
+
+        /**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#link(String, String, Map<String, Object>)}
+         * @param context The HateoasContext to lookup {@link LinkableInfo}
+         * @param id
+         * @param rel
+         * @param params
+         * @return
+         */
+        public abstract HateoasResponseBuilder link(HateoasContext context, String id, String rel, Map<String, Object> paramMap);
+
         /**
          * Append a link to the object at the specified FieldPath, corresponding to the supplied id,
          * building the URI using the specified parameters.
@@ -554,7 +577,7 @@ public abstract class HateoasResponse extends Response {
 		
 		/**
          * This method is an alternative mechanism if you have not used @Linkable to register your links.
-         * @see {@link HateoasResponseBuilder#selfEach(String, String...)}
+         * @see {@link HateoasResponseBuilder#makeLink(String, String, Object...)}
 		 * @param hateoasContext
 		 * @param id
 		 * @param rel
@@ -566,6 +589,34 @@ public abstract class HateoasResponse extends Response {
 				hateoasContext = HateoasContextProvider.getDefaultContext();
 			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
 			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, rel, params);
+		}
+
+        /**
+         * Construct a {@link HateoasLink} for the supplied id, building the URI using the specified map of parameters.
+         *
+         *
+         * @param id the @Linkable id of the target method.
+         * @param rel the relation of the linked resource in the current context.
+         * @param params the parameters to use for populating path parameters.  @return a populated HateoasLink instance.
+         */
+		public static HateoasLink makeLink(String id, String rel, Map<String, Object> paramMap) {
+			return makeLink(null, id, rel, paramMap);
+		}
+		
+		/**
+         * This method is an alternative mechanism if you have not used @Linkable to register your links.
+         * @see {@link HateoasResponseBuilder#makeLink(String, String, Map<String, Object>)}
+		 * @param hateoasContext
+		 * @param id
+		 * @param rel
+		 * @param params
+		 * @return
+		 */
+		public static HateoasLink makeLink(HateoasContext hateoasContext, String id, String rel, Map<String, Object> paramMap) {
+			if (hateoasContext == null)
+				hateoasContext = HateoasContextProvider.getDefaultContext();
+			LinkableInfo linkableInfo = hateoasContext.getLinkableInfo(id);
+			return DefaultHateoasLink.fromLinkableInfo(linkableInfo, rel, paramMap);
 		}
 
 		/**

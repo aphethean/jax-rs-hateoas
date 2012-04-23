@@ -25,6 +25,7 @@ import org.junit.Test;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
@@ -33,6 +34,7 @@ public class DefaultHateoasLinkTest {
 
 	public static final String[] DEFAULT_MEDIA_TYPE = new String[] { "*/*" };
 	private DefaultHateoasLink tested;
+	private DefaultHateoasLink testedFromMap;
 
 	@Before
 	public void prepareTestedInstance() throws IllegalArgumentException,
@@ -45,6 +47,11 @@ public class DefaultHateoasLinkTest {
 				DEFAULT_MEDIA_TYPE, "test label", "test description",
 				DummyDto.class);
 		tested = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, 1, 2);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id1", 1);
+		map.put("id2", 2);
+		testedFromMap = DefaultHateoasLink.fromLinkableInfo(linkableInfo, AtomRels.SELF, map);
 	}
 
 	@After
@@ -68,8 +75,38 @@ public class DefaultHateoasLinkTest {
 	}
 
 	@Test
+	public void verifyFromLinkableInfoMap() {
+		assertNotNull(testedFromMap);
+		assertEquals("test.dummy", testedFromMap.getId());
+		assertEquals("self", testedFromMap.getRel());
+		assertEquals("POST", testedFromMap.getMethod());
+		assertEquals("http://www.example.com/api/dummy/1/2", testedFromMap.getHref());
+		assertEquals("test label", testedFromMap.getLabel());
+		assertEquals("test description", testedFromMap.getDescription());
+		assertEquals(DummyDto.class, testedFromMap.getTemplateClass());
+
+		TestUtils.assertArray(testedFromMap.getConsumes(), "*/*");
+		TestUtils.assertArray(testedFromMap.getProduces(), "*/*");
+	}
+
+	@Test
 	public void verifyToMap() {
 		Map<String, Object> result = tested.toMap(HateoasVerbosity.MAXIMUM);
+
+		assertEquals("test.dummy", result.get("id"));
+		assertEquals("self", result.get("rel"));
+		assertEquals("POST", result.get("method"));
+		assertEquals("http://www.example.com/api/dummy/1/2", result.get("href"));
+		assertEquals("test label", result.get("label"));
+		assertEquals("test description", result.get("description"));
+		TestUtils.assertArray((String[]) result.get("consumes"), "*/*");
+		TestUtils.assertArray((String[]) result.get("produces"), "*/*");
+		assertEquals(new DummyDto(), result.get("template"));
+	}
+
+	@Test
+	public void verifyMapToMap() {
+		Map<String, Object> result = testedFromMap.toMap(HateoasVerbosity.MAXIMUM);
 
 		assertEquals("test.dummy", result.get("id"));
 		assertEquals("self", result.get("rel"));

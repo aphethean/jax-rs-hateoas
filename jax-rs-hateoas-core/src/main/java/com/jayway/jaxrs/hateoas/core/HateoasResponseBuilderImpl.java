@@ -57,6 +57,16 @@ public class HateoasResponseBuilderImpl extends HateoasResponse.HateoasResponseB
     }
 
     @Override
+    public HateoasResponseBuilder link(String id, String rel, Map<String, Object> paramMap) {
+        return links(HateoasResponseBuilder.makeLink(id, rel, paramMap));
+    }
+
+    @Override
+    public HateoasResponseBuilder link(HateoasContext context, String id, String rel, Map<String, Object> paramMap) {
+        return links(HateoasResponseBuilder.makeLink(context, id, rel, paramMap));
+    }
+
+    @Override
     public HateoasResponseBuilder link(FieldPath fieldPath, String id, String rel, String... entityFields) {
         return link(null, fieldPath, id, rel, entityFields);
     }

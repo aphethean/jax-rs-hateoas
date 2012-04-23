@@ -157,6 +157,18 @@ class DefaultHateoasLink implements HateoasLink {
 				linkableInfo.getTemplateClass());
 	}
 
+	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,
+			String rel, Map<String, Object> paramMap) {
+		URI requestURI = RequestContext.getRequestContext().getBasePath()
+				.path(linkableInfo.getMethodPath()).buildFromMap(paramMap);
+
+		return new DefaultHateoasLink(linkableInfo.getId(), rel,
+				requestURI.toASCIIString(), linkableInfo.getConsumes(),
+				linkableInfo.getProduces(), linkableInfo.getHttpMethod(),
+				linkableInfo.getLabel(), linkableInfo.getDescription(),
+				linkableInfo.getTemplateClass());
+	}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
