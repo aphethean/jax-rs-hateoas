@@ -147,6 +147,8 @@ class DefaultHateoasLink implements HateoasLink {
 
 	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,
 			String rel, Object... params) {
+		if (params != null && params.length == 1 && params[0] instanceof Map<?, ?>)
+			return fromLinkableInfoMap(linkableInfo, rel, (Map<String, Object>) params[0]);
 		URI requestURI = RequestContext.getRequestContext().getBasePath()
 				.path(linkableInfo.getMethodPath()).build(params);
 
@@ -158,6 +160,11 @@ class DefaultHateoasLink implements HateoasLink {
 	}
 
 	static DefaultHateoasLink fromLinkableInfo(LinkableInfo linkableInfo,
+			String rel, Map<String, Object> paramMap) {
+		return fromLinkableInfoMap(linkableInfo, rel, paramMap);
+	}
+
+	private static DefaultHateoasLink fromLinkableInfoMap(LinkableInfo linkableInfo,
 			String rel, Map<String, Object> paramMap) {
 		URI requestURI = RequestContext.getRequestContext().getBasePath()
 				.path(linkableInfo.getMethodPath()).buildFromMap(paramMap);
